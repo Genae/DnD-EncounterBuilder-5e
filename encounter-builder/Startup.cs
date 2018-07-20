@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
+using encounter_builder.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace encounter_builder
 {
@@ -45,6 +42,22 @@ namespace encounter_builder
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+            #if DEBUG
+            var p = new ProcessStartInfo()
+            {
+                Arguments = " /c npm run serve",
+                CreateNoWindow = true,
+                WorkingDirectory = Directory.GetCurrentDirectory(),
+                FileName = "cmd.exe"
+            };
+            new Process()
+            {
+                StartInfo = p
+            }.Start();
+            #endif
+
+            new Importer().ImportCompendium(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data", "Monster Manual Bestiary.xml"));
+        
         }
     }
 }
