@@ -56,7 +56,7 @@ namespace encounter_builder
             }.Start();
             #endif
 
-            new Importer().ImportCompendium(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data", "Monster Manual Bestiary.xml"));
+            new Importer().ImportCompendium(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data", "SRD.xml"));
         
         }
     }
