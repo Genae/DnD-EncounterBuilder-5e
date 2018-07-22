@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace encounter_builder.Models
+namespace encounter_builder.Models.ImportData
 {
     [XmlRoot("data")]
-    public class CompendiumRawData
+    public class CompendiumRaw
     {
         [XmlElement("version")]
         public int Version;
@@ -15,7 +15,7 @@ namespace encounter_builder.Models
         [XmlElement("item")]
         public List<ItemRaw> Items;
         [XmlElement("monster")]
-        public List<MonsterRawData> Monsters;
+        public List<MonsterRaw> Monsters;
         [XmlElement("spell")]
         public List<SpellRaw> Spells;
     }

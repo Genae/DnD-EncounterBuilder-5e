@@ -1,3 +1,7 @@
-﻿<h1>HELLO WORLD</h1>
-<h2>Message From Server</h2>
-<p *ngFor="let m of result">{{m}}</p>
+﻿<h1>Monster Compendium</h1>
+<div>
+    <button (click)="updateIndex(-1)">-</button>
+    <span>Index: {{index}}</span>
+    <button (click)="updateIndex(1)">+</button>
+</div>
+<statBlock [monster]="monsters[index]"></statBlock>

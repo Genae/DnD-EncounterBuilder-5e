@@ -17,7 +17,7 @@ namespace encounter_builder.Models
         Performance,
         Persuasion,
         Religion,
-        Sleight_of_Hand,
+        Sleight_Of_Hand,
         Stealth,
         Survival
     }

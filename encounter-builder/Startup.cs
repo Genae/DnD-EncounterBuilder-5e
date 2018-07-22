@@ -2,10 +2,14 @@
 using System.IO;
 using System.Reflection;
 using encounter_builder.Database;
+using encounter_builder.Provider;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace encounter_builder
 {
@@ -14,6 +18,7 @@ namespace encounter_builder
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            
         }
 
         public IConfiguration Configuration { get; }
@@ -21,7 +26,13 @@ namespace encounter_builder
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(options =>
+            {
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            }); 
+
+            services.TryAddSingleton<DataProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,6 +53,14 @@ namespace encounter_builder
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            JsonConvert.DefaultSettings = (() =>
+            {
+                var settings = new JsonSerializerSettings();
+                settings.Converters.Add(new StringEnumConverter { CamelCaseText = true });
+                return settings;
+            });
+
             #if DEBUG
             var p = new ProcessStartInfo()
             {
@@ -55,9 +74,6 @@ namespace encounter_builder
                 StartInfo = p
             }.Start();
             #endif
-
-            new Importer().ImportCompendium(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data", "SRD.xml"));
-        
         }
     }
 }

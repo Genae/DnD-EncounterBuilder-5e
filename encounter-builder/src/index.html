@@ -3,6 +3,35 @@
 <head>
     <meta charset="utf-8" />
     <title></title>
+    <meta charset="UTF-8">
+    <title>Statblock example</title>
+
+    <link rel="import" href="src/app/statblock/top-stats.html">
+    <link rel="import" href="src/app/statblock/creature-heading.html">
+    <link rel="import" href="src/app/statblock/property-block.html">
+    <link rel="import" href="src/app/statblock/property-line.html">
+    <link rel="import" href="src/app/statblock/stat-block.html">
+
+    <style>
+        body {
+            margin: 0;
+        }
+        stat-block {
+            /* A bit of margin for presentation purposes, to show off the drop
+        shadow. */
+            margin-left: 20px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border: 0px;
+            border-collapse: collapse;
+        }
+        th, td {
+            width: 50px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <app></app>

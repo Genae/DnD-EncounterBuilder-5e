@@ -29,6 +29,7 @@ module.exports = {
     resolve: {
         extensions: ['*', '.js', '.ts', '.html', '.css']
     },
+    devtool: 'source-map',
     plugins: [
         new HtmlWebpackPlugin({
             template: './src/index.html'

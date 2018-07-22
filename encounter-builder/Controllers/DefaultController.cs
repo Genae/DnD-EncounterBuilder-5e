@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using encounter_builder.Models.ImportData;
+using encounter_builder.Provider;
 using Microsoft.AspNetCore.Mvc;
 
 namespace encounter_builder.Controllers
@@ -10,10 +9,16 @@ namespace encounter_builder.Controllers
     [Route("api/[controller]")]
     public class DefaultController : Controller
     {
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly DataProvider _dataProvider;
+
+        public DefaultController(DataProvider dataProvider)
         {
-            return new string[] { "Didn't", "believe", "it", "right??" };
+            _dataProvider = dataProvider;
+        }
+        [HttpGet]
+        public IEnumerable<MonsterRaw> Get()
+        {
+            return _dataProvider.GetAllMonsters();
         }
     }
 }

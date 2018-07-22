@@ -1,0 +1,107 @@
+﻿<div *ngIf="monster">
+    <stat-block>
+        <creature-heading>
+            <h1>{{monster.name}}</h1>
+            <h2>{{monster.size}} {{monster.type}}, {{monster.alignment}}</h2>
+        </creature-heading>
+
+        <top-stats>
+            <property-line>
+                <h4>Armor Class</h4>
+                <p>{{monster.armorclass}} <span *ngIf="monster.armor">({{monster.armor}})</span></p>
+            </property-line>
+            <property-line>
+                <h4>Hit Points</h4>
+                <p>{{monster.maximumHitpoints}} ({{monster.hitDie.description}})<span *ngIf="monster.maximumHitpoints !== monster.hitDie.expectedRoll" style="color: red">Expected {{monster.hitDie.expectedRoll}}!</span></p>
+            </property-line>
+            <property-line>
+                <h4>Speed</h4>
+                <p>{{monster.speed}}</p>
+            </property-line>
+
+            <tapered-rule></tapered-rule>
+            <table>
+                <tr>
+                    <th>STR</th>
+                    <th>DEX</th>
+                    <th>CON</th>
+                    <th>INT</th>
+                    <th>WIS</th>
+                    <th>CHA</th>
+                </tr>
+                <tr>
+                    <td>{{monster.abilities['Strength'].description}}</td>
+                    <td>{{monster.abilities['Dexterity'].description}}</td>
+                    <td>{{monster.abilities['Constitution'].description}}</td>
+                    <td>{{monster.abilities['Intelligence'].description}}</td>
+                    <td>{{monster.abilities['Wisdom'].description}}</td>
+                    <td>{{monster.abilities['Charisma'].description}}</td>
+                </tr>
+            </table>
+            <tapered-rule></tapered-rule>
+
+            <property-line *ngIf="monster.savingThrows.length > 0">
+                <h4>Saving Throws</h4>
+                <p>{{describeSavingThrows(monster.savingThrows)}}</p>
+            </property-line>
+            <property-line *ngIf="monster.skills.length > 0">
+                <h4>Skills</h4>
+                <p>{{describeSkills(monster.skills)}}</p>
+            </property-line>
+            <property-line *ngIf="monster.vulnerable">
+                <h4>Damage Vulnerabilities</h4>
+                <p>{{monster.vulnerable}}</p>
+            </property-line>
+            <property-line *ngIf="monster.resist">
+                <h4>Damage Resistances</h4>
+                <p>{{monster.resist}}</p>
+            </property-line>
+            <property-line *ngIf="monster.immune">
+                <h4>Damage Immunities</h4>
+                <p>{{monster.immune}}</p>
+            </property-line>
+            <property-line *ngIf="monster.conditionImmune">
+                <h4>Condition Immunities</h4>
+                <p>{{monster.conditionImmune}}</p>
+            </property-line>
+            <property-line>
+                <h4>Senses</h4>
+                <p>{{monster.senses ? monster.senses + ', ' : ''}}passive Perception {{monster.passive}}</p>
+            </property-line>
+            <property-line>
+                <h4>Languages</h4>
+                <p>{{monster.languages == undefined ? '—' : monster.languages}}</p>
+            </property-line>
+            <property-line>
+                <h4>Challenge</h4>
+                <p>{{monster.challengeRating.description}}</p>
+            </property-line>
+        </top-stats>
+
+        <property-block *ngFor="let trait of monster.traits">
+            <h4>{{trait.name}}.</h4>
+            <p>{{trait.text}}</p>
+        </property-block>
+
+        <h3>Actions</h3>
+
+        <property-block *ngFor="let action of monster.actions">
+            <h4>{{action.name}}.</h4>
+            <p>{{action.text}}</p>
+        </property-block>
+
+        <h3 *ngIf="monster.legendaryActions.length > 0">Legendary Actions</h3>
+
+        <property-block *ngFor="let action of monster.legendaryActions">
+            <h4>{{action.name}}.</h4>
+            <p>{{action.text}}</p>
+        </property-block>
+
+        <h3 *ngIf="monster.reactions.length > 0">Reactions</h3>
+
+        <property-block *ngFor="let action of monster.reactions">
+            <h4>{{action.name}}.</h4>
+            <p>{{action.text}}</p>
+        </property-block>
+    </stat-block>
+</div>

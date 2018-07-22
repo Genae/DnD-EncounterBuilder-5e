@@ -8,7 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="src\app\core\models\" />
+    <None Remove="src\app\core\models\monster.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\FullData\" />
+    <Folder Include="Models\ViewData\" />
     <Folder Include="src\app\core\pipes\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
@@ -22,6 +27,10 @@
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="src\app\core\models\monster.ts" />
   </ItemGroup>
 
   <ItemGroup>

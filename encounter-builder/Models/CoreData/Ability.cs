@@ -4,7 +4,7 @@ namespace encounter_builder.Models
     {
         Strength,
         Dexterity,
-        Constition,
+        Constitution,
         Intelligence,
         Wisdom,
         Charisma

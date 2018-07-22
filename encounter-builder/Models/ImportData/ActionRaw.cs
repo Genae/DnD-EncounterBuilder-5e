@@ -1,8 +1,8 @@
 using System.Xml.Serialization;
 
-namespace encounter_builder.Models
+namespace encounter_builder.Models.ImportData
 {
-    public class TraitRaw
+    public class ActionRaw
     {
         [XmlElement("name")]
         public string Name;
