@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace encounter_builder.Models
@@ -45,84 +44,5 @@ namespace encounter_builder.Models
         public ItemType? Type => (ItemType?) TypeId;
         public DamageType? DamageType => (DamageType?)DamageTypeId;
         public WeaponProperty? WeaponProperties => (WeaponProperty?)WeaponPropertyId;
-    }
-
-    [Flags]
-    public enum WeaponProperty
-    {
-        Ammunition,
-        Finesse,
-        Heavy,
-        Light,
-        Loading,
-        Reach,
-        Special,
-        Throw,
-        Twohanded,
-        Veratile,
-        Martial_Weapon
-    }
-
-    public enum DamageType
-    {
-        Acid,
-        Bludgeoning,
-        Cold,
-        Fire,
-        Force,
-        Lightning,
-        Necrotic,
-        Piercing,
-        Poison,
-        Psychic,
-        Radiant,
-        Slashing,
-        Thunder
-    }
-
-    public enum ItemType
-    {
-        Unknown00,
-        Light_Armor,
-        Medium_Armor,
-        Heavy_Armor,
-        Shield,
-        Melee_Weapon,
-        Ranged_Weapon,
-        Ammunition,
-        Rod,
-        Staff,
-        Wand,
-        Ring,
-        Potion,
-        Scroll,
-        Wondrous_Item,
-        Wealth
-    }
-
-    public class ModifierRaw
-    {
-        [XmlElement("type")]
-        public int StatId;
-        [XmlElement("value")]
-        public int Value;
-
-        public ModifierStat Stat => (ModifierStat) StatId;
-    }
-
-    public enum ModifierStat
-    {
-        Unknown0,
-        WeaponAttack,
-        WeaponDamage,
-        Unknown3,
-        Unknown4,
-        Unknown5,
-        Unknown6,
-        SpellAttack,
-        Unknown8,
-        Unknown9,
-        Armorclass,
-        Unknown11
     }
 }

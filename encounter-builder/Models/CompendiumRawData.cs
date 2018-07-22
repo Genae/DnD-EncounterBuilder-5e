@@ -16,5 +16,7 @@ namespace encounter_builder.Models
         public List<ItemRaw> Items;
         [XmlElement("monster")]
         public List<MonsterRawData> Monsters;
+        [XmlElement("spell")]
+        public List<SpellRaw> Spells;
     }
 }
