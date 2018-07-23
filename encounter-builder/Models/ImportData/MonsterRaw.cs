@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using encounter_builder.Database;
 using encounter_builder.Models.CoreData;
 
 namespace encounter_builder.Models.ImportData
@@ -62,6 +63,8 @@ namespace encounter_builder.Models.ImportData
         public DieRoll HitDie => GetHealthDies(MaximumHitpoints, Abilities[Ability.Constitution], SizeId);
 
         public ChallengeRating ChallengeRating => new ChallengeRating(CR);
+        [XmlIgnore]
+        public Spellcasting Spellcasting;
 
         private DieRoll GetHealthDies(int maximumHitpoints, AbilityScore abilityScore, int? sizeId)
         {
@@ -69,6 +72,19 @@ namespace encounter_builder.Models.ImportData
             var dieSize = size <= 4 ? size * 2 + 4 : 20;
             var level = (int)Math.Round(maximumHitpoints / (dieSize / 2f + 0.5f + abilityScore.Modifier));
             return new DieRoll(dieSize, level, level * abilityScore.Modifier);
+        }
+
+        public bool CheckForSpellcasting(List<SpellRaw> spells, Importer importer)
+        {
+            for (var i = 0; i < Traits.Count; i++)
+            {
+                var trait = Traits[i];
+                if (trait.Name.Equals("Spellcasting"))
+                {
+                    Traits[i] = Spellcasting = new Spellcasting(trait.Text, spells, importer);
+                }
+            }
+            return Spellcasting != null;
         }
     }
 

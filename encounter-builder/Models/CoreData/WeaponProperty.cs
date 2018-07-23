@@ -16,7 +16,7 @@ namespace encounter_builder.Models
         Special,
         Throw,
         Twohanded,
-        Veratile,
+        Versatile,
         Martial_Weapon
     }
 }
