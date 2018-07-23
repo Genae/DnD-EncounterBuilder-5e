@@ -81,10 +81,12 @@ namespace encounter_builder.Models.ImportData
                 var trait = Traits[i];
                 if (trait.Name.Equals("Spellcasting"))
                 {
-                    Traits[i] = Spellcasting = new Spellcasting(trait.Text, spells, importer);
+                    Spellcasting = new Spellcasting(trait.Text, spells, importer);
+                    Traits.RemoveAt(i);
+                    return true;
                 }
             }
-            return Spellcasting != null;
+            return false;
         }
     }
 

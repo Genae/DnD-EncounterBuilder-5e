@@ -1,5 +1,5 @@
 ﻿<div *ngIf="monster">
-    <stat-block>
+    <stat-block data-two-column="">
         <creature-heading>
             <h1>{{monster.name}}</h1>
             <h2>{{monster.size}} {{monster.type}}, {{monster.alignment}}</h2>
@@ -77,6 +77,14 @@
                 <p>{{monster.challengeRating.description}}</p>
             </property-line>
         </top-stats>
+
+        <property-block *ngIf="monster.spellcasting">
+            <h4>Spellcasting.</h4>
+            <p>{{monster.spellcasting.textBeforeTable}}</p>
+            <p style="line-height: 0.7">&nbsp;</p>
+            <p *ngFor="let line of getSpellLines(monster.spellcasting)" style="text-indent: 0;">{{line.level}}: <i>{{line.spelllist}}</i></p>
+            <p>{{monster.spellcasting.textAfterTable}}</p>
+        </property-block>
 
         <property-block *ngFor="let trait of monster.traits">
             <h4>{{trait.name}}.</h4>

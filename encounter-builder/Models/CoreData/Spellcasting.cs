@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using encounter_builder.Database;
 using encounter_builder.Models.ImportData;
 
@@ -18,6 +19,13 @@ namespace encounter_builder.Models.CoreData
         public int SpellcastingModifier;
         public string SpellListClass;
         public ReadiedSpell[][] Spells;
+
+        //spell Table
+        private int _spellTableStart;
+        private int _spellTableEnd;
+        public string TextBeforeTable;
+        public string TextAfterTable;
+        public string OldTableText;
 
         public Spellcasting(string spellcastingDescription, List<SpellRaw> spells, Importer importer)
         {
@@ -52,6 +60,15 @@ namespace encounter_builder.Models.CoreData
             SpellDC = TryFindSpellsaveDC(spellcastingDescription, importer);
             SpellcastingModifier = TryFindSpellcastingModifier(spellcastingDescription, SpellDC, importer);
             Spells = TryFindSpells(Spellslots, spellcastingDescription, SpellListClass, spells, importer);
+            RemoveSpellTable(_spellTableStart, _spellTableEnd, spellcastingDescription);
+        }
+
+        private void RemoveSpellTable(int spellTableStart, int spellTableEnd, string spellcastingDescription)
+        {
+            var realStart = spellcastingDescription.LastIndexOf(':', spellTableStart) + 1;
+            TextBeforeTable = spellcastingDescription.Substring(0, realStart);
+            OldTableText = spellcastingDescription.Substring(realStart, spellTableEnd - realStart);
+            TextAfterTable = spellcastingDescription.Substring(spellTableEnd, spellcastingDescription.Length - spellTableEnd);
         }
 
         private ReadiedSpell[][] TryFindSpells(int[] spellslots, string spellcastingDescription, string spellListClass, List<SpellRaw> spells, Importer importer)
@@ -75,20 +92,25 @@ namespace encounter_builder.Models.CoreData
                     var startIndex = spellcastingDescription.IndexOf(startStr, StringComparison.Ordinal);
                     if (startIndex != -1)
                     {
+                        if (_spellTableStart == 0 || _spellTableStart > startIndex)
+                            _spellTableStart = startIndex;
                         startIndex += startStr.Length;
                         var endIndex = spellcastingDescription.IndexOf("\n", startIndex, StringComparison.Ordinal);
                         if (endIndex == -1)
                             endIndex = spellcastingDescription.Length;
+                        if (_spellTableEnd < endIndex)
+                            _spellTableEnd = endIndex;
                         var spellsStr = spellcastingDescription.Substring(startIndex, endIndex - startIndex).Trim().Split(',');
                         foreach (var spell in spellsStr)
                         {
+                            var marked = spell.Contains('*');
                             var name = spell.Trim().Trim('*');
                             var index = spells.FindIndex(s => s.Name.ToLower().Equals(name.ToLower()));
                             if (index == -1)
                             {
                                 importer.Errors.Add("could not find spell " + name + " in description " + spellcastingDescription);
                             }
-                            spellsInLevel.Add(new ReadiedSpell(name, index));
+                            spellsInLevel.Add(new ReadiedSpell(name, index, marked));
                         }
                         spellList[i] = spellsInLevel.ToArray();
                         continue;
@@ -195,8 +217,8 @@ namespace encounter_builder.Models.CoreData
         public int[] GetSpellslotByLevel(int level, string spellcastingClass)
         {
             var mod = 1;
-            if (spellcastingClassModifier.ContainsKey(spellcastingClass))
-                mod = spellcastingClassModifier[spellcastingClass];
+            if (SpellcastingClassModifier.ContainsKey(spellcastingClass))
+                mod = SpellcastingClassModifier[spellcastingClass];
             if (spellcastingClass.Equals("warlock"))
             {
                 return DefaultSpellslotsByLevelWarlock[level - 1];
@@ -204,7 +226,7 @@ namespace encounter_builder.Models.CoreData
             return DefaultSpellslotsByLevelFull[(level + (mod > 1 && level > 2 ? 1 : 0))/mod];
         }
 
-        private static readonly Dictionary<string, int> spellcastingClassModifier = new Dictionary<string, int>
+        private static readonly Dictionary<string, int> SpellcastingClassModifier = new Dictionary<string, int>
         {
             {"bard", 1 },
             {"cleric", 1 },
@@ -238,7 +260,6 @@ namespace encounter_builder.Models.CoreData
             new[] {4, 3, 3, 3, 3, 2, 1, 1, 1}, //19
             new[] {4, 3, 3, 3, 3, 2, 2, 1, 1} //20
         };
-
         private static readonly int[][] DefaultSpellslotsByLevelWarlock =
         {
             new[] {1, 0, 0, 0, 0, 0, 0, 0, 0}, //1
@@ -302,17 +323,18 @@ namespace encounter_builder.Models.CoreData
             return num + "th";
         }
     }
-
-
+    
     public class ReadiedSpell
     {
         public string Name;
         public int Index;
+        public bool Marked;
 
-        public ReadiedSpell(string name, int index)
+        public ReadiedSpell(string name, int index, bool marked)
         {
             Name = name;
             Index = index;
+            Marked = marked;
         }
     }
 }

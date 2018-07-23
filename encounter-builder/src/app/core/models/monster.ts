@@ -12,6 +12,27 @@ export class ChallengeRating {
     public description: string;
 }
 
+export class ReadiedSpell {
+    public name: string;
+    public index: number;
+    public marked: boolean;
+}
+
+export class Spellcasting {
+    public spellcastingLevel: number;
+    public spellcastingAbility: string;
+    public spellslots: number[];
+    public spellDc: number;
+    public spellcastingModifier: number;
+    public spellListClass: string;
+    public spells: ReadiedSpell[][];
+    private spellTableStart: number;
+    private spellTableEnd: number;
+    public textBeforeTable: string;
+    public textAfterTable: string;
+    public oldTableText: string;
+}
+
 export class Monster {
     public name: string;
     public sizeId: number;
@@ -33,6 +54,7 @@ export class Monster {
     public cr: number;
     public challengeRating: ChallengeRating;
     public size: string;
+    public spellcasting: Spellcasting;
     public savingThrows: SavingThrow[];
     public skills: Skill[];
     public traits: Trait[];
