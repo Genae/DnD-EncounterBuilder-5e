@@ -8,6 +8,7 @@ namespace encounter_builder.Models.CoreData
 {
     public class Spellcasting : TraitRaw
     {
+        public int SpellcastingLevelByDescription;
         public int SpellcastingLevel;
         public Ability SpellcastingAbility;
         public int[] Spellslots;
@@ -15,7 +16,7 @@ namespace encounter_builder.Models.CoreData
         public bool SpellSlotsCorrect => Spellslots.SequenceEqual(SpellslotsByLevel);
         public int SpellDC;
         public int SpellcastingModifier;
-        public string SellListClass;
+        public string SpellListClass;
         public ReadiedSpell[][] Spells;
 
         public Spellcasting(string spellcastingDescription, List<SpellRaw> spells, Importer importer)
@@ -25,31 +26,35 @@ namespace encounter_builder.Models.CoreData
                 .Replace("level-spellcaster", "level spellcaster")
                 .Replace(": ", ":")
                 .Replace(":", ": ")
-                .Replace("th level", "th-level")
-                .Replace("Save DC", "save DC");
+                .Replace("th-level", "th level")
+                .Replace("th level spellcaster", "th-level spellcaster")
+                .Replace("th level slot", "th-level slot")
+                .Replace("Save DC", "save DC")
+                .Replace(" Level", " level")
+                .Replace("st—", "st-");
             Name = "Spellcasting";
             Text = spellcastingDescription;
-            SpellcastingLevel = TryFindLevel(spellcastingDescription, importer);
+            SpellcastingLevel = SpellcastingLevelByDescription = TryFindLevel(spellcastingDescription, importer);
+            SpellListClass = TryFindSpellListClass(spellcastingDescription, importer);
             SpellcastingAbility = TryFindSpellcastingAbility(spellcastingDescription, importer);
-            SpellslotsByLevel = GetSpellslotByLevel(SpellcastingLevel);
-            Spellslots = CheckSpellslotsByDescription(SpellslotsByLevel, spellcastingDescription);
+            SpellslotsByLevel = GetSpellslotByLevel(SpellcastingLevel, SpellListClass);
+            Spellslots = CheckSpellslotsByDescription(SpellslotsByLevel, SpellListClass, spellcastingDescription);
             if (!SpellSlotsCorrect)
             {
-                var levelBySlots = FindSpellCastingLevelBySlots(Spellslots);
+                var levelBySlots = FindSpellCastingLevelBySlots(Spellslots, SpellListClass);
                 if (levelBySlots != -1)
                 {
                     spellcastingDescription = FixDescription(SpellcastingLevel, levelBySlots);
                     SpellcastingLevel = levelBySlots;
-                    SpellslotsByLevel = GetSpellslotByLevel(SpellcastingLevel);
+                    SpellslotsByLevel = GetSpellslotByLevel(SpellcastingLevel, SpellListClass);
                 }
             }
             SpellDC = TryFindSpellsaveDC(spellcastingDescription, importer);
             SpellcastingModifier = TryFindSpellcastingModifier(spellcastingDescription, SpellDC, importer);
-            SellListClass = TryFindSpellListClass(spellcastingDescription, importer);
-            Spells = TryFindSpells(Spellslots, spellcastingDescription, spells, importer);
+            Spells = TryFindSpells(Spellslots, spellcastingDescription, SpellListClass, spells, importer);
         }
 
-        private ReadiedSpell[][] TryFindSpells(int[] spellslots, string spellcastingDescription, List<SpellRaw> spells, Importer importer)
+        private ReadiedSpell[][] TryFindSpells(int[] spellslots, string spellcastingDescription, string spellListClass, List<SpellRaw> spells, Importer importer)
         {
             var spellList = new ReadiedSpell[10][];
             for (var i = 0; i <= 9; i++)
@@ -59,7 +64,14 @@ namespace encounter_builder.Models.CoreData
                     var spellsInLevel = new List<ReadiedSpell>();
                     var startStr = i == 0
                         ? "Cantrips (at will): "
-                        : thIfy(i) + " level (" + spellslots[i-1] + " slot" + (spellslots[i - 1] > 1 ? "s): " : "): ");
+                        : thIfy(i) + " level (" + spellslots[i - 1] + " slot" + (spellslots[i - 1] > 1 ? "s): " : "): ");
+                    if (spellListClass.Equals("warlock"))
+                    {
+
+                        startStr = i == 0
+                            ? "Cantrips (at will): "
+                            : "1st-" + thIfy(i) + " level (" + spellslots[i - 1] + " " + thIfy(i) + "-level slot" + (spellslots[i - 1] > 1 ? "s): " : "): ");
+                    }
                     var startIndex = spellcastingDescription.IndexOf(startStr, StringComparison.Ordinal);
                     if (startIndex != -1)
                     {
@@ -89,10 +101,10 @@ namespace encounter_builder.Models.CoreData
 
         private string TryFindSpellListClass(string spellcastingDescription, Importer importer)
         {
-            var startStrings = new[] {"has the following ", "has following ", "knows the following ", "prepared from the "};
+            var startStrings = new[] {"prepared from the ", "knows the following ", "has the following ", "has following "};
             foreach (var startStr in startStrings)
             {
-                var stopStrings = new [] {" spells prepared", "spells:", " spell list"};
+                var stopStrings = new [] {" spells prepared", " spell", " spell list"};
                 foreach (var stopStr in stopStrings)
                 {
                     var startIndex = spellcastingDescription.IndexOf(startStr, StringComparison.Ordinal);
@@ -102,7 +114,8 @@ namespace encounter_builder.Models.CoreData
                         var stopIndex = spellcastingDescription.IndexOf(stopStr, startIndex, StringComparison.Ordinal);
                         if (stopIndex != -1)
                         {
-                            return spellcastingDescription.Substring(startIndex, stopIndex - startIndex).Trim();
+                            var found = spellcastingDescription.Substring(startIndex, stopIndex - startIndex).Trim();
+                            return found.Replace("spells", "").Replace("prepared", "").Replace("from", "").Replace("the", "").Trim();
                         }
                     }
                 }
@@ -142,24 +155,25 @@ namespace encounter_builder.Models.CoreData
             return Text;
         }
 
-        private int FindSpellCastingLevelBySlots(int[] spellslots)
+        private int FindSpellCastingLevelBySlots(int[] spellslots, string spellcastingClass)
         {
-            for (var i = 0; i < DefaultSpellslotsByLevel.Length; i++)
+            for (var i = 1; i <= 20; i++)
             {
-                if (spellslots.SequenceEqual(DefaultSpellslotsByLevel[i]))
+                if (spellslots.SequenceEqual(GetSpellslotByLevel(i, spellcastingClass)))
                 {
-                    return i + 1;
+                    return i;
                 }
             }
             return -1;
         }
 
-        private int[] CheckSpellslotsByDescription(int[] spellslots, string spellcastingDescription)
+        private int[] CheckSpellslotsByDescription(int[] spellslots, string spellListClass, string spellcastingDescription)
         {
             var slots = new int[9];
             for (var i = 0; i < 9; i++)
             {
-                if (spellslots[i] > 0 && spellcastingDescription.Contains(thIfy(i + 1) + " level (" + spellslots[i] + " slot"))
+                if (spellslots[i] > 0 && (spellcastingDescription.Contains(thIfy(i + 1) + " level (" + spellslots[i] + " slot")
+                    || spellListClass.Equals("warlock") && spellcastingDescription.Contains("1st-" + thIfy(i + 1) + " level (" + spellslots[i] + " " + thIfy(i + 1) + "-level slot")))
                 {
                     slots[i] = spellslots[i];
                 }
@@ -167,7 +181,8 @@ namespace encounter_builder.Models.CoreData
                 {
                     for (var j = 1; j < 10; j++)
                     {
-                        if (spellcastingDescription.Contains(thIfy(i + 1) + " level (" + j + " slot"))
+                        if (spellcastingDescription.Contains(thIfy(i + 1) + " level (" + j + " slot")
+                            || spellListClass.Equals("warlock") && spellcastingDescription.Contains("1st-" + thIfy(i + 1) + " level (" + j + " " + thIfy(i + 1) + "-level slot"))
                         {
                             slots[i] = j;
                         }
@@ -177,13 +192,31 @@ namespace encounter_builder.Models.CoreData
             return slots;
         }
 
-        public int[] GetSpellslotByLevel(int level)
+        public int[] GetSpellslotByLevel(int level, string spellcastingClass)
         {
-            return DefaultSpellslotsByLevel[level - 1];
+            var mod = 1;
+            if (spellcastingClassModifier.ContainsKey(spellcastingClass))
+                mod = spellcastingClassModifier[spellcastingClass];
+            if (spellcastingClass.Equals("warlock"))
+            {
+                return DefaultSpellslotsByLevelWarlock[level - 1];
+            }
+            return DefaultSpellslotsByLevelFull[(level + (mod > 1 && level > 2 ? 1 : 0))/mod];
         }
 
-        private static readonly int[][] DefaultSpellslotsByLevel =
+        private static readonly Dictionary<string, int> spellcastingClassModifier = new Dictionary<string, int>
         {
+            {"bard", 1 },
+            {"cleric", 1 },
+            {"druid", 1 },
+            {"paladin", 2 },
+            {"ranger", 2 },
+            {"sorcerer", 1 },
+            {"wizard", 1 }
+        };
+        private static readonly int[][] DefaultSpellslotsByLevelFull =
+        {
+            new[] {0, 0, 0, 0, 0, 0, 0, 0, 0}, //0
             new[] {2, 0, 0, 0, 0, 0, 0, 0, 0}, //1
             new[] {3, 0, 0, 0, 0, 0, 0, 0, 0}, //2
             new[] {4, 2, 0, 0, 0, 0, 0, 0, 0}, //3
@@ -205,7 +238,31 @@ namespace encounter_builder.Models.CoreData
             new[] {4, 3, 3, 3, 3, 2, 1, 1, 1}, //19
             new[] {4, 3, 3, 3, 3, 2, 2, 1, 1} //20
         };
-        
+
+        private static readonly int[][] DefaultSpellslotsByLevelWarlock =
+        {
+            new[] {1, 0, 0, 0, 0, 0, 0, 0, 0}, //1
+            new[] {2, 0, 0, 0, 0, 0, 0, 0, 0}, //2
+            new[] {0, 2, 0, 0, 0, 0, 0, 0, 0}, //3
+            new[] {0, 2, 0, 0, 0, 0, 0, 0, 0}, //4
+            new[] {0, 0, 2, 0, 0, 0, 0, 0, 0}, //5
+            new[] {0, 0, 2, 0, 0, 0, 0, 0, 0}, //6
+            new[] {0, 0, 0, 2, 0, 0, 0, 0, 0}, //7
+            new[] {0, 0, 0, 2, 0, 0, 0, 0, 0}, //8
+            new[] {0, 0, 0, 0, 2, 0, 0, 0, 0}, //9
+            new[] {0, 0, 0, 0, 2, 0, 0, 0, 0}, //10
+            new[] {0, 0, 0, 0, 3, 0, 0, 0, 0}, //11
+            new[] {0, 0, 0, 0, 3, 0, 0, 0, 0}, //12
+            new[] {0, 0, 0, 0, 3, 0, 0, 0, 0}, //13
+            new[] {0, 0, 0, 0, 3, 0, 0, 0, 0}, //14
+            new[] {0, 0, 0, 0, 3, 0, 0, 0, 0}, //15
+            new[] {0, 0, 0, 0, 3, 0, 0, 0, 0}, //16
+            new[] {0, 0, 0, 0, 4, 0, 0, 0, 0}, //17
+            new[] {0, 0, 0, 0, 4, 0, 0, 0, 0}, //18
+            new[] {0, 0, 0, 0, 4, 0, 0, 0, 0}, //19
+            new[] {0, 0, 0, 0, 4, 0, 0, 0, 0} //20
+        };
+
         private Ability TryFindSpellcastingAbility(string spellcastingDescription, Importer importer)
         {
             var desc = spellcastingDescription.ToLower();

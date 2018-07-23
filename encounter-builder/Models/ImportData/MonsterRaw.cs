@@ -96,6 +96,7 @@ namespace encounter_builder.Models.ImportData
 
         private static int[] ExperienceTable = new[]
         {
+            0,
             10,
             25,
             50,
@@ -129,13 +130,32 @@ namespace encounter_builder.Models.ImportData
             105000,
             120000,
             135000,
-            155000
+            155000,
+            175000,
+            195000,
+            215000,
+            240000,
+            265000,
+            290000,
+            315000,
+            345000,
+            375000,
+            405000,
+            435000,
+            475000,
+            515000,
+            555000,
+            595000,
+            635000,
+            685000,
+            735000,
+            835000
         };
 
         public ChallengeRating(int cr)
         {
             Value = cr;
-            Experience = ExperienceTable[cr + 3];
+            Experience = ExperienceTable[cr + 4];
         }
 
         public override string ToString()

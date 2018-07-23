@@ -25,9 +25,12 @@ namespace encounter_builder.Database
                 if (compendiumMonster.CheckForSpellcasting(compendium.Spells, this)) 
                     casters.Add(compendiumMonster);
             }
-            var incorrectCasters = casters.Where(c => !c.Spellcasting.SpellSlotsCorrect);
-            if(incorrectCasters.Any())
-                throw new Exception("Incorrect Caster");
+            var incorrectCasters = casters.Where(c => !c.Spellcasting.SpellSlotsCorrect || Math.Abs(c.Spellcasting.SpellcastingLevel - c.Spellcasting.SpellcastingLevelByDescription) > 1);
+            foreach (var incorrectCaster in incorrectCasters)
+            {
+                Errors.Add("Incorrect Caster Spellslots: " + incorrectCaster.Spellcasting.Text);
+            }
+                
             return compendium;
         }
 
