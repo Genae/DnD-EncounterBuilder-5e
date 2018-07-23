@@ -1,5 +1,5 @@
-﻿<div *ngIf="monster">
-    <stat-block data-two-column="">
+﻿
+<stat-block id="statBlockId">
         <creature-heading>
             <h1>{{monster.name}}</h1>
             <h2>{{monster.size}} {{monster.type}}, {{monster.alignment}}</h2>
@@ -8,11 +8,15 @@
         <top-stats>
             <property-line>
                 <h4>Armor Class</h4>
-                <p>{{monster.armorclass}} <span *ngIf="monster.armor">({{monster.armor}})</span></p>
+                <p>
+                    {{monster.armorclass}} <span *ngIf="monster.armor">({{monster.armor}})</span>
+                </p>
             </property-line>
             <property-line>
                 <h4>Hit Points</h4>
-                <p>{{monster.maximumHitpoints}} ({{monster.hitDie.description}})<span *ngIf="monster.maximumHitpoints !== monster.hitDie.expectedRoll" style="color: red">Expected {{monster.hitDie.expectedRoll}}!</span></p>
+                <p>
+                    {{monster.maximumHitpoints}} ({{monster.hitDie.description}})<span *ngIf="monster.maximumHitpoints !== monster.hitDie.expectedRoll" style="color: red">Expected {{monster.hitDie.expectedRoll}}!</span>
+                </p>
             </property-line>
             <property-line>
                 <h4>Speed</h4>
@@ -82,7 +86,9 @@
             <h4>Spellcasting.</h4>
             <p>{{monster.spellcasting.textBeforeTable}}</p>
             <p style="line-height: 0.7">&nbsp;</p>
-            <p *ngFor="let line of getSpellLines(monster.spellcasting)" style="text-indent: 0;">{{line.level}}: <i>{{line.spelllist}}</i></p>
+            <p *ngFor="let line of getSpellLines(monster.spellcasting)" style="text-indent: 0;">
+                {{line.level}}: <i>{{line.spelllist}}</i>
+            </p>
             <p>{{monster.spellcasting.textAfterTable}}</p>
         </property-block>
 
@@ -107,9 +113,9 @@
 
         <h3 *ngIf="monster.reactions.length > 0">Reactions</h3>
 
-        <property-block *ngFor="let action of monster.reactions">
-            <h4>{{action.name}}.</h4>
-            <p>{{action.text}}</p>
-        </property-block>
-    </stat-block>
-</div>
+    <property-block *ngFor="let action of monster.reactions">
+        <h4>{{action.name}}.</h4>
+        <p>{{action.text}}</p>
+    </property-block>
+
+</stat-block>

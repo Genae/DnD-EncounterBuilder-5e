@@ -1,17 +1,31 @@
-﻿import { Component, OnInit, Input } from '@angular/core';
+﻿import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 
 import {Monster, SavingThrow, Skill, Spellcasting } from "../../core/models/monster";
 
+var ResizeObserver: any = (window as any).ResizeObserver;
 @Component({
     selector: 'statBlock',
     templateUrl: 'statBlock.component.html'
 })
 
-export class StatBlockComponent implements OnInit {
+export class StatBlockComponent implements AfterViewInit {
 
-    @Input() monster: Monster; 
+    @Input() monster: Monster;
 
-    ngOnInit(): void {
+    ngAfterViewInit(): void {
+        var element = document.getElementById('statBlockId');
+        new ResizeObserver(function() {
+            var size = element.getBoundingClientRect();
+            console.log(size.height);
+            var warp = element.shadowRoot.getElementById('content-wrap');
+            if (size.height > 800) {
+                warp.style.width = (warp.getBoundingClientRect().width - 18.19 + 450) + 'px';
+            }
+            else if (size.height < 400)
+            {
+                warp.style.width = size.width < 500 ? '400px' : (warp.getBoundingClientRect().width - 18.19 - 450) + 'px';
+            }
+        }).observe(element);
     }
 
     public describeSavingThrows(saves: SavingThrow[]) {
