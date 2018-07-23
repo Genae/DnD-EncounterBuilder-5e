@@ -23,7 +23,8 @@ module.exports = {
             { test: /\.ts$/, loaders: 'awesome-typescript-loader' },
             { test: /\.html$/, loaders: 'html-loader' },
             { test: /\.css$/, loaders: 'css-loader' },
-            { test: /\.css$/, loaders: ExtractTextPlugin.extract({ fallback: "style-loader", use: "css-loader" }) }
+            { test: /\.css$/, loaders: ExtractTextPlugin.extract({ fallback: "style-loader", use: "css-loader" }) },
+            { test: /\.(png|svg|jpg|gif)$/, use: [ 'file-loader'] }
         ]
     },
     resolve: {
