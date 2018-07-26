@@ -1,4 +1,4 @@
-namespace encounter_builder.Models
+namespace encounter_builder.Models.CoreData
 {
     public enum DamageType
     {
@@ -14,6 +14,9 @@ namespace encounter_builder.Models
         Psychic,
         Radiant,
         Slashing,
-        Thunder
+        Thunder,
+        BludgeoningNonMagic,
+        PiercingNonMagic,
+        SlashingNonMagic
     }
 }

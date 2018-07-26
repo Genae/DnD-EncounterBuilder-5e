@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 
-import { HomeService } from "../../core/services/home.service";
-import {Monster} from "../../core/models/monster";
+import { Monster } from "../../core/models/monster";
+import { DataService } from "../../core/services/data.service";
 
 @Component({
     selector: 'home',
@@ -13,8 +13,8 @@ export class HomeComponent implements OnInit {
     monsters: Monster[] = [];
     public index: number = 0;
 
-    constructor(private hserv: HomeService) {
-        this.hserv.GetHomeMessage().subscribe(response => this.monsters = response);
+    constructor(private dataService: DataService) {
+        this.dataService.getMonsters().subscribe(response => this.monsters = response);
     }
 
     updateIndex(delta: number) {

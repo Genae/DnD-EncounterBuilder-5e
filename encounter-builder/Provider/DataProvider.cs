@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using encounter_builder.Database;
 using encounter_builder.Models.ImportData;
 
@@ -11,16 +6,23 @@ namespace encounter_builder.Provider
 {
     public class DataProvider
     {
+        private readonly DatabaseConnection _db;
         public CompendiumRaw Compendium;
 
-        public DataProvider()
+        public DataProvider(DatabaseConnection db)
         {
-            Compendium = new Importer().ImportCompendium(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data", "SRD.xml"));
+            _db = db;
+            //Compendium = new Importer().ImportCompendium(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data", "SRD.xml"));
+            /*Compendium = new Importer().ImportCompendium(@"D:\Dateien\OneDrive\Xerios\AllData.xml");
+            foreach (var compendiumMonster in Compendium.Monsters)
+            {
+                db.GetCollection<MonsterRaw>().Insert(compendiumMonster);
+            }*/
         }
 
         public MonsterRaw[] GetAllMonsters()
         {
-            return Compendium.Monsters.ToArray();
+            return _db.GetCollection<MonsterRaw>().FindAll().ToArray();
         }
     }
 }

@@ -1,6 +1,6 @@
 using System.Xml.Serialization;
 
-namespace encounter_builder.Models.ImportData
+namespace encounter_builder.Models.CoreData
 {
     public class DieRoll
     {

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using encounter_builder.Database;
 using encounter_builder.Models.CoreData;
+using encounter_builder.Parser;
 
 namespace encounter_builder.Models.ImportData
 {
-    public class MonsterRaw
+    public class MonsterRaw : KeyedDocument
     {
         [XmlElement("name")]
         public string Name;
@@ -58,8 +59,6 @@ namespace encounter_builder.Models.ImportData
         [XmlIgnore]
         public Size? Size => (Size?)(SizeId ?? 2);
         [XmlIgnore]
-        public Dictionary<Ability, AbilityScore> Abilities => AbilityScore.GetFromString(AbilityString);
-        [XmlIgnore]
         public DieRoll HitDie => GetHealthDies(MaximumHitpoints, Abilities[Ability.Constitution], SizeId);
 
         public ChallengeRating ChallengeRating => new ChallengeRating(CR);
@@ -72,106 +71,6 @@ namespace encounter_builder.Models.ImportData
             var dieSize = size <= 4 ? size * 2 + 4 : 20;
             var level = (int)Math.Round(maximumHitpoints / (dieSize / 2f + 0.5f + abilityScore.Modifier));
             return new DieRoll(dieSize, level, level * abilityScore.Modifier);
-        }
-
-        public bool CheckForSpellcasting(List<SpellRaw> spells, Importer importer)
-        {
-            for (var i = 0; i < Traits.Count; i++)
-            {
-                var trait = Traits[i];
-                if (trait.Name.Equals("Spellcasting"))
-                {
-                    Spellcasting = new Spellcasting(trait.Text, spells, importer);
-                    Traits.RemoveAt(i);
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    public class ChallengeRating
-    {
-        public int Value;
-        public int Experience;
-        public string Description => ToString();
-
-        private static int[] ExperienceTable = new[]
-        {
-            0,
-            10,
-            25,
-            50,
-            100,
-            200,
-            450,
-            700,
-            1100,
-            1800,
-            2300,
-            2900,
-            3900,
-            5000,
-            5900,
-            7200,
-            8400,
-            10000,
-            11500,
-            13000,
-            15000,
-            18000,
-            20000,
-            22000,
-            25000,
-            33000,
-            41000,
-            50000,
-            62000,
-            75000,
-            90000,
-            105000,
-            120000,
-            135000,
-            155000,
-            175000,
-            195000,
-            215000,
-            240000,
-            265000,
-            290000,
-            315000,
-            345000,
-            375000,
-            405000,
-            435000,
-            475000,
-            515000,
-            555000,
-            595000,
-            635000,
-            685000,
-            735000,
-            835000
-        };
-
-        public ChallengeRating(int cr)
-        {
-            Value = cr;
-            Experience = ExperienceTable[cr + 4];
-        }
-
-        public override string ToString()
-        {
-            var cr = Value + "";
-            if (Value == 0)
-                cr = "1/2";
-            if (Value == -1)
-                cr = "1/4";
-            if (Value == -2)
-                cr = "1/8";
-            if (Value == -3)
-                cr = "0";
-            return $"{cr} ({Experience:N0} XP)";
         }
     }
 }

@@ -16,18 +16,26 @@ namespace encounter_builder.Models.CoreData
             Modifier = value / 2 - 5;
         }
 
-        public static Dictionary<Ability, AbilityScore> GetFromString(string abilities)
+        public static Dictionary<Ability, AbilityScore> GetFromString(string abilities, ref List<string> errors)
         {
-            var abilityArray = abilities.Trim(',').Split(',').Select(s => Convert.ToInt32((string) s)).ToArray();
-            return new Dictionary<Ability, AbilityScore>
+            try
             {
-                {Ability.Strength, new AbilityScore(abilityArray[0]) },
-                {Ability.Dexterity, new AbilityScore(abilityArray[1]) },
-                {Ability.Constitution, new AbilityScore(abilityArray[2]) },
-                {Ability.Intelligence, new AbilityScore(abilityArray[3]) },
-                {Ability.Wisdom, new AbilityScore(abilityArray[4]) },
-                {Ability.Charisma, new AbilityScore(abilityArray[5]) }
-            };
+                var abilityArray = abilities.Trim(',').Split(',').Select(s => Convert.ToInt32((string) s)).ToArray();
+                return new Dictionary<Ability, AbilityScore>
+                {
+                    {Ability.Strength, new AbilityScore(abilityArray[0])},
+                    {Ability.Dexterity, new AbilityScore(abilityArray[1])},
+                    {Ability.Constitution, new AbilityScore(abilityArray[2])},
+                    {Ability.Intelligence, new AbilityScore(abilityArray[3])},
+                    {Ability.Wisdom, new AbilityScore(abilityArray[4])},
+                    {Ability.Charisma, new AbilityScore(abilityArray[5])}
+                };
+            }
+            catch (Exception ex)
+            {
+                errors.Add("Error from parsing ability string" + abilities + ": " + ex);
+                return null;
+            }
         }
 
         public override string ToString()

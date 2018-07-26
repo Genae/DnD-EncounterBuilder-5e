@@ -6,8 +6,9 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { routing } from './app.router';
 
-import { HomeService } from "./core/services/home.service";
-import {StatBlockComponent} from "./components/statBlockComponent/statBlock.component";
+import { StatBlockComponent } from "./components/statBlockComponent/statBlock.component";
+import { DataService } from "./core/services/data.service";
+import { MonsterDetailComponent } from "./components/monsterDetailComponent/monsterDetail.component";
 
 @NgModule({
     imports: [
@@ -18,10 +19,11 @@ import {StatBlockComponent} from "./components/statBlockComponent/statBlock.comp
     ],
     declarations: [
         HomeComponent,
+        MonsterDetailComponent,
         AppComponent,
         StatBlockComponent
     ],
-    providers: [HomeService],
+    providers: [DataService],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
  })

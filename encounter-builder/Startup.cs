@@ -33,6 +33,7 @@ namespace encounter_builder
             }); 
 
             services.TryAddSingleton<DataProvider>();
+            services.TryAddSingleton<DatabaseConnection>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

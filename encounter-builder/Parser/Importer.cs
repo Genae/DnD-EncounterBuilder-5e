@@ -5,7 +5,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using encounter_builder.Models.ImportData;
 
-namespace encounter_builder.Database
+namespace encounter_builder.Parser
 {
     public class Importer
     {

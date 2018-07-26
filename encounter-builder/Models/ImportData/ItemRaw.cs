@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
+using encounter_builder.Models.CoreData;
 
 namespace encounter_builder.Models.ImportData
 {
