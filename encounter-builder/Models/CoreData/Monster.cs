@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using encounter_builder.Database;
 using LiteDB;
 
@@ -38,9 +39,6 @@ namespace encounter_builder.Models.CoreData
         public string Name { get; set; }
         public string Text { get; set; }
         public Attack Attack { get; set; }
-        public int Reach { get; set; }
-        public int ShortRange { get; set; }
-        public int LongRange { get; set; }
         public List<HitEffect> HitEffects { get; set; }
     }
 
@@ -63,7 +61,10 @@ namespace encounter_builder.Models.CoreData
     {
         public int AttackBonus { get; set; }
         public AttackType Type { get; set; }
-        public TargetType Target { get; set; }
+        public string Target { get; set; }
+        public int Reach { get; set; }
+        public int ShortRange { get; set; }
+        public int LongRange { get; set; }
     }
 
     public enum AttackType
@@ -75,13 +76,7 @@ namespace encounter_builder.Models.CoreData
         Ranged_Spell_Attack,
         Melee_or_Ranged_Spell_Attack
     }
-
-    public enum TargetType
-    {
-        one_creature,
-        one_target
-    }
-
+    
     public class Trait
     {
         

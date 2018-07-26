@@ -19,18 +19,6 @@ namespace encounter_builder.Parser
             {
                 compendium = (CompendiumRaw)serializer.Deserialize(reader);
             }
-            var casters = new List<MonsterRaw>();
-            foreach (var compendiumMonster in compendium.Monsters)
-            {
-                if (compendiumMonster.CheckForSpellcasting(compendium.Spells, this)) 
-                    casters.Add(compendiumMonster);
-            }
-            var incorrectCasters = casters.Where(c => !c.Spellcasting.SpellSlotsCorrect || Math.Abs(c.Spellcasting.SpellcastingLevel - c.Spellcasting.SpellcastingLevelByDescription) > 1);
-            foreach (var incorrectCaster in incorrectCasters)
-            {
-                Errors.Add("Incorrect Caster Spellslots: " + incorrectCaster.Spellcasting.Text);
-            }
-                
             return compendium;
         }
 

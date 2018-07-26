@@ -6,8 +6,7 @@
         public int Experience { get; set; }
         public string Description => ToString();
 
-        private static int[] ExperienceTable = new[]
-        {
+        private static readonly int[] ExperienceTable = {
             0,
             10,
             25,

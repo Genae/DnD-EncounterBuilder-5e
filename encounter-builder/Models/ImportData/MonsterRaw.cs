@@ -58,19 +58,7 @@ namespace encounter_builder.Models.ImportData
         public List<LegendaryActionRaw> LegendaryActions;
         [XmlIgnore]
         public Size? Size => (Size?)(SizeId ?? 2);
-        [XmlIgnore]
-        public DieRoll HitDie => GetHealthDies(MaximumHitpoints, Abilities[Ability.Constitution], SizeId);
 
-        public ChallengeRating ChallengeRating => new ChallengeRating(CR);
-        [XmlIgnore]
-        public Spellcasting Spellcasting;
 
-        private DieRoll GetHealthDies(int maximumHitpoints, AbilityScore abilityScore, int? sizeId)
-        {
-            var size = sizeId ?? 2;
-            var dieSize = size <= 4 ? size * 2 + 4 : 20;
-            var level = (int)Math.Round(maximumHitpoints / (dieSize / 2f + 0.5f + abilityScore.Modifier));
-            return new DieRoll(dieSize, level, level * abilityScore.Modifier);
-        }
     }
 }
