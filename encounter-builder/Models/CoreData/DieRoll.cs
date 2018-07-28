@@ -27,5 +27,13 @@ namespace encounter_builder.Models.CoreData
                 return $"{DieCount}d{Die} - {Offset*-1}";
             return $"{DieCount}d{Die}";
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is DieRoll roll &&
+                   Die == roll.Die &&
+                   DieCount == roll.DieCount &&
+                   Offset == roll.Offset;
+        }
     }
 }

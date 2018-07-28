@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using encounter_builder.Database;
+using encounter_builder.Parser;
 using encounter_builder.Provider;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,6 +35,9 @@ namespace encounter_builder
 
             services.TryAddSingleton<DataProvider>();
             services.TryAddSingleton<DatabaseConnection>();
+            services.TryAddScoped<ActionParser>();
+            services.TryAddScoped<MonsterParser>();
+            services.TryAddScoped<SpellcastingParser>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

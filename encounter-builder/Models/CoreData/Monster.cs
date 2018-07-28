@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using encounter_builder.Database;
 using LiteDB;
 
@@ -36,6 +37,11 @@ namespace encounter_builder.Models.CoreData
 
     public class Action
     {
+        public Action()
+        {
+            HitEffects = new List<HitEffect>();
+        }
+
         public string Name { get; set; }
         public string Text { get; set; }
         public Attack Attack { get; set; }
@@ -44,17 +50,81 @@ namespace encounter_builder.Models.CoreData
 
     public class HitEffect
     {
-        public DamageType DamageType { get; set; }
+        public HitEffect() { }
+        public HitEffect(HitEffect hitEffect)
+        {
+            DamageType = hitEffect.DamageType;
+            DamageDie = hitEffect.DamageDie;
+            DC = hitEffect.DC;
+            Condition = hitEffect.Condition;
+        }
+
+        public DamageType? DamageType { get; set; }
         public DieRoll DamageDie { get; set; }
-        public AbilityCheck DC { get; set; }
-        public Condition Condition { get; set; }
+        public ICheck DC { get; set; }
+        public List<Condition> Condition { get; set; }
+
+        public void AddCondition(Condition c)
+        {
+            if (Condition == null)
+            {
+                Condition = new List<Condition>();
+            }
+            Condition.Add(c);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is HitEffect effect &&
+                   DamageType == effect.DamageType &&
+                   EqualityComparer<DieRoll>.Default.Equals(DamageDie, effect.DamageDie) &&
+                   EqualityComparer<ICheck>.Default.Equals(DC, effect.DC) &&
+                   (Condition?.SequenceEqual(effect.Condition) ?? effect.Condition == null);
+        }
     }
 
-    public class AbilityCheck
+    public interface ICheck
+    {
+        int Value { get; set; }
+    }
+
+    public class AbilityCheck : ICheck
     {
         public Ability Ability { get; set; }
         public int Value { get; set; }
-        public bool IsSavingThrow { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is AbilityCheck check &&
+                   Ability == check.Ability &&
+                   Value == check.Value;
+        }
+    }
+
+    public class SkillCheck : ICheck
+    {
+        public Skill Skill { get; set; }
+        public int Value { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is SkillCheck check &&
+                   Skill == check.Skill &&
+                   Value == check.Value;
+        }
+    }
+
+    public class SavingThrow : ICheck
+    {
+        public Ability Ability { get; set; }
+        public int Value { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is SavingThrow @throw &&
+                   Ability == @throw.Ability &&
+                   Value == @throw.Value;
+        }
     }
 
     public class Attack
@@ -65,6 +135,17 @@ namespace encounter_builder.Models.CoreData
         public int Reach { get; set; }
         public int ShortRange { get; set; }
         public int LongRange { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Attack attack &&
+                   AttackBonus == attack.AttackBonus &&
+                   Type == attack.Type &&
+                   Target == attack.Target &&
+                   Reach == attack.Reach &&
+                   ShortRange == attack.ShortRange &&
+                   LongRange == attack.LongRange;
+        }
     }
 
     public enum AttackType

@@ -1,4 +1,6 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
+using encounter_builder.Models.CoreData;
 
 namespace encounter_builder.Models.ImportData
 {
@@ -8,6 +10,6 @@ namespace encounter_builder.Models.ImportData
         public int SkillId;
         [XmlElement("modifier")]
         public int Modifier;
-        public Skill Skill => (Skill)SkillId;
+        public Skill Skill => (Skill)(1 << SkillId);
     }
 }

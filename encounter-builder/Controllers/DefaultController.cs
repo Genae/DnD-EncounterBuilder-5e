@@ -15,8 +15,9 @@ namespace encounter_builder.Controllers
         {
             _dataProvider = dataProvider;
         }
+
         [HttpGet]
-        public IEnumerable<MonsterRaw> Get()
+        public IEnumerable<MonsterRaw> Get(string y)
         {
             return _dataProvider.GetAllMonsters();
         }
