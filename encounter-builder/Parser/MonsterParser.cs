@@ -26,11 +26,33 @@ namespace encounter_builder.Parser
                 Name = raw.Name,
                 Abilities = ParseAbilities(raw, ref errors),
                 Actions = ParseActions(raw, errors),
+                Alignment = ParseAlignment(raw, errors),
                 ChallengeRating = new ChallengeRating(raw.CR),
+                
                 Spellcasting = CheckForSpellcasting(spells, raw, ref errors)
+                
             };
             monster.HitDie = GetHealthDies(monster.MaximumHitpoints, monster.Abilities[Ability.Constitution], raw.SizeId);
             return monster;
+        }
+
+        private AlignmentDistribution ParseAlignment(MonsterRaw raw, List<string> errors)
+        {
+            foreach (Morality morality in Enum.GetValues(typeof(Morality)))
+            {
+                if (raw.Alignment.Contains("any " + morality + "alignment"))
+                {
+                    return new AlignmentDistribution(new Alignment(){Morality = morality});
+                }
+            }
+            if (raw.Alignment.Contains("any"))
+            {
+                return AlignmentDistribution.Any;
+            }
+            if (raw.Alignment.Contains("unaligned"))
+            {
+                return AlignmentDistribution.Unaligned;
+            }
         }
 
         private List<Action> ParseActions(MonsterRaw raw, List<string> errors)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using encounter_builder.Database;
 using LiteDB;
+using Remotion.Linq.Parsing.Structure.IntermediateModel;
 
 namespace encounter_builder.Models.CoreData
 {
@@ -214,18 +215,53 @@ namespace encounter_builder.Models.CoreData
 
     public class AlignmentDistribution
     {
-        [BsonIgnore]
-        public static AlignmentDistribution Any;
-        [BsonIgnore]
-        public static AlignmentDistribution Unaligned;
         public Dictionary<Alignment, float> AlignmentChances { get; set; }
+
+        public AlignmentDistribution()
+        {
+            AlignmentChances = new Dictionary<Alignment, float>();
+        }
+
+        public AlignmentDistribution(Alignment alignment)
+        {
+            AlignmentChances = new Dictionary<Alignment, float>
+            {
+                {alignment, 1}
+            };
+        }
+
+        public static AlignmentDistribution Any()
+        {
+            return new AlignmentDistribution()
+            {
+                AlignmentChances = new Dictionary<Alignment, float>()
+                {
+                    {new Alignment(Morality.Good), 1/9f},
+                    {new Alignment(Morality.Good), 1/9f},
+                    {new Alignment(Morality.Good), 1/9f},
+                    {new Alignment(Morality.Neutral), 1/9f},
+                    {new Alignment(Morality.Neutral), 1/9f},
+                    {new Alignment(Morality.Neutral), 1/9f},
+                    {new Alignment(Morality.Evil), 1/9f},
+                    {new Alignment(Morality.Evil), 1/9f},
+                    {new Alignment(Morality.Evil), 1/9f},
+                }
+            };
+        }
     }
 
     public class Alignment
     {
-        public Morality Morality { get; set; }
-        public Order Order { get; set; }
-        public float Chance { get; set; }
+        public Morality? Morality { get; set; }
+        public Order? Order { get; set; }
+
+        public Alignment() { }
+
+        public Alignment(Morality? morality, Order? order)
+        {
+            Morality = morality;
+            Order = order;
+        }
     }
 
     public enum Morality
