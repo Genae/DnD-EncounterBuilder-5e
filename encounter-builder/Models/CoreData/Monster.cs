@@ -161,17 +161,18 @@ namespace encounter_builder.Models.CoreData
     
     public class Trait
     {
-        
+        public string Name { get; set; }
+        public string Text { get; set; }
     }
 
     public class Reaction
     {
-        
+        public Action Action { get; set; } //TODO
     }
 
     public class LegendaryAction
     {
-        
+        public Action Action { get; set; } //TODO
     }
 
     public class Senses
@@ -207,7 +208,7 @@ namespace encounter_builder.Models.CoreData
         Fiend,
         Giant,
         Humanoid,
-        Monstrositie,
+        Monstrosity,
         Ooze,
         Plant,
         Undead
@@ -232,19 +233,40 @@ namespace encounter_builder.Models.CoreData
 
         public static AlignmentDistribution Any()
         {
-            return new AlignmentDistribution()
+            return new AlignmentDistribution
+            {
+                AlignmentChances = new Dictionary<Alignment, float>
+                {
+                    { new Alignment(Morality.Good, Order.Lawful), 1/9f},
+                    { new Alignment(Morality.Good, Order.Neutral), 1/9f},
+                    { new Alignment(Morality.Good, Order.Chaotic), 1/9f},
+                    { new Alignment(Morality.Neutral, Order.Lawful), 1/9f},
+                    { new Alignment(Morality.Neutral, Order.Neutral), 1/9f},
+                    { new Alignment(Morality.Neutral, Order.Chaotic), 1/9f},
+                    { new Alignment(Morality.Evil, Order.Lawful), 1/9f},
+                    { new Alignment(Morality.Evil, Order.Neutral), 1/9f},
+                    { new Alignment(Morality.Evil, Order.Chaotic), 1/9f},
+                }
+            };
+        }
+
+        public static AlignmentDistribution Unaligned()
+        {
+            return new AlignmentDistribution
+            {
+                AlignmentChances = new Dictionary<Alignment, float>()
+            };
+        }
+
+        public static AlignmentDistribution Any(Morality morality, float multiplier = 1f)
+        {
+            return new AlignmentDistribution
             {
                 AlignmentChances = new Dictionary<Alignment, float>()
                 {
-                    {new Alignment(Morality.Good), 1/9f},
-                    {new Alignment(Morality.Good), 1/9f},
-                    {new Alignment(Morality.Good), 1/9f},
-                    {new Alignment(Morality.Neutral), 1/9f},
-                    {new Alignment(Morality.Neutral), 1/9f},
-                    {new Alignment(Morality.Neutral), 1/9f},
-                    {new Alignment(Morality.Evil), 1/9f},
-                    {new Alignment(Morality.Evil), 1/9f},
-                    {new Alignment(Morality.Evil), 1/9f},
+                    { new Alignment(morality, Order.Lawful), 1/3f * multiplier},
+                    { new Alignment(morality, Order.Neutral), 1/3f * multiplier},
+                    { new Alignment(morality, Order.Chaotic), 1/3f * multiplier}
                 }
             };
         }
