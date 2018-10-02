@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using encounter_builder.Models.ImportData;
+using encounter_builder.Models.CoreData;
 using encounter_builder.Provider;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +17,7 @@ namespace encounter_builder.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<MonsterRaw> Get(string y)
+        public IEnumerable<Monster> Get(string y)
         {
             return _dataProvider.GetAllMonsters();
         }

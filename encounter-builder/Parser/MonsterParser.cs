@@ -27,17 +27,17 @@ namespace encounter_builder.Parser
             {
                 Name = raw.Name,
                 Abilities = ParseAbilities(raw, ref errors),
-                Actions = ParseActions(raw, errors),
+                Actions = ParseActions(raw.Actions, errors),
                 Alignment = ParseAlignment(raw, errors),
                 Armor = raw.Armor,
                 Armorclass = raw.Armorclass,
                 ChallengeRating = new ChallengeRating(raw.CR),
-                ConditionImmune = ParseConditions(raw.ConditionImmune),
+                ConditionImmune = ParseConditions(raw.ConditionImmune, errors),
                 Immune = ParseDamageTypes(raw.Immune),
                 Languages = raw.Languages,
-                LegendaryActions = ParseActions(raw, errors).Select(a => new LegendaryAction {Action = a}).ToList(),
+                LegendaryActions = ParseActions(raw.LegendaryActions, errors).Select(a => new LegendaryAction {Action = a}).ToList(),
                 MaximumHitpoints = raw.MaximumHitpoints,
-                Reactions = ParseActions(raw, errors).Select(a => new Reaction { Action = a }).ToList(),
+                Reactions = ParseActions(raw.Reactions, errors).Select(a => new Reaction { Action = a }).ToList(),
                 Resist = ParseDamageTypes(raw.Resist),
                 SavingThrows = raw.SavingThrows.ToDictionary(s => s.Ability, s => s.Modifier),
                 Senses = ParseSenses(raw.Senses, errors),
@@ -69,9 +69,9 @@ namespace encounter_builder.Parser
         private Speed ParseSpeed(string rawSpeed, List<string> errors)
         {
             var speed = new Speed {AdditionalInformation = rawSpeed};
-            var regex = new Regex("(Speed )([0-9]*)");
+            var regex = new Regex("^([0-9]+)");
             if(regex.IsMatch(rawSpeed))
-                speed.Speeds[MovementType.Normal] = Convert.ToInt32(regex.Match(rawSpeed.ToLower()).Groups[2].Value);
+                speed.Speeds[MovementType.Normal] = Convert.ToInt32(regex.Match(rawSpeed.ToLower()).Groups[1].Value);
 
             regex = new Regex("(burrow )([0-9]*)");
             if (regex.IsMatch(rawSpeed))
@@ -94,6 +94,8 @@ namespace encounter_builder.Parser
 
         private Senses ParseSenses(string rawSenses, List<string> errors)
         {
+            if (rawSenses == null)
+                return null;
             var senses = new Senses();
             var regex = new Regex("(passive perception )([0-9]*)");
             if(regex.IsMatch(rawSenses.ToLower()))
@@ -123,12 +125,44 @@ namespace encounter_builder.Parser
 
         private DamageType[] ParseDamageTypes(string rawImmune)
         {
-            return rawImmune.Split(',').Select(s => Enum.Parse<DamageType>(s.Trim())).ToArray();
+            if (rawImmune == null)
+                return null;
+            var damageTypes = new List<DamageType>();
+            if (rawImmune.ToLower().Contains("from nonmagical attacks"))
+            {
+                damageTypes.AddRange(new []{DamageType.Piercing, DamageType.Slashing, DamageType.Bludgeoning}.Where(dt => rawImmune.Contains(dt.ToString())));
+            }
+            else
+            {
+                damageTypes.AddRange(new[] { DamageType.PiercingMagic, DamageType.SlashingMagic, DamageType.BludgeoningMagic }.Where(dt => rawImmune.Contains(dt.ToString().Replace("Magic", ""))));
+            }
+            damageTypes.AddRange(new []
+            {
+                DamageType.Acid,
+                DamageType.Cold,
+                DamageType.Fire,
+                DamageType.Force,
+                DamageType.Lightning,
+                DamageType.Necrotic,
+                DamageType.Poison,
+                DamageType.Psychic,
+                DamageType.Radiant,
+                DamageType.Thunder,
+            }.Where(dt => rawImmune.Contains(dt.ToString())));
+            return damageTypes.ToArray();
         }
 
-        private Condition[] ParseConditions(string rawConditionImmune)
+        private Condition[] ParseConditions(string rawConditionImmune, List<string> errors)
         {
-            return rawConditionImmune.Split(',').Select(s => Enum.Parse<Condition>(s.Trim())).ToArray();
+            try
+            {
+                return rawConditionImmune?.Split(',').Select(s => Enum.Parse<Condition>(s.Trim(), true)).ToArray();
+            }
+            catch (Exception ex)
+            {
+                errors.Add(ex.ToString());
+                return null;
+            }
         }
 
         private AlignmentDistribution ParseAlignment(MonsterRaw raw, List<string> errors)
@@ -164,9 +198,9 @@ namespace encounter_builder.Parser
             return null;
         }
 
-        private List<Action> ParseActions(MonsterRaw raw, List<string> errors)
+        private List<Action> ParseActions(List<ActionRaw> raw, List<string> errors)
         {
-            return raw.Actions.Select(r => _actionParser.ParseAction(r, errors)).ToList();
+            return raw.Select(r => _actionParser.ParseAction(r, errors)).ToList();
         }
         
         private Dictionary<Ability, AbilityScore> ParseAbilities(MonsterRaw raw, ref List<string> errors)

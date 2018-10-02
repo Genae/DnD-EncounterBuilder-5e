@@ -12,6 +12,8 @@ namespace encounter_builder.Models.CoreData
         [XmlIgnore]
         public string Description => ToString();
 
+        public DieRoll() { }
+
         public DieRoll(int die, int dieCount, int offset)
         {
             Die = die;

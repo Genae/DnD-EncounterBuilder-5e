@@ -15,8 +15,8 @@ namespace encounter_builder.Models.CoreData
         Radiant,
         Slashing,
         Thunder,
-        BludgeoningNonMagic,
-        PiercingNonMagic,
-        SlashingNonMagic
+        BludgeoningMagic,
+        PiercingMagic,
+        SlashingMagic
     }
 }

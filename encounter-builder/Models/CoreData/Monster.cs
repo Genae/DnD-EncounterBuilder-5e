@@ -1,9 +1,6 @@
-﻿using System;
+﻿using encounter_builder.Database;
 using System.Collections.Generic;
 using System.Linq;
-using encounter_builder.Database;
-using LiteDB;
-using Remotion.Linq.Parsing.Structure.IntermediateModel;
 
 namespace encounter_builder.Models.CoreData
 {
@@ -38,15 +35,10 @@ namespace encounter_builder.Models.CoreData
 
     public class Action
     {
-        public Action()
-        {
-            HitEffects = new List<HitEffect>();
-        }
-
         public string Name { get; set; }
         public string Text { get; set; }
         public Attack Attack { get; set; }
-        public List<HitEffect> HitEffects { get; set; }
+        public List<HitEffect> HitEffects { get; set; } = new List<HitEffect>();
     }
 
     public class HitEffect
@@ -63,24 +55,15 @@ namespace encounter_builder.Models.CoreData
         public DamageType? DamageType { get; set; }
         public DieRoll DamageDie { get; set; }
         public ICheck DC { get; set; }
-        public List<Condition> Condition { get; set; }
-
-        public void AddCondition(Condition c)
-        {
-            if (Condition == null)
-            {
-                Condition = new List<Condition>();
-            }
-            Condition.Add(c);
-        }
-
+        public List<Condition> Condition { get; set; } = new List<Condition>();
+        
         public override bool Equals(object obj)
         {
             return obj is HitEffect effect &&
                    DamageType == effect.DamageType &&
                    EqualityComparer<DieRoll>.Default.Equals(DamageDie, effect.DamageDie) &&
                    EqualityComparer<ICheck>.Default.Equals(DC, effect.DC) &&
-                   (Condition?.SequenceEqual(effect.Condition) ?? effect.Condition == null);
+                   (Condition.SequenceEqual(effect.Condition));
         }
     }
 
@@ -179,7 +162,7 @@ namespace encounter_builder.Models.CoreData
     {
         public int PassivePerception { get; set; }
         public bool BlindOutsideRange { get; set; }
-        public Dictionary<Sense, int> SenseRanges;
+        public Dictionary<Sense, int> SenseRanges { get; set; } = new Dictionary<Sense, int>();
     }
 
     public enum Sense
@@ -274,12 +257,12 @@ namespace encounter_builder.Models.CoreData
 
     public class Alignment
     {
-        public Morality? Morality { get; set; }
-        public Order? Order { get; set; }
+        public Morality Morality { get; set; } 
+        public Order Order { get; set; } 
 
         public Alignment() { }
 
-        public Alignment(Morality? morality, Order? order)
+        public Alignment(Morality morality, Order order)
         {
             Morality = morality;
             Order = order;
@@ -322,7 +305,7 @@ namespace encounter_builder.Models.CoreData
 
     public class Speed
     {
-        public Dictionary<MovementType, int> Speeds { get; set; }
+        public Dictionary<MovementType, int> Speeds { get; set; } = new Dictionary<MovementType, int>();
         public string AdditionalInformation { get; set; }
     }
 

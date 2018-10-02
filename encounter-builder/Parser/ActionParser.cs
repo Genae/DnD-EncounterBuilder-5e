@@ -33,7 +33,7 @@ namespace encounter_builder.Parser
 
         private void FindHitEffects(Action action, List<string> errors, ref int pos)
         {
-            var HitDieRegex = new Regex(@"([0-9]*) \(([0-9]*)d([0-9]*)( \+ ([0-9]*))*\) ([a-z]*) damage");
+            var HitDieRegex = new Regex(@"([0-9]*) \(([0-9]*)d([0-9]*)( [\+|\-] [0-9]*)*\) ([a-z]*) damage");
             var hitDies = HitDieRegex.Matches(action.Text);
             var positions = hitDies.ToDictionary(d => d.Index, d => d);
             var DCRegex = new Regex(@"(DC ([0-9]*) ([A-Za-z]*) saving throw)|(\(escape DC ([0-9]*)\))|(DC ([0-9]*) [A-Za-z]* \(([A-Za-z]*)\)( or [A-Za-z]* \(([A-Za-z]*)\)*)* check)", RegexOptions.None);
@@ -45,8 +45,8 @@ namespace encounter_builder.Parser
             foreach (var hitDie in positions)
             {
                 var hitEffect = FindEffectForPosition(hitDie.Key, effects, dcPositions);
-                var damageDie = new DieRoll(Convert.ToInt32(hitDie.Value.Groups[3].Value), Convert.ToInt32(hitDie.Value.Groups[2].Value), hitDie.Value.Groups[5].Value.Length > 0 ? Convert.ToInt32(hitDie.Value.Groups[5].Value) : 0);
-                var damageType = Enum.Parse<DamageType>(hitDie.Value.Groups[6].Value, true);
+                var damageDie = new DieRoll(Convert.ToInt32(hitDie.Value.Groups[3].Value), Convert.ToInt32(hitDie.Value.Groups[2].Value), hitDie.Value.Groups[4].Value.Length > 0 ? Convert.ToInt32(hitDie.Value.Groups[4].Value.Replace(" ", "")) : 0);
+                var damageType = Enum.Parse<DamageType>(hitDie.Value.Groups[5].Value, true);
                 if (hitEffect.DamageDie != null)
                 {
                     hitEffect = new HitEffect(hitEffect)
@@ -65,7 +65,7 @@ namespace encounter_builder.Parser
             foreach (var cond in conditions.ToArray())
             {
                 var hitEffect = FindEffectForPosition(cond.Index, effects, dcPositions);
-                hitEffect.AddCondition(Enum.Parse<Condition>(cond.Value, true));
+                hitEffect.Condition.Add(Enum.Parse<Condition>(cond.Value, true));
             }
 
             action.HitEffects.AddRange(effects.Values);
@@ -95,7 +95,7 @@ namespace encounter_builder.Parser
                             Value = Convert.ToInt32(dc.Value.Groups[7].Value)
                         };
                         var reg = new Regex(@"\([A-Za-z]*\)");
-                        foreach (var s in reg.Matches(dc.Value.Value).Select(s => Enum.Parse<Skill>(s.Value.Trim('(', ')'))))
+                        foreach (var s in reg.Matches(dc.Value.Value).Select(s => Enum.Parse<Skill>(s.Value.Trim('(', ')'), true)))
                         {
                             ((SkillCheck) effects[dc.Key].DC).Skill |= s;
                         }
@@ -106,7 +106,7 @@ namespace encounter_builder.Parser
                         effects[dc.Key].DC = new SavingThrow()
                         {
                             Value = Convert.ToInt32(dc.Value.Groups[2].Value),
-                            Ability = Enum.Parse<Ability>(str)
+                            Ability = Enum.Parse<Ability>(str, true)
                         };
                     }
                 }
@@ -126,7 +126,11 @@ namespace encounter_builder.Parser
         private void GetAttackTypeFromText(Action action, List<string> errors)
         {
             var text = action.Text.ToLower();
-            foreach (AttackType type in Enum.GetValues(typeof(AttackType)))
+            var t = Enum.GetValues(typeof(AttackType));
+            AttackType[] types = new AttackType[t.Length];
+            t.CopyTo(types, 0);
+            t = types.Reverse().ToArray();
+            foreach (AttackType type in t)
             {
                 if (text.Contains(type.ToString().Replace("_", " ").ToLower()))
                 {
@@ -187,7 +191,7 @@ namespace encounter_builder.Parser
                 {
                     var range = action.Text.Substring(start, end - start).Trim().Split('/');
                     action.Attack.ShortRange = Convert.ToInt32(range[0]);
-                    if(range.Length > 0)
+                    if(range.Length > 1)
                         action.Attack.LongRange = Convert.ToInt32(range[1]);
                     reachEnd = end + 3;
                 }

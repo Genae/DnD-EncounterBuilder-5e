@@ -5,6 +5,7 @@
         public int Value { get; set; }
         public int Experience { get; set; }
         public string Description => ToString();
+        public ChallengeRating() { }
 
         private static readonly int[] ExperienceTable = {
             0,

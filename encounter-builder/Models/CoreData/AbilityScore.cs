@@ -10,6 +10,8 @@ namespace encounter_builder.Models.CoreData
         public int Modifier;
         public string Description => ToString();
 
+        public AbilityScore() { }
+
         public AbilityScore(int value)
         {
             Value = value;

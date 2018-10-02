@@ -53,9 +53,9 @@ namespace encounter_builder.Models.ImportData
         [XmlElement("action")]
         public List<ActionRaw> Actions;
         [XmlElement("reaction")]
-        public List<ReactionRaw> Reactions;
+        public List<ActionRaw> Reactions;
         [XmlElement("legendary")]
-        public List<LegendaryActionRaw> LegendaryActions;
+        public List<ActionRaw> LegendaryActions;
         [XmlIgnore]
         public Size? Size => (Size?)(SizeId ?? 2);
 
