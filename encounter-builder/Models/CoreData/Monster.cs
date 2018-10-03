@@ -1,6 +1,7 @@
 ﻿using encounter_builder.Database;
 using System.Collections.Generic;
 using System.Linq;
+using StackExchange.Redis;
 
 namespace encounter_builder.Models.CoreData
 {
@@ -199,18 +200,18 @@ namespace encounter_builder.Models.CoreData
 
     public class AlignmentDistribution
     {
-        public Dictionary<Alignment, float> AlignmentChances { get; set; }
+        public List<AlignmentChance> AlignmentChances { get; set; }
 
         public AlignmentDistribution()
         {
-            AlignmentChances = new Dictionary<Alignment, float>();
+            AlignmentChances = new List<AlignmentChance>();
         }
 
         public AlignmentDistribution(Alignment alignment)
         {
-            AlignmentChances = new Dictionary<Alignment, float>
+            AlignmentChances = new List<AlignmentChance>
             {
-                {alignment, 1}
+                new AlignmentChance(alignment, 1)
             };
         }
 
@@ -218,17 +219,17 @@ namespace encounter_builder.Models.CoreData
         {
             return new AlignmentDistribution
             {
-                AlignmentChances = new Dictionary<Alignment, float>
+                AlignmentChances = new List<AlignmentChance>
                 {
-                    { new Alignment(Morality.Good, Order.Lawful), 1/9f},
-                    { new Alignment(Morality.Good, Order.Neutral), 1/9f},
-                    { new Alignment(Morality.Good, Order.Chaotic), 1/9f},
-                    { new Alignment(Morality.Neutral, Order.Lawful), 1/9f},
-                    { new Alignment(Morality.Neutral, Order.Neutral), 1/9f},
-                    { new Alignment(Morality.Neutral, Order.Chaotic), 1/9f},
-                    { new Alignment(Morality.Evil, Order.Lawful), 1/9f},
-                    { new Alignment(Morality.Evil, Order.Neutral), 1/9f},
-                    { new Alignment(Morality.Evil, Order.Chaotic), 1/9f},
+                    new AlignmentChance(Morality.Good, Order.Lawful, 1/9f),
+                    new AlignmentChance(Morality.Good, Order.Neutral, 1/9f),
+                    new AlignmentChance(Morality.Good, Order.Chaotic, 1/9f),
+                    new AlignmentChance(Morality.Neutral, Order.Lawful, 1/9f),
+                    new AlignmentChance(Morality.Neutral, Order.Neutral, 1/9f),
+                    new AlignmentChance(Morality.Neutral, Order.Chaotic, 1/9f),
+                    new AlignmentChance(Morality.Evil, Order.Lawful, 1/9f),
+                    new AlignmentChance(Morality.Evil, Order.Neutral, 1/9f),
+                    new AlignmentChance(Morality.Evil, Order.Chaotic, 1/9f),
                 }
             };
         }
@@ -237,7 +238,7 @@ namespace encounter_builder.Models.CoreData
         {
             return new AlignmentDistribution
             {
-                AlignmentChances = new Dictionary<Alignment, float>()
+                AlignmentChances = new List<AlignmentChance>()
             };
         }
 
@@ -245,13 +246,33 @@ namespace encounter_builder.Models.CoreData
         {
             return new AlignmentDistribution
             {
-                AlignmentChances = new Dictionary<Alignment, float>()
+                AlignmentChances = new List<AlignmentChance>()
                 {
-                    { new Alignment(morality, Order.Lawful), 1/3f * multiplier},
-                    { new Alignment(morality, Order.Neutral), 1/3f * multiplier},
-                    { new Alignment(morality, Order.Chaotic), 1/3f * multiplier}
+                    new AlignmentChance(morality, Order.Lawful, 1/3f * multiplier),
+                    new AlignmentChance(morality, Order.Neutral, 1/3f * multiplier),
+                    new AlignmentChance(morality, Order.Chaotic, 1/3f * multiplier)
                 }
             };
+        }
+    }
+
+    public class AlignmentChance
+    {
+        public Alignment Alignment { get; set; }
+        public float Chance { get; set; }
+
+        public AlignmentChance() { }
+
+        public AlignmentChance(Alignment alignment, float chance)
+        {
+            Alignment = alignment;
+            Chance = chance;
+        }
+
+        public AlignmentChance(Morality morality, Order order, float chance)
+        {
+            Alignment = new Alignment(morality, order);
+            Chance = chance;
         }
     }
 

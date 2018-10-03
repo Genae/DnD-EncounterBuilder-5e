@@ -15,18 +15,18 @@ namespace encounter_builder.Provider
         {
             _db = db;
             //Compendium = new Importer().ImportCompendium(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data", "SRD.xml"));
-            /*Compendium = new Importer().ImportCompendium(@"D:\Eigene Dateien\OneDrive\Xerios\AllData.xml");
+            Compendium = new Importer().ImportCompendium(@"D:\Eigene Dateien\OneDrive\Xerios\AllData.xml");
             var parser = new MonsterParser(new SpellcastingParser(), new ActionParser());
             foreach (var compendiumMonster in Compendium.Monsters)
             {
                 var monster = parser.Parse(compendiumMonster, Compendium.Spells);
-                db.GetCollection<Monster>().Insert(monster);
-            }*/
+                db.Add(monster);
+            }
         }
 
         public Monster[] GetAllMonsters()
         {
-            return _db.GetCollection<Monster>().FindAll().ToArray();
+            return _db.GetQueryable<Monster>().ToArray();
         }
     }
 }

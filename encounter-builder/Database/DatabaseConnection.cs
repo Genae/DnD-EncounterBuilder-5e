@@ -1,29 +1,61 @@
-﻿using System.Xml.Serialization;
-using LiteDB;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace encounter_builder.Database
 {
     public class DatabaseConnection
     {
-        private readonly string DatabaseFile = @"D:\Database\MyData.db";
-        private LiteDatabase _database;
+        private readonly string DatabaseRoot = @"D:\Database";
+        private Dictionary<string, List<object>> _database;
 
-        private LiteDatabase Database => _database ?? (_database = OpenDatabase());
+        private Dictionary<string, List<object>> Database => _database ?? (_database = LoadDatabase());
 
-        private LiteDatabase OpenDatabase()
+        private Dictionary<string, List<object>> LoadDatabase()
         {
-            return new LiteDatabase(DatabaseFile);
+            var myDb = new Dictionary<string, List<object>>();
+            var dbs = Directory.GetDirectories(DatabaseRoot);
+            foreach (var db in dbs.Select(d => new DirectoryInfo(d)))
+            {
+                myDb[db.Name] = new List<object>();
+                foreach (var entry in Directory.GetFiles(db.FullName))
+                {
+                    var json = File.ReadAllText(entry);
+                    myDb[db.Name].Add(JsonConvert.DeserializeObject(json, new JsonSerializerSettings {TypeNameHandling = TypeNameHandling.All}));
+                }
+            }
+            return myDb;
         }
 
-        public LiteCollection<T> GetCollection<T>()
+        public void Add<T>(T item) where T: KeyedDocument
         {
-            return Database.GetCollection<T>(typeof(T).Name);
+            if (!Database.ContainsKey(typeof(T).Name))
+            {
+                Database[typeof(T).Name] = new List<object>();
+                Directory.CreateDirectory(Path.Combine(DatabaseRoot, typeof(T).Name));
+            }
+            if (item.Id == null)
+            {
+                item.Id = Guid.NewGuid().ToString().Replace("-", "");
+            }
+            Database[typeof(T).Name].Add(item);
+            File.WriteAllText(Path.Combine(DatabaseRoot, typeof(T).Name, item.Id + ".json"), JsonConvert.SerializeObject(item, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.Indented }));
+        }
+
+        public IQueryable<T> GetQueryable<T>()
+        {
+            if(!Database.ContainsKey(typeof(T).Name))
+                return new List<T>().AsQueryable();
+            return Database[typeof(T).Name].Cast<T>().AsQueryable();
         }
     }
 
     public class KeyedDocument
     {
         [XmlIgnore]
-        public ObjectId Id { get; set; }
+        public string Id { get; set; }
     }
 }

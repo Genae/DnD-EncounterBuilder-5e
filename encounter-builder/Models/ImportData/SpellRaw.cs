@@ -20,7 +20,7 @@ namespace encounter_builder.Models.ImportData
         [XmlElement("v")]
         public int VocalId;
         [XmlElement("s")]
-        public int SOmaticId;
+        public int SomaticId;
         [XmlElement("m")]
         public int MaterialId;
         [XmlElement("materials")]
