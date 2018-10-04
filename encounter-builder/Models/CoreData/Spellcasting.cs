@@ -2,8 +2,10 @@
 
 namespace encounter_builder.Models.CoreData
 {
-    public class Spellcasting : TraitRaw
+    public class Spellcasting
     {
+        public string Name { get; set; }
+        public string Text { get; set; }
         public int SpellcastingLevel { get; set; }
         public Ability SpellcastingAbility { get; set; }
         public int[] Spellslots { get; set; }

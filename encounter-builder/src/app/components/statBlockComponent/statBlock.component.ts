@@ -16,7 +16,6 @@ export class StatBlockComponent implements AfterViewInit {
         var element = document.getElementById('statBlockId');
         new ResizeObserver(function() {
             var size = element.getBoundingClientRect();
-            console.log(size.height);
             var warp = element.shadowRoot.getElementById('content-wrap');
             if (size.height > 800) {
                 warp.style.width = (warp.getBoundingClientRect().width - 18.19 + 450) + 'px';
@@ -28,18 +27,18 @@ export class StatBlockComponent implements AfterViewInit {
         }).observe(element);
     }
 
-    public describeSavingThrows(saves: SavingThrow[]) {
+    public describeSavingThrows(saves: { [id: string]: number; }) {
         var str = "";
-        for (var save of saves) {
-            str += save.ability.substr(0, 3) + " " + (save.modifier > 0 ? "+" + save.modifier : save.modifier) + ", ";
+        for (var save in saves) {
+            str += save.substr(0, 3) + " " + (saves[save] > 0 ? "+" + saves[save] : saves[save]) + ", ";
         }
         return str.substr(0, str.length - 2);
     }
 
-    public describeSkills(skills: Skill[]) {
+    public describeSkills(skills: { [id: string]: number; }) {
         var str = "";
-        for (var skill of skills) {
-            str += skill.skill + " " + (skill.modifier > 0 ? "+" + skill.modifier : skill.modifier) + ", ";
+        for (var skill in skills) {
+            str += skill + " " + (skills[skill] > 0 ? "+" + skills[skill] : skills[skill]) + ", ";
         }
         return str.substr(0, str.length - 2);
     }

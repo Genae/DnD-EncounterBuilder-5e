@@ -2,7 +2,7 @@
 <stat-block id="statBlockId">
         <creature-heading>
             <h1>{{monster.name}}</h1>
-            <h2>{{monster.size}} {{monster.type}}, {{monster.alignment}}</h2>
+            <h2>{{monster.size}} {{monster.type.type + (monster.type.tags.length > 0 ? ' ' + monster.type.tags : '')}}, {{monster.alignment.description}}</h2>
         </creature-heading>
 
         <top-stats>
@@ -15,12 +15,12 @@
             <property-line>
                 <h4>Hit Points</h4>
                 <p>
-                    {{monster.maximumHitpoints}} ({{monster.hitDie.description}})<span *ngIf="monster.maximumHitpoints !== monster.hitDie.expectedRoll" style="color: red">Expected {{monster.hitDie.expectedRoll}}!</span>
+                    {{monster.hitDie.expectedRoll}} ({{monster.hitDie.description}})
                 </p>
             </property-line>
             <property-line>
                 <h4>Speed</h4>
-                <p>{{monster.speed}}</p>
+                <p>{{monster.speed.additionalInformation}}</p>
             </property-line>
 
             <tapered-rule></tapered-rule>
@@ -34,12 +34,12 @@
                     <th>CHA</th>
                 </tr>
                 <tr>
-                    <td>{{monster.abilities['Strength'].description}}</td>
-                    <td>{{monster.abilities['Dexterity'].description}}</td>
-                    <td>{{monster.abilities['Constitution'].description}}</td>
-                    <td>{{monster.abilities['Intelligence'].description}}</td>
-                    <td>{{monster.abilities['Wisdom'].description}}</td>
-                    <td>{{monster.abilities['Charisma'].description}}</td>
+                    <td>{{monster.abilities.Strength.description}}</td>
+                    <td>{{monster.abilities.Dexterity.description}}</td>
+                    <td>{{monster.abilities.Constitution.description}}</td>
+                    <td>{{monster.abilities.Intelligence.description}}</td>
+                    <td>{{monster.abilities.Wisdom.description}}</td>
+                    <td>{{monster.abilities.Charisma.description}}</td>
                 </tr>
             </table>
             <tapered-rule></tapered-rule>
@@ -48,29 +48,29 @@
                 <h4>Saving Throws</h4>
                 <p>{{describeSavingThrows(monster.savingThrows)}}</p>
             </property-line>
-            <property-line *ngIf="monster.skills.length > 0">
+            <property-line *ngIf="monster.skillmodifiers !== {}">
                 <h4>Skills</h4>
-                <p>{{describeSkills(monster.skills)}}</p>
+                <p>{{describeSkills(monster.skillmodifiers)}}</p>
             </property-line>
             <property-line *ngIf="monster.vulnerable">
                 <h4>Damage Vulnerabilities</h4>
-                <p>{{monster.vulnerable}}</p>
+                <p>{{monster.vulnerable.join(', ')}}</p>
             </property-line>
             <property-line *ngIf="monster.resist">
                 <h4>Damage Resistances</h4>
-                <p>{{monster.resist}}</p>
+                <p>{{monster.resist.join(', ')}}</p>
             </property-line>
             <property-line *ngIf="monster.immune">
                 <h4>Damage Immunities</h4>
-                <p>{{monster.immune}}</p>
+                <p>{{monster.immune.join(', ')}}</p>
             </property-line>
             <property-line *ngIf="monster.conditionImmune">
                 <h4>Condition Immunities</h4>
-                <p>{{monster.conditionImmune}}</p>
+                <p>{{monster.conditionImmune.join(', ')}}</p>
             </property-line>
-            <property-line>
+            <property-line *ngIf="monster.senses">
                 <h4>Senses</h4>
-                <p>{{monster.senses ? monster.senses + ', ' : ''}}passive Perception {{monster.passive}}</p>
+                <p>{{monster.senses.description}}</p>
             </property-line>
             <property-line>
                 <h4>Languages</h4>
@@ -106,16 +106,16 @@
 
         <h3 *ngIf="monster.legendaryActions.length > 0">Legendary Actions</h3>
 
-        <property-block *ngFor="let action of monster.legendaryActions">
-            <h4>{{action.name}}.</h4>
-            <p>{{action.text}}</p>
+        <property-block *ngFor="let la of monster.legendaryActions">
+            <h4>{{la.action.name}}.</h4>
+            <p>{{la.action.text}}</p>
         </property-block>
 
         <h3 *ngIf="monster.reactions.length > 0">Reactions</h3>
 
-    <property-block *ngFor="let action of monster.reactions">
-        <h4>{{action.name}}.</h4>
-        <p>{{action.text}}</p>
+    <property-block *ngFor="let r of monster.reactions">
+        <h4>{{r.action.name}}.</h4>
+        <p>{{r.action.text}}</p>
     </property-block>
 
 </stat-block>

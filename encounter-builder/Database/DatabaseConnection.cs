@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using LiteDB;
 using Newtonsoft.Json;
 
 namespace encounter_builder.Database
@@ -39,7 +40,7 @@ namespace encounter_builder.Database
             }
             if (item.Id == null)
             {
-                item.Id = Guid.NewGuid().ToString().Replace("-", "");
+                item.Id = ObjectId.NewObjectId().ToString();
             }
             Database[typeof(T).Name].Add(item);
             File.WriteAllText(Path.Combine(DatabaseRoot, typeof(T).Name, item.Id + ".json"), JsonConvert.SerializeObject(item, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.Indented }));

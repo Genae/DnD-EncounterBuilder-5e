@@ -44,6 +44,11 @@ namespace encounter_builder.Models.CoreData
 
     public class HitEffect
     {
+        public DamageType? DamageType { get; set; }
+        public DieRoll DamageDie { get; set; }
+        public ICheck DC { get; set; }
+        public List<Condition> Condition { get; set; } = new List<Condition>();
+        
         public HitEffect() { }
         public HitEffect(HitEffect hitEffect)
         {
@@ -53,11 +58,6 @@ namespace encounter_builder.Models.CoreData
             Condition = hitEffect.Condition;
         }
 
-        public DamageType? DamageType { get; set; }
-        public DieRoll DamageDie { get; set; }
-        public ICheck DC { get; set; }
-        public List<Condition> Condition { get; set; } = new List<Condition>();
-        
         public override bool Equals(object obj)
         {
             return obj is HitEffect effect &&
@@ -164,6 +164,7 @@ namespace encounter_builder.Models.CoreData
         public int PassivePerception { get; set; }
         public bool BlindOutsideRange { get; set; }
         public Dictionary<Sense, int> SenseRanges { get; set; } = new Dictionary<Sense, int>();
+        public string Description { get; set; }
     }
 
     public enum Sense
@@ -201,21 +202,23 @@ namespace encounter_builder.Models.CoreData
     public class AlignmentDistribution
     {
         public List<AlignmentChance> AlignmentChances { get; set; }
+        public string Description { get; set; }
 
         public AlignmentDistribution()
         {
             AlignmentChances = new List<AlignmentChance>();
         }
 
-        public AlignmentDistribution(Alignment alignment)
+        public AlignmentDistribution(Alignment alignment, string description)
         {
             AlignmentChances = new List<AlignmentChance>
             {
                 new AlignmentChance(alignment, 1)
             };
+            Description = description;
         }
 
-        public static AlignmentDistribution Any()
+        public static AlignmentDistribution Any(string description)
         {
             return new AlignmentDistribution
             {
@@ -230,19 +233,21 @@ namespace encounter_builder.Models.CoreData
                     new AlignmentChance(Morality.Evil, Order.Lawful, 1/9f),
                     new AlignmentChance(Morality.Evil, Order.Neutral, 1/9f),
                     new AlignmentChance(Morality.Evil, Order.Chaotic, 1/9f),
-                }
+                },
+                Description = description
             };
         }
 
-        public static AlignmentDistribution Unaligned()
+        public static AlignmentDistribution Unaligned(string description)
         {
             return new AlignmentDistribution
             {
-                AlignmentChances = new List<AlignmentChance>()
+                AlignmentChances = new List<AlignmentChance>(),
+                Description = description
             };
         }
 
-        public static AlignmentDistribution Any(Morality morality, float multiplier = 1f)
+        public static AlignmentDistribution Any(string description, Morality morality, float multiplier = 1f)
         {
             return new AlignmentDistribution
             {
@@ -251,7 +256,8 @@ namespace encounter_builder.Models.CoreData
                     new AlignmentChance(morality, Order.Lawful, 1/3f * multiplier),
                     new AlignmentChance(morality, Order.Neutral, 1/3f * multiplier),
                     new AlignmentChance(morality, Order.Chaotic, 1/3f * multiplier)
-                }
+                },
+                Description = description
             };
         }
     }

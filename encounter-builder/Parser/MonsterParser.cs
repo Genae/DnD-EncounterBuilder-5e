@@ -96,7 +96,10 @@ namespace encounter_builder.Parser
         {
             if (rawSenses == null)
                 return null;
-            var senses = new Senses();
+            var senses = new Senses
+            {
+                Description = rawSenses
+            };
             var regex = new Regex("(passive perception )([0-9]*)");
             if(regex.IsMatch(rawSenses.ToLower()))
                 senses.PassivePerception = Convert.ToInt32(regex.Match(rawSenses.ToLower()).Groups[2].Value);
@@ -130,11 +133,11 @@ namespace encounter_builder.Parser
             var damageTypes = new List<DamageType>();
             if (rawImmune.ToLower().Contains("from nonmagical attacks"))
             {
-                damageTypes.AddRange(new []{DamageType.Piercing, DamageType.Slashing, DamageType.Bludgeoning}.Where(dt => rawImmune.Contains(dt.ToString())));
+                damageTypes.AddRange(new []{DamageType.Piercing, DamageType.Slashing, DamageType.Bludgeoning}.Where(dt => rawImmune.ToLower().Contains(dt.ToString().ToLower())));
             }
             else
             {
-                damageTypes.AddRange(new[] { DamageType.PiercingMagic, DamageType.SlashingMagic, DamageType.BludgeoningMagic }.Where(dt => rawImmune.Contains(dt.ToString().Replace("Magic", ""))));
+                damageTypes.AddRange(new[] { DamageType.PiercingMagic, DamageType.SlashingMagic, DamageType.BludgeoningMagic }.Where(dt => rawImmune.ToLower().Contains(dt.ToString().Replace("Magic", "").ToLower())));
             }
             damageTypes.AddRange(new []
             {
@@ -148,7 +151,7 @@ namespace encounter_builder.Parser
                 DamageType.Psychic,
                 DamageType.Radiant,
                 DamageType.Thunder,
-            }.Where(dt => rawImmune.Contains(dt.ToString())));
+            }.Where(dt => rawImmune.ToLower().Contains(dt.ToString().ToLower())));
             return damageTypes.ToArray();
         }
 
@@ -171,28 +174,32 @@ namespace encounter_builder.Parser
             {
                 foreach (Order order in Enum.GetValues(typeof(Order)))
                 {
-                    if(raw.Alignment.Contains($"{order} {morality}"))
-                        return new AlignmentDistribution(new Alignment(morality, order));
+                    if(raw.Alignment.ToLower().Contains($"{order} {morality}".ToLower()))
+                        return new AlignmentDistribution(new Alignment(morality, order), raw.Alignment);
                 }
-                if (raw.Alignment.Contains("any " + morality + "alignment"))
+                if (raw.Alignment.ToLower().Contains("any " + morality.ToString().ToLower() + "alignment"))
                 {
-                    return AlignmentDistribution.Any(morality);
+                    return AlignmentDistribution.Any(raw.Alignment, morality);
                 }
             }
             foreach (Morality morality in Enum.GetValues(typeof(Morality)))
             {
-                if (raw.Alignment.Contains("any " + morality + "alignment"))
+                if (raw.Alignment.ToLower().Contains("any " + morality.ToString().ToLower() + "alignment"))
                 {
-                    return AlignmentDistribution.Any(morality);
+                    return AlignmentDistribution.Any(raw.Alignment, morality);
                 }
+            }
+            if (raw.Alignment.Contains("neutral"))
+            {
+                return new AlignmentDistribution(new Alignment(Morality.Neutral, Order.Neutral), raw.Alignment);
             }
             if (raw.Alignment.Contains("any"))
             {
-                return AlignmentDistribution.Any();
+                return AlignmentDistribution.Any(raw.Alignment);
             }
             if (raw.Alignment.Contains("unaligned"))
             {
-                return AlignmentDistribution.Unaligned();
+                return AlignmentDistribution.Unaligned(raw.Alignment);
             }
             errors.Add("Could not find Alignment");
             return null;
