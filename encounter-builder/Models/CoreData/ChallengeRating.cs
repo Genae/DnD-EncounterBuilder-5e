@@ -1,9 +1,12 @@
-﻿namespace encounter_builder.Models.CoreData
+﻿using LiteDB;
+
+namespace encounter_builder.Models.CoreData
 {
     public class ChallengeRating
     {
         public int Value { get; set; }
         public int Experience { get; set; }
+        [BsonIgnore]
         public string Description => ToString();
         public ChallengeRating() { }
 

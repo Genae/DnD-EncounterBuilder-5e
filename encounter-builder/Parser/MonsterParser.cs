@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using encounter_builder.Models;
 using encounter_builder.Models.CoreData;
+using encounter_builder.Models.CoreData.Enums;
 using encounter_builder.Models.ImportData;
 using Action = encounter_builder.Models.CoreData.Action;
 
@@ -20,7 +20,7 @@ namespace encounter_builder.Parser
             _actionParser = actionParser;
         }
 
-        public Monster Parse(MonsterRaw raw, List<SpellRaw> spells)
+        public Monster Parse(MonsterRaw raw, List<Spell> spells)
         {
             var errors = new List<string>();
             var monster = new Monster
@@ -223,7 +223,7 @@ namespace encounter_builder.Parser
             return new DieRoll(dieSize, level, level * abilityScore.Modifier);
         }
 
-        public Spellcasting CheckForSpellcasting(List<SpellRaw> spells, MonsterRaw raw, ref List<string> errors)
+        public Spellcasting CheckForSpellcasting(List<Spell> spells, MonsterRaw raw, ref List<string> errors)
         {
             for (var i = 0; i < raw.Traits.Count; i++)
             {

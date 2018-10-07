@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using encounter_builder.Models.CoreData.Enums;
 using LiteDB;
 
 namespace encounter_builder.Models.CoreData

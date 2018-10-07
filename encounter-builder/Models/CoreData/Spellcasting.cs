@@ -1,4 +1,4 @@
-﻿using encounter_builder.Models.ImportData;
+﻿using encounter_builder.Models.CoreData.Enums;
 
 namespace encounter_builder.Models.CoreData
 {

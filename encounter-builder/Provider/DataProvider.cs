@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using encounter_builder.Database;
 using encounter_builder.Models.CoreData;
 using encounter_builder.Models.ImportData;
@@ -16,13 +17,23 @@ namespace encounter_builder.Provider
             _db = db;
             //Compendium = new Importer().ImportCompendium(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data", "SRD.xml"));
             Compendium = new Importer().ImportCompendium(@"D:\Dateien\OneDrive\Xerios\AllData.xml");
-            var parser = new MonsterParser(new SpellcastingParser(), new ActionParser());
-            var existing = GetAllMonsters();
+            var monsterParser = new MonsterParser(new SpellcastingParser(), new ActionParser());
+            var spellParser = new SpellParser();
+            var allMonsters = GetAllMonsters();
+            var allSpells = GetAllSpells();
+            foreach (var compendiumSpell in Compendium.Spells)
+            {
+                if (allSpells.Any(m => m.Name.Equals(compendiumSpell.Name)))
+                    continue;
+                var spell = spellParser.Parse(compendiumSpell);
+                db.Add(spell);
+            }
+            allSpells = GetAllSpells();
             foreach (var compendiumMonster in Compendium.Monsters)
             {
-                if (existing.Any(m => m.Name.Equals(compendiumMonster.Name)))
+                if (allMonsters.Any(m => m.Name.Equals(compendiumMonster.Name)))
                     continue;
-                var monster = parser.Parse(compendiumMonster, Compendium.Spells);
+                var monster = monsterParser.Parse(compendiumMonster, allSpells);
                 db.Add(monster);
             }
         }
@@ -30,6 +41,11 @@ namespace encounter_builder.Provider
         public Monster[] GetAllMonsters()
         {
             return _db.GetQueryable<Monster>().ToArray();
+        }
+
+        public List<Spell> GetAllSpells()
+        {
+            return _db.GetQueryable<Spell>().ToList();
         }
     }
 }

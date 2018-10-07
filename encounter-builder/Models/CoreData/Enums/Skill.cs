@@ -1,8 +1,10 @@
 using System;
+using Newtonsoft.Json;
 
-namespace encounter_builder.Models.CoreData
+namespace encounter_builder.Models.CoreData.Enums
 {
     [Flags]
+    [JsonConverter(typeof(FlagConverter))]
     public enum Skill
     {
         Acrobatics = 1,

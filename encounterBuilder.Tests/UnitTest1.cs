@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using encounter_builder.Models.CoreData;
+using encounter_builder.Models.CoreData.Enums;
 using encounter_builder.Models.ImportData;
 using encounter_builder.Parser;
 using Xunit;

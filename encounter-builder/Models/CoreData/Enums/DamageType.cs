@@ -1,4 +1,4 @@
-namespace encounter_builder.Models.CoreData
+namespace encounter_builder.Models.CoreData.Enums
 {
     public enum DamageType
     {

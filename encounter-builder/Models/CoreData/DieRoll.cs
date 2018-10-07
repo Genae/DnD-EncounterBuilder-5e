@@ -1,4 +1,5 @@
 using System.Xml.Serialization;
+using LiteDB;
 
 namespace encounter_builder.Models.CoreData
 {
@@ -7,9 +8,9 @@ namespace encounter_builder.Models.CoreData
         public int Die { get; set; }
         public int DieCount { get; set; }
         public int Offset { get; set; }
-        [XmlIgnore]
+        [XmlIgnore, BsonIgnore]
         public int ExpectedRoll => (int)((Die / 2f + 0.5f) * DieCount + Offset);
-        [XmlIgnore]
+        [XmlIgnore, BsonIgnore]
         public string Description => ToString();
 
         public DieRoll() { }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using encounter_builder.Database;
+using encounter_builder.Models.CoreData.Enums;
 
 namespace encounter_builder.Models.CoreData
 {
@@ -17,17 +18,5 @@ namespace encounter_builder.Models.CoreData
         public string Duration { get; set; }
         public string Text { get; set; }
         public List<string> ClassLists { get; set; } = new List<string>();
-    }
-
-    public enum SpellSchool
-    {
-        Abjuration,
-        Conjuration,
-        Divination,
-        Enchantment,
-        Evocation,
-        Illusion,
-        Necromancy,
-        Transmutation
     }
 }

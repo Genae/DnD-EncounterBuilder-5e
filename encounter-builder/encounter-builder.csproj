@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\ViewData\" />
     <Folder Include="src\app\core\pipes\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>

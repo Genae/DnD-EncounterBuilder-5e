@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace encounter_builder.Models
+namespace encounter_builder.Models.CoreData.Enums
 {
     [Flags]
     [JsonConverter(typeof(FlagConverter))]

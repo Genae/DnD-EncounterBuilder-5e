@@ -1,17 +1,19 @@
-﻿namespace encounter_builder.Models.CoreData
+﻿using LiteDB;
+
+namespace encounter_builder.Models.CoreData
 {
     public class PreparedSpell
     {
         public string Name { get; set; }
-        public int Index { get; set; }
+        public ObjectId SpellId { get; set; }
         public bool Marked { get; set; }
 
         public PreparedSpell() { }
 
-        public PreparedSpell(string name, int index, bool marked)
+        public PreparedSpell(string name, ObjectId id, bool marked)
         {
             Name = name;
-            Index = index;
+            SpellId = id;
             Marked = marked;
         }
     }

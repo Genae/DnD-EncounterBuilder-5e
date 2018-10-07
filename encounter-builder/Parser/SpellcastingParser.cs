@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using encounter_builder.Models;
 using encounter_builder.Models.CoreData;
-using encounter_builder.Models.ImportData;
+using encounter_builder.Models.CoreData.Enums;
 
 namespace encounter_builder.Parser
 {
     public class SpellcastingParser
     {
-        public Spellcasting ParseSpellcasting(string spellcastingDescription, List<SpellRaw> spells, ref List<String> errors)
+        public Spellcasting ParseSpellcasting(string spellcastingDescription, List<Spell> spells, ref List<String> errors)
         {
             spellcastingDescription = spellcastingDescription
                 .Replace("spell caster", "spellcaster")
@@ -66,7 +65,7 @@ namespace encounter_builder.Parser
             return (TextBeforeTable, OldTableText, TextAfterTable);
         }
 
-        private PreparedSpell[][] TryFindSpells(int[] spellslots, string spellcastingDescription, string spellListClass, List<SpellRaw> spells, ref List<String> errors, out int _spellTableStart, out int _spellTableEnd)
+        private PreparedSpell[][] TryFindSpells(int[] spellslots, string spellcastingDescription, string spellListClass, List<Spell> spells, ref List<String> errors, out int _spellTableStart, out int _spellTableEnd)
         {
             _spellTableStart = 0;
             _spellTableEnd = 0;
@@ -102,12 +101,12 @@ namespace encounter_builder.Parser
                         {
                             var marked = spell.Contains('*');
                             var name = spell.Trim().Trim('*');
-                            var index = spells.FindIndex(s => s.Name.ToLower().Equals(name.ToLower()));
-                            if (index == -1)
+                            var spellObj = spells.FirstOrDefault(s => s.Name.ToLower().Equals(name.ToLower()));
+                            if (spellObj == null)
                             {
                                 errors.Add("could not find spell " + name + " in description " + spellcastingDescription);
                             }
-                            spellsInLevel.Add(new PreparedSpell(name, index, marked));
+                            spellsInLevel.Add(new PreparedSpell(name, spellObj.Id, marked));
                         }
                         spellList[i] = spellsInLevel.ToArray();
                         continue;
