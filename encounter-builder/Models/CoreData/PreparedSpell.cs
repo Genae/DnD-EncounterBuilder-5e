@@ -1,10 +1,13 @@
 ﻿using LiteDB;
+using Newtonsoft.Json;
 
 namespace encounter_builder.Models.CoreData
 {
     public class PreparedSpell
     {
         public string Name { get; set; }
+
+        [JsonConverter(typeof(ObjectIdConverter))]
         public ObjectId SpellId { get; set; }
         public bool Marked { get; set; }
 

@@ -4,6 +4,7 @@ using encounter_builder.Database;
 using encounter_builder.Models.CoreData;
 using encounter_builder.Models.ImportData;
 using encounter_builder.Parser;
+using LiteDB;
 
 namespace encounter_builder.Provider
 {
@@ -46,6 +47,11 @@ namespace encounter_builder.Provider
         public List<Spell> GetAllSpells()
         {
             return _db.GetQueryable<Spell>().ToList();
+        }
+
+        public IEnumerable<Spell> GetAllSpellsWithIds(ObjectId[] ids)
+        {
+            return _db.GetQueryable<Spell>().Where(s => ids.Contains(s.Id)).ToArray();
         }
     }
 }

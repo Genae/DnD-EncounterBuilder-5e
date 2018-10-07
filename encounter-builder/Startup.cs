@@ -1,15 +1,21 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using encounter_builder.Database;
 using encounter_builder.Parser;
 using encounter_builder.Provider;
+using LiteDB;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Bson.Converters;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace encounter_builder
 {
@@ -62,7 +68,11 @@ namespace encounter_builder
             JsonConvert.DefaultSettings = (() =>
             {
                 var settings = new JsonSerializerSettings();
-                settings.Converters.Add(new StringEnumConverter { CamelCaseText = true });
+                settings.Converters = new List<JsonConverter>
+                {
+                    new ObjectIdConverter(),
+                    new StringEnumConverter { CamelCaseText = true }
+                };
                 return settings;
             });
 
@@ -79,6 +89,24 @@ namespace encounter_builder
                 StartInfo = p
             }.Start();
             #endif
+        }
+    }
+
+    public class ObjectIdConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            serializer.Serialize(writer, value.ToString());
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            return new ObjectId((string) existingValue);
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return typeof(ObjectId).IsAssignableFrom(objectType);
         }
     }
 }

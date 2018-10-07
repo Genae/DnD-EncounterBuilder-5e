@@ -4,4 +4,4 @@
     <span>Index: {{index}}</span>
     <button (click)="updateIndex(1)">+</button>
 </div>
-<statBlock [monster]="monsters[index]" *ngIf="monsters[index]"></statBlock>
+<monsterDetail [monsters]="monsters" [index]="index" *ngIf="monsters[index]"></monsterDetail>

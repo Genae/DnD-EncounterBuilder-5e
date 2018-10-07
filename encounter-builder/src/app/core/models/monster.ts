@@ -192,7 +192,7 @@ export enum Ability {
 
 export class PreparedSpell {
     name: string;
-    index: number;
+    spellId: number;
     marked: boolean;
 }
 

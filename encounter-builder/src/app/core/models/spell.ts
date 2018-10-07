@@ -1,16 +1,17 @@
 ﻿export class Spell {
-    public Name: string;
-    public School: SpellSchool;
-    public CastAsRitual: boolean;
-    public Level: number;
-    public Time: string;
-    public Range: string;
-    public VocalComponent: boolean;
-    public SomaticComponent: boolean;
-    public Materials: string;
-    public Duration: string;
-    public Text: string;
-    public ClassLists: string[];
+    public id: string;
+    public name: string;
+    public school: SpellSchool;
+    public castAsRitual: boolean;
+    public level: number;
+    public time: string;
+    public range: string;
+    public vocalComponent: boolean;
+    public somaticComponent: boolean;
+    public materials: string;
+    public duration: string;
+    public text: string;
+    public classLists: string[];
 }
 
 export enum SpellSchool

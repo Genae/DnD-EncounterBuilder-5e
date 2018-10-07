@@ -20,4 +20,9 @@ export class DataService {
             .map((res: Response) => res.json())
             .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
     }
+    getSpellsFromIds(ids: string[]): Observable<any[]> {
+        return this.http.post(`api/spells`, ids)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+    }
 }
