@@ -2,6 +2,7 @@
 
 import { Monster } from "../../core/models/monster";
 import { DataService } from "../../core/services/data.service";
+import { Spell } from "../../core/models/spell";
 
 @Component({
     selector: 'home',
@@ -11,6 +12,7 @@ import { DataService } from "../../core/services/data.service";
 export class HomeComponent implements OnInit {
 
     monsters: Monster[] = [];
+    spells: Spell[] = [];
     public index: number = 0;
 
     constructor(private dataService: DataService) {
@@ -23,6 +25,7 @@ export class HomeComponent implements OnInit {
         }
 
         this.dataService.getMonsters().subscribe(response => this.monsters = response);
+        this.dataService.getSpells().subscribe(response => this.spells = response);
     }
 
     updateIndex(delta: number) {

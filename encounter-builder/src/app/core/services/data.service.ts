@@ -11,9 +11,13 @@ export class DataService {
 
 
     getMonsters(): Observable<any[]> {
-        return this.http.get(`api/default`)
+        return this.http.get(`api/monsters`)
             .map((res: Response) => res.json())
             .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
     }
-    
+    getSpells(): Observable<any[]> {
+        return this.http.get(`api/spells`)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+    }
 }

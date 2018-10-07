@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace encounter_builder.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("api")]
     public class DefaultController : Controller
     {
         private readonly DataProvider _dataProvider;
@@ -17,9 +17,17 @@ namespace encounter_builder.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Monster> Get(string y)
+        [Route("monsters")]
+        public IEnumerable<Monster> GetAllMonsters()
         {
             return _dataProvider.GetAllMonsters();
+        }
+
+        [HttpGet]
+        [Route("spells")]
+        public IEnumerable<Spell> GetAllSpells()
+        {
+            return _dataProvider.GetAllSpells();
         }
     }
 }
