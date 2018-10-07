@@ -4,9 +4,9 @@ namespace encounter_builder.Models.CoreData
 {
     public class DieRoll
     {
-        public int Die;
-        public int DieCount;
-        public int Offset;
+        public int Die { get; set; }
+        public int DieCount { get; set; }
+        public int Offset { get; set; }
         [XmlIgnore]
         public int ExpectedRoll => (int)((Die / 2f + 0.5f) * DieCount + Offset);
         [XmlIgnore]

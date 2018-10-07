@@ -1,9 +1,15 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using encounter_builder.Database;
+using encounter_builder.Models;
+using encounter_builder.Models.CoreData;
 using encounter_builder.Parser;
 using encounter_builder.Provider;
+using LiteDB;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -34,10 +40,11 @@ namespace encounter_builder
             }); 
 
             services.TryAddSingleton<DataProvider>();
-            services.TryAddSingleton<DatabaseConnection>();
+            services.TryAddSingleton<IDatabaseConnection, LiteDbConnection>();
             services.TryAddScoped<ActionParser>();
             services.TryAddScoped<MonsterParser>();
             services.TryAddScoped<SpellcastingParser>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

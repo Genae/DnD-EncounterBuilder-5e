@@ -1,6 +1,8 @@
-﻿using encounter_builder.Database;
+﻿using System;
+using encounter_builder.Database;
 using System.Collections.Generic;
 using System.Linq;
+using LiteDB;
 using StackExchange.Redis;
 
 namespace encounter_builder.Models.CoreData
@@ -25,7 +27,6 @@ namespace encounter_builder.Models.CoreData
         public DieRoll HitDie { get; set; }
         public ChallengeRating ChallengeRating { get; set; }
         public Spellcasting Spellcasting { get; set; }
-
         public Dictionary<Ability, int> SavingThrows { get; set; }
         public Dictionary<Skill, int> Skillmodifiers { get; set; }
         public List<Trait> Traits { get; set; }

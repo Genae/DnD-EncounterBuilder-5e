@@ -30,7 +30,9 @@ export class StatBlockComponent implements AfterViewInit {
     public describeSavingThrows(saves: { [id: string]: number; }) {
         var str = "";
         for (var save in saves) {
-            str += save.substr(0, 3) + " " + (saves[save] > 0 ? "+" + saves[save] : saves[save]) + ", ";
+            if (saves.hasOwnProperty(save)) {
+                str += save.substr(0, 3) + " " + (saves[save] > 0 ? "+" + saves[save] : saves[save]) + ", ";
+            }
         }
         return str.substr(0, str.length - 2);
     }
@@ -38,7 +40,9 @@ export class StatBlockComponent implements AfterViewInit {
     public describeSkills(skills: { [id: string]: number; }) {
         var str = "";
         for (var skill in skills) {
-            str += skill + " " + (skills[skill] > 0 ? "+" + skills[skill] : skills[skill]) + ", ";
+            if (skills.hasOwnProperty(skill)) {
+                str += skill + " " + (skills[skill] > 0 ? "+" + skills[skill] : skills[skill]) + ", ";
+            }
         }
         return str.substr(0, str.length - 2);
     }

@@ -1,62 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Xml.Serialization;
+using encounter_builder.Models;
+using encounter_builder.Models.CoreData;
 using LiteDB;
-using Newtonsoft.Json;
 
 namespace encounter_builder.Database
 {
-    public class DatabaseConnection
+    public interface IDatabaseConnection
     {
-        private readonly string DatabaseRoot = @"D:\Database";
-        private Dictionary<string, List<object>> _database;
+        IQueryable<T> GetQueryable<T>();
+        void Add<T>(T item) where T : KeyedDocument;
+    }
 
-        private Dictionary<string, List<object>> Database => _database ?? (_database = LoadDatabase());
+    public class LiteDbConnection : IDatabaseConnection
+    {
+        private readonly string DatabaseFile = @"D:\Database\MyData.db";
+        private LiteDatabase _database;
+        private LiteDatabase Database => _database ?? (_database = OpenDatabase());
 
-        private Dictionary<string, List<object>> LoadDatabase()
+        private LiteDatabase OpenDatabase()
         {
-            var myDb = new Dictionary<string, List<object>>();
-            var dbs = Directory.GetDirectories(DatabaseRoot);
-            foreach (var db in dbs.Select(d => new DirectoryInfo(d)))
-            {
-                myDb[db.Name] = new List<object>();
-                foreach (var entry in Directory.GetFiles(db.FullName))
-                {
-                    var json = File.ReadAllText(entry);
-                    myDb[db.Name].Add(JsonConvert.DeserializeObject(json, new JsonSerializerSettings {TypeNameHandling = TypeNameHandling.All}));
-                }
-            }
-            return myDb;
-        }
 
-        public void Add<T>(T item) where T: KeyedDocument
-        {
-            if (!Database.ContainsKey(typeof(T).Name))
-            {
-                Database[typeof(T).Name] = new List<object>();
-                Directory.CreateDirectory(Path.Combine(DatabaseRoot, typeof(T).Name));
-            }
-            if (item.Id == null)
-            {
-                item.Id = ObjectId.NewObjectId().ToString();
-            }
-            Database[typeof(T).Name].Add(item);
-            File.WriteAllText(Path.Combine(DatabaseRoot, typeof(T).Name, item.Id + ".json"), JsonConvert.SerializeObject(item, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.Indented }));
+            BsonMapper.Global.RegisterType<Dictionary<Ability, int>>
+            (
+                serialize: (dic) => new BsonDocument(dic.ToDictionary(kv => kv.Key.ToString(), kv => new BsonValue(kv.Value))),
+                deserialize: (bson) => ((BsonDocument)bson).RawValue.ToDictionary(kv => Enum.Parse<Ability>(kv.Key), kv => kv.Value.AsInt32)
+            );
+            BsonMapper.Global.RegisterType<Dictionary<Ability, AbilityScore>>
+            (
+                serialize: (dic) => new BsonDocument(dic.ToDictionary(kv => kv.Key.ToString(), kv => BsonMapper.Global.ToDocument(kv.Value) as BsonValue)),
+                deserialize: (bson) => ((BsonDocument)bson).RawValue.ToDictionary(kv => Enum.Parse<Ability>(kv.Key), kv => BsonMapper.Global.ToObject<AbilityScore>(kv.Value as BsonDocument))
+            );
+            BsonMapper.Global.RegisterType<Dictionary<Skill, int>>
+            (
+                serialize: (dic) => new BsonDocument(dic.ToDictionary(kv => kv.Key.ToString(), kv => new BsonValue(kv.Value))),
+                deserialize: (bson) => ((BsonDocument)bson).RawValue.ToDictionary(kv => Enum.Parse<Skill>(kv.Key), kv => kv.Value.AsInt32)
+            );
+            BsonMapper.Global.RegisterType<Dictionary<MovementType, int>>
+            (
+                serialize: (dic) => new BsonDocument(dic.ToDictionary(kv => kv.Key.ToString(), kv => new BsonValue(kv.Value))),
+                deserialize: (bson) => ((BsonDocument)bson).RawValue.ToDictionary(kv => Enum.Parse<MovementType>(kv.Key), kv => kv.Value.AsInt32)
+            );
+            return new LiteDatabase(DatabaseFile);
         }
 
         public IQueryable<T> GetQueryable<T>()
         {
-            if(!Database.ContainsKey(typeof(T).Name))
-                return new List<T>().AsQueryable();
-            return Database[typeof(T).Name].Cast<T>().AsQueryable();
+            return Database.GetCollection<T>(typeof(T).Name).FindAll().AsQueryable();
         }
-    }
 
-    public class KeyedDocument
-    {
-        [XmlIgnore]
-        public string Id { get; set; }
-    }
+        public void Add<T>(T item) where T : KeyedDocument
+        {
+            Database.GetCollection<T>(typeof(T).Name).Insert(item);
+        }
+    } 
 }

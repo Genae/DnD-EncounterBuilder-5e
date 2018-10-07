@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LiteDB;
 
 namespace encounter_builder.Models.CoreData
 {
     public class AbilityScore
     {
-        public int Value;
-        public int Modifier;
+        public int Value { get; set; }
+        public int Modifier { get; set; }
+        [BsonIgnore]
         public string Description => ToString();
 
         public AbilityScore() { }

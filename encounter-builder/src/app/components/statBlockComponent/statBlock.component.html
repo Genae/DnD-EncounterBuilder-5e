@@ -2,7 +2,7 @@
 <stat-block id="statBlockId">
         <creature-heading>
             <h1>{{monster.name}}</h1>
-            <h2>{{monster.size}} {{monster.type.type + (monster.type.tags.length > 0 ? ' ' + monster.type.tags : '')}}, {{monster.alignment.description}}</h2>
+            <h2>{{monster.size}} {{monster.type.type + (monster.type.tags !== undefined ? ' ' + monster.type.tags : '')}}, {{monster.alignment.description}}</h2>
         </creature-heading>
 
         <top-stats>
@@ -48,7 +48,7 @@
                 <h4>Saving Throws</h4>
                 <p>{{describeSavingThrows(monster.savingThrows)}}</p>
             </property-line>
-            <property-line *ngIf="monster.skillmodifiers !== {}">
+            <property-line *ngIf="!monster.skillmodifiers.isEmpty()">
                 <h4>Skills</h4>
                 <p>{{describeSkills(monster.skillmodifiers)}}</p>
             </property-line>

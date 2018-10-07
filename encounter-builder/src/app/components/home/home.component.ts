@@ -14,6 +14,14 @@ export class HomeComponent implements OnInit {
     public index: number = 0;
 
     constructor(private dataService: DataService) {
+        (Object.prototype as any).isEmpty = function () {
+            for (var key in this) {
+                if (this.hasOwnProperty(key))
+                    return false;
+            }
+            return true;
+        }
+
         this.dataService.getMonsters().subscribe(response => this.monsters = response);
     }
 
