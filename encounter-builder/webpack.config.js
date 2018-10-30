@@ -4,6 +4,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
+    mode: 'development',
     entry: path.resolve(__dirname, 'src/main.ts'),
     devServer: {
         proxy: {

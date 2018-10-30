@@ -9,19 +9,25 @@ import { routing } from './app.router';
 import { StatBlockComponent } from "./components/statBlockComponent/statBlock.component";
 import { DataService } from "./core/services/data.service";
 import { MonsterDetailComponent } from "./components/monsterDetailComponent/monsterDetail.component";
+import { SpellDetailComponent } from "./components/spellDetailComponent/spellDetail.component";
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from "./statblock/material.module";
 
 @NgModule({
     imports: [
         BrowserModule,
         FormsModule,
         HttpModule,
+        BrowserAnimationsModule,
+        MaterialModule,
         routing
     ],
     declarations: [
         HomeComponent,
         MonsterDetailComponent,
         AppComponent,
-        StatBlockComponent
+        StatBlockComponent,
+        SpellDetailComponent
     ],
     providers: [DataService],
     bootstrap: [AppComponent],

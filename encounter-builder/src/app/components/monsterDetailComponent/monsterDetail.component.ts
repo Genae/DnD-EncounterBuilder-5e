@@ -24,6 +24,7 @@ export class MonsterDetailComponent {
     }
 
     public indexUpdated() {
+        this.monsterSpells = [];
         const monster = this.monsters[this.currentIndex];
         if (monster.spellcasting !== undefined && monster.spellcasting.spells.length > 0) {
             var flattened = [].concat.apply([], monster.spellcasting.spells).filter((a: PreparedSpell) => a !== null);
