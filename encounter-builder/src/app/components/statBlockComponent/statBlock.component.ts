@@ -79,4 +79,13 @@ export class StatBlockComponent implements AfterViewInit {
             ? 'Cantrips (at will)'
             : '1st-' + this.thIfy(i) + ' level (' + sc.spellslots[i - 1] + ' ' + this.thIfy(i) +'-level slots)');
     }
+
+    isEmpty(obj: any): boolean {
+        for (var prop in obj) {
+            if (obj.hasOwnProperty(prop))
+                return false;
+        }
+
+        return JSON.stringify(obj) === JSON.stringify({});
+    }
 }

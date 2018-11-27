@@ -2,8 +2,9 @@
 
 import { DataService } from "../../core/services/data.service";
 import { Monster, PreparedSpell } from "../../core/models/monster";
-import { ActivatedRoute } from '@angular/router';
 import { Spell } from "../../core/models/spell";
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'monsterDetail',
@@ -12,24 +13,26 @@ import { Spell } from "../../core/models/spell";
 
 export class MonsterDetailComponent {
 
-    constructor(private dataService: DataService) { }
+    constructor(private dataService: DataService, private route: ActivatedRoute) {
 
-    @Input() monsters: Monster[];
-    currentIndex: number;
-    monsterSpells: Spell[];
-    @Input()
-    set index(index: number) {
-        this.currentIndex = index;
-        this.indexUpdated();
+        this.route.params.subscribe(params => {
+            this.dataService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
+        });
+        
     }
 
-    public indexUpdated() {
-        this.monsterSpells = [];
-        const monster = this.monsters[this.currentIndex];
+    data: any;
+
+
+    public monsterUpdated(monster: Monster) {
+        this.data = {};
+        this.data.monsterSpells = [];
+        this.data.myMonster = [];
+        this.data.myMonster.push(monster);
         if (monster.spellcasting !== undefined && monster.spellcasting.spells.length > 0) {
             var flattened = [].concat.apply([], monster.spellcasting.spells).filter((a: PreparedSpell) => a !== null);
             this.dataService.getSpellsFromIds(flattened.map((s: PreparedSpell) => s.spellId)).subscribe((data) => {
-                this.monsterSpells = data;
+                this.data.monsterSpells = data;
             });
         }
     }

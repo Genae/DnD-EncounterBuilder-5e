@@ -5,8 +5,9 @@
     <title></title>
     <meta charset="UTF-8">
     <title>Statblock example</title>
-    <link rel="stylesheet" href="node_modules/@angular/material/prebuilt-themes/indigo-pink.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="src/main.css">
     <link rel="import" href="src/app/statblock/top-stats.html">
     <link rel="import" href="src/app/statblock/creature-heading.html">
     <link rel="import" href="src/app/statblock/property-block.html">
@@ -38,7 +39,25 @@
     </style>
 </head>
 <body>
-    <app></app>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>Bootstrap Sidebar</h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li>
+                    <a href="#/monsterList">Monster List</a>
+                </li>
+            </ul>
+        </nav>
+        <div id="content" style="width: 100%">
+            
+            <app></app>
+
+        </div>
+    </div>
 
 </body>
 </html>

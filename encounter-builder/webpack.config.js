@@ -1,7 +1,6 @@
 ﻿var webpack = require('webpack');
 var path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
     mode: 'development',
@@ -23,8 +22,7 @@ module.exports = {
             { test: /\.component.ts$/, loaders: 'angular2-template-loader' },
             { test: /\.ts$/, loaders: 'awesome-typescript-loader' },
             { test: /\.html$/, loaders: 'html-loader' },
-            { test: /\.css$/, loaders: 'css-loader' },
-            { test: /\.css$/, loaders: ExtractTextPlugin.extract({ fallback: "style-loader", use: "css-loader" }) },
+            { test: /\.css$/, loaders: ['raw', 'css-loader'] },
             { test: /\.(png|svg|jpg|gif)$/, use: [ 'file-loader'] }
         ]
     },

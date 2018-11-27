@@ -11,7 +11,8 @@ import { DataService } from "./core/services/data.service";
 import { MonsterDetailComponent } from "./components/monsterDetailComponent/monsterDetail.component";
 import { SpellDetailComponent } from "./components/spellDetailComponent/spellDetail.component";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialModule } from "./statblock/material.module";
+import { MonsterListComponent } from "./components/monsterListComponent/monsterList.component";
+
 
 @NgModule({
     imports: [
@@ -19,7 +20,6 @@ import { MaterialModule } from "./statblock/material.module";
         FormsModule,
         HttpModule,
         BrowserAnimationsModule,
-        MaterialModule,
         routing
     ],
     declarations: [
@@ -27,7 +27,8 @@ import { MaterialModule } from "./statblock/material.module";
         MonsterDetailComponent,
         AppComponent,
         StatBlockComponent,
-        SpellDetailComponent
+        SpellDetailComponent,
+        MonsterListComponent
     ],
     providers: [DataService],
     bootstrap: [AppComponent],

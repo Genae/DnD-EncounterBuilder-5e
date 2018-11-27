@@ -1,0 +1,12 @@
+﻿<div>
+    <table class="table table-hover" style="width: 100%">
+        <tr>
+            <th>Name</th>
+            <th>CR</th>
+        </tr>
+        <tr *ngFor="let monster of monsters" (click)="redirect(monster.id)">
+            <td>{{monster.name}}</td>
+            <td>{{monster.challengeRating.description}}</td>
+        </tr>
+    </table>
+</div>

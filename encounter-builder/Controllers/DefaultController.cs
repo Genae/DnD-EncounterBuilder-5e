@@ -26,6 +26,13 @@ namespace encounter_builder.Controllers
         }
 
         [HttpGet]
+        [Route("monsters/{id}")]
+        public Monster GetAllMonsters(string id)
+        {
+            return _dataProvider.GetAllMonsters().FirstOrDefault(m => m.Id.ToString().Equals(id));
+        }
+
+        [HttpGet]
         [Route("spells")]
         public IEnumerable<Spell> GetAllSpells()
         {

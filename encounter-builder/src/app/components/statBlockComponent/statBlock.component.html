@@ -48,7 +48,7 @@
                 <h4>Saving Throws</h4>
                 <p>{{describeSavingThrows(monster.savingThrows)}}</p>
             </property-line>
-            <property-line *ngIf="!monster.skillmodifiers.isEmpty()">
+            <property-line *ngIf="!isEmpty(monster.skillmodifiers)">
                 <h4>Skills</h4>
                 <p>{{describeSkills(monster.skillmodifiers)}}</p>
             </property-line>

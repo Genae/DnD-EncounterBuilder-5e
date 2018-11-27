@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <None Remove="src\app\core\models\monster.ts" />
-    <None Remove="src\app\statblock\material.module.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,7 +30,6 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="src\app\core\models\monster.ts" />
-    <TypeScriptCompile Include="src\app\statblock\material.module.ts" />
   </ItemGroup>
 
   <ItemGroup>

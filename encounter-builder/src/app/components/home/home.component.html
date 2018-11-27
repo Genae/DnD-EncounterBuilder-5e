@@ -1,28 +1,13 @@
-﻿<mat-sidenav-container>
-    <mat-sidenav>Start</mat-sidenav>
-    <mat-sidenav-content>
-    </mat-sidenav-content>
-</mat-sidenav-container>
-<style>
-    .example-container {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: #eee;
-    }
+﻿
 
-</style>
-<mat-drawer-container class="example-container">
-    <mat-drawer mode="side" opened>Drawer content</mat-drawer>
-    <mat-drawer-content>
-        <h1>Monster Compendium</h1>
-        <div>
-            <button (click)="updateIndex(-1)">-</button>
-            <span>Index: {{index}}</span>
-            <button (click)="updateIndex(1)">+</button>
-        </div>
-        <monsterDetail [monsters]="monsters" [index]="index" *ngIf="monsters[index]"></monsterDetail>
-    </mat-drawer-content>
-</mat-drawer-container>
+<!--<div class="wrapper">
+
+    <nav id="sidebar">
+        ...
+    </nav>
+
+    Page Content
+        
+
+    </div> -->
+
