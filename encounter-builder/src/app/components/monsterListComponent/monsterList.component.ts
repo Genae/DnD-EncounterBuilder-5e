@@ -4,6 +4,7 @@ import { DataService } from "../../core/services/data.service";
 import { Monster, PreparedSpell } from "../../core/models/monster";
 import { Spell } from "../../core/models/spell";
 import { Router } from '@angular/router';
+import { Pipe, PipeTransform } from '@angular/core';
 
 @Component({
     selector: 'monsterList',
@@ -13,12 +14,29 @@ import { Router } from '@angular/router';
 export class MonsterListComponent {
 
     monsters: Monster[] = [];
+    search: any;
 
     constructor(private dataService: DataService, private router: Router) {
         this.dataService.getMonsters().subscribe(response => this.monsters = response);
+        this.search = {};
     }
 
     public redirect(id: string) {
         this.router.navigateByUrl('/monsterDetails/' + id);
+    }
+}
+
+@Pipe({
+    name: 'filter',
+    pure: false
+})
+export class FilterPipe implements PipeTransform {
+    transform(items: any[], filter: any): any[] {
+        if (!items) return [];
+        if (!filter.name) return items;
+        let searchtext = filter.name.toLowerCase();
+        return items.filter(it => {
+            return it.name.toLowerCase().includes(searchtext);
+        });
     }
 }

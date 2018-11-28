@@ -11,7 +11,8 @@ import { DataService } from "./core/services/data.service";
 import { MonsterDetailComponent } from "./components/monsterDetailComponent/monsterDetail.component";
 import { SpellDetailComponent } from "./components/spellDetailComponent/spellDetail.component";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MonsterListComponent } from "./components/monsterListComponent/monsterList.component";
+import { MonsterListComponent, FilterPipe } from "./components/monsterListComponent/monsterList.component";
+import { DataTableModule } from "angular-6-datatable";
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { MonsterListComponent } from "./components/monsterListComponent/monsterL
         FormsModule,
         HttpModule,
         BrowserAnimationsModule,
+        DataTableModule,
         routing
     ],
     declarations: [
@@ -28,7 +30,8 @@ import { MonsterListComponent } from "./components/monsterListComponent/monsterL
         AppComponent,
         StatBlockComponent,
         SpellDetailComponent,
-        MonsterListComponent
+        MonsterListComponent,
+        FilterPipe
     ],
     providers: [DataService],
     bootstrap: [AppComponent],
