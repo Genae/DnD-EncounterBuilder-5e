@@ -1,12 +1,18 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using compendium.Database;
+using compendium.Parser;
+using compendium.Provider;
 using ElectronNET.API;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace compendium
 {
@@ -23,6 +29,18 @@ namespace compendium
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddMvc().AddJsonOptions(options =>
+            {
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            });
+
+            services.TryAddSingleton<DataProvider>();
+            services.TryAddSingleton<IDatabaseConnection, LiteDbConnection>();
+            services.TryAddScoped<ActionParser>();
+            services.TryAddScoped<MonsterParser>();
+            services.TryAddScoped<SpellcastingParser>();
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -47,6 +65,17 @@ namespace compendium
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+
+            JsonConvert.DefaultSettings = (() =>
+            {
+                var settings = new JsonSerializerSettings();
+                settings.Converters = new List<JsonConverter>
+                {
+                    new ObjectIdConverter(),
+                    new StringEnumConverter { CamelCaseText = true }
+                };
+                return settings;
+            });
 
             app.UseMvc(routes =>
             {

@@ -11,6 +11,7 @@ import { MonsterListComponent, FilterPipe } from './components/monsterListCompon
 import { MonsterDetailComponent } from './components/monsterDetailComponent/monsterDetail.component';
 import { StatBlockComponent } from './components/statBlockComponent/statBlock.component';
 import { SpellDetailComponent } from './components/spellDetailComponent/spellDetail.component';
+import { DataService } from './services/data.service';
 import { DataTableModule } from "angular-6-datatable";
 
 @NgModule({
@@ -35,7 +36,7 @@ import { DataTableModule } from "angular-6-datatable";
       { path: 'monsterDetail/:id', component: MonsterDetailComponent },
     ])
   ],
-  providers: [],
+  providers: [DataService],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
