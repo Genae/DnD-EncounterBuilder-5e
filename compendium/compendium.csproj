@@ -57,23 +57,5 @@
     <None Update="ClientApp\src\app\assets\light.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="ClientApp\src\app\components\statBlockComponent\statblock\creature-heading.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="ClientApp\src\app\components\statBlockComponent\statblock\property-block.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="ClientApp\src\app\components\statBlockComponent\statblock\property-line.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="ClientApp\src\app\components\statBlockComponent\statblock\stat-block.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="ClientApp\src\app\components\statBlockComponent\statblock\tapered-rule.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="ClientApp\src\app\components\statBlockComponent\statblock\top-stats.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>
