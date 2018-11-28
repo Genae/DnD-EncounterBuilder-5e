@@ -1,6 +1,7 @@
-import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 
-import {Monster, SavingThrow, Skill, Spellcasting } from "../../models/monster";
+import { Monster, SavingThrow, Skill, Spellcasting } from "../../models/monster";
+import { ResizeSensor } from 'css-element-queries';
 
 var ResizeObserver: any = (window as any).ResizeObserver;
 @Component({
@@ -8,25 +9,25 @@ var ResizeObserver: any = (window as any).ResizeObserver;
     templateUrl: 'statBlock.component.html'
 })
 
-export class StatBlockComponent implements AfterViewInit {
+export class StatBlockComponent {
 
-    @Input() monster: Monster;
-
-    ngAfterViewInit(): void {
-        var element = document.getElementById('statBlockId');
-        new ResizeObserver(function() {
-            var size = element.getBoundingClientRect();
-            var warp = element.shadowRoot.getElementById('content-wrap');
-            if (size.height > 800) {
-                warp.style.width = (warp.getBoundingClientRect().width - 18.19 + 450) + 'px';
-            }
-            else if (size.height < 400)
-            {
-                warp.style.width = size.width < 500 ? '400px' : (warp.getBoundingClientRect().width - 18.19 - 450) + 'px';
-            }
-        }).observe(element);
-    }
-
+  monster: Monster;
+  @Input()
+  set setMonster(m: Monster) {
+    this.monster = m;
+    var element = document.getElementById('statBlockId');
+    var sensor = new ResizeSensor(element, function () {
+      var size = element.getBoundingClientRect();
+      var warp = element.shadowRoot.getElementById('content-wrap');
+      if (size.height > 800) {
+        warp.style.width = (warp.getBoundingClientRect().width - 18.19 + 450) + 'px';
+      }
+      else if (size.height < 400) {
+        warp.style.width = size.width < 500 ? '400px' : (warp.getBoundingClientRect().width - 18.19 - 450) + 'px';
+      }
+    });
+  };
+  
     public describeSavingThrows(saves: { [id: string]: number; }) {
         var str = "";
         for (var save in saves) {

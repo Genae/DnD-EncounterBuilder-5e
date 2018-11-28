@@ -20,18 +20,16 @@ export class MonsterDetailComponent {
         
     }
 
-    data: any;
-
+    myMonster: Monster;
+    monsterSpells: Spell[];
 
     public monsterUpdated(monster: Monster) {
-        this.data = {};
-        this.data.monsterSpells = [];
-        this.data.myMonster = [];
-        this.data.myMonster.push(monster);
+        this.monsterSpells = [];
+        this.myMonster = monster;
         if (monster.spellcasting !== undefined && monster.spellcasting.spells.length > 0) {
             var flattened = [].concat.apply([], monster.spellcasting.spells).filter((a: PreparedSpell) => a !== null);
             this.dataService.getSpellsFromIds(flattened.map((s: PreparedSpell) => s.spellId)).subscribe((data) => {
-                this.data.monsterSpells = data;
+                this.monsterSpells = data;
             });
         }
     }

@@ -1,6 +1,6 @@
-﻿<div *ngIf="data">
-    <statBlock [monster]="data.myMonster[0]"></statBlock>
+<div *ngIf="myMonster">
+    <statBlock [setMonster]="myMonster"></statBlock>
     <div style="margin-left: 10px">
-        <spellDetail [spell]="tspell" *ngFor="let tspell of data.monsterSpells"></spellDetail>
+        <spellDetail [spell]="tspell" *ngFor="let tspell of monsterSpells"></spellDetail>
     </div>
 </div>
