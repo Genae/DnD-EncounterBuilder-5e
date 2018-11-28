@@ -2,7 +2,7 @@
 <stat-block id="statBlockId">
         <creature-heading>
             <h1>{{monster.name}}</h1>
-            <h2>{{monster.size}} {{monster.type.type + (monster.type.tags !== undefined ? ' ' + monster.type.tags : '')}}, {{monster.alignment.description}}</h2>
+            <h2>{{monster.size}} {{monster.race.monsterType + (monster.race.tags !== undefined ? ' ' + monster.race.tags : '')}}, {{monster.alignment.description}}</h2>
         </creature-heading>
 
         <top-stats>

@@ -23,7 +23,7 @@
         <tbody>
         <tr *ngFor="let monster of mf.data" (click)="redirect(monster.id)">
             <td>{{monster.name}}</td>
-            <td>{{monster.type.type}}</td>
+            <td>{{monster.race.monsterType}}</td>
             <td>{{monster.challengeRating.description}}</td>
             <td>{{monster.hitDie.expectedRoll}}</td>
         </tr>

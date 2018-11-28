@@ -46,7 +46,7 @@ namespace encounter_builder.Parser
                 Speed = ParseSpeed(raw.Speed, errors),
                 Spellcasting = CheckForSpellcasting(spells, raw, ref errors),
                 Traits = raw.Traits.Select(t => new Trait(){Name = t.Name, Text = t.Text}).ToList(),
-                Type = ParseMonsterType(raw.Type),
+                Race = ParseMonsterType(raw.Type),
                 Vulnerable = ParseDamageTypes(raw.Vulnerable)
             };
             monster.HitDie = GetHealthDies(monster.MaximumHitpoints, monster.Abilities[Ability.Constitution], raw.SizeId);
@@ -58,11 +58,11 @@ namespace encounter_builder.Parser
             var race = new MonsterRace();
             foreach (MonsterType monsterRace in Enum.GetValues(typeof(MonsterType)))
             {
-                if (rawType.Contains(monsterRace.ToString()))
-                    race.Type = monsterRace;
+                if (rawType.Contains(monsterRace.ToString().ToLower()))
+                    race.MonsterType = monsterRace;
             }
             var regex = new Regex(@"\(([A-Za-z]*)\)");
-            race.Tags = regex.Match(rawType).Value;
+            race.Tags = regex.Match(rawType).Value.Trim('(').Trim(')');
             return race;
         }
 

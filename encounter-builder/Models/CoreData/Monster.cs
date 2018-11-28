@@ -8,7 +8,8 @@ namespace encounter_builder.Models.CoreData
     {
         public string Name { get; set; }
         public Size Size { get; set; }
-        public MonsterRace Type { get; set; }
+
+        public MonsterRace Race { get; set; }
         public AlignmentDistribution Alignment { get; set; }
         public string Armor { get; set; }
         public int Armorclass { get; set; }
