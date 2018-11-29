@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { Monster, PreparedSpell } from "../../models/monster";
+import { Monster, PreparedSpell, Size, MonsterType } from "../../models/monster";
 import { Spell } from "../../models/spell";
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { DataService } from "../../services/data.service";
@@ -21,7 +21,8 @@ export class MonsterDetailComponent {
     }
 
     myMonster: Monster;
-    monsterSpells: Spell[];
+  monsterSpells: Spell[];
+  edit: boolean = false;
 
     public monsterUpdated(monster: Monster) {
         this.monsterSpells = [];
@@ -32,5 +33,14 @@ export class MonsterDetailComponent {
                 this.monsterSpells = data;
             });
         }
+  }
+
+  public enumValues(enumType): any[] {
+    switch (enumType) {
+    case "Size": 
+        return Object.keys(Size).filter(key => !isNaN(Number(Size[key])));
+    case "MonsterType":
+        return Object.keys(MonsterType).filter(key => !isNaN(Number(MonsterType[key])));
     }
+  }
 }
