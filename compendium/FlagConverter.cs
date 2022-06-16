@@ -8,13 +8,13 @@ namespace compendium
 {
     public class FlagConverter : JsonConverter
     {
-        public override object ReadJson(JsonReader reader, Type objectType, Object existingValue, JsonSerializer serializer)
+        public override object ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, Object existingValue, JsonSerializer serializer)
         {
             //If you need to deserialize, fill in the code here
             return null;
         }
 
-        public override void WriteJson(JsonWriter writer, Object value, JsonSerializer serializer)
+        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, Object value, JsonSerializer serializer)
         {
             var flags = value.ToString()
                 .Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries)
@@ -31,12 +31,12 @@ namespace compendium
 
     public class ObjectIdConverter : JsonConverter
     {
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object value, JsonSerializer serializer)
         {
             serializer.Serialize(writer, value.ToString());
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             return new ObjectId((string)existingValue);
         }

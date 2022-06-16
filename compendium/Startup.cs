@@ -3,10 +3,8 @@ using System.Threading.Tasks;
 using compendium.Database;
 using compendium.Parser;
 using compendium.Provider;
-using ElectronNET.API;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -94,8 +92,6 @@ namespace compendium
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
-
-            Task.Run(async () => await Electron.WindowManager.CreateWindowAsync());
         }
     }
 }

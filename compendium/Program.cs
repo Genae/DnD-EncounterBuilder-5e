@@ -1,5 +1,3 @@
-
-using ElectronNET.API;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
@@ -14,7 +12,6 @@ namespace compendium
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseElectron(args)
                 .UseStartup<Startup>();
     }
 }

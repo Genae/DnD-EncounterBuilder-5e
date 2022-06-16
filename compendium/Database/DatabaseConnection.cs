@@ -42,7 +42,7 @@ namespace compendium.Database
                 serialize: (dic) => new BsonDocument(dic.ToDictionary(kv => kv.Key.ToString(), kv => new BsonValue(kv.Value))),
                 deserialize: (bson) => ((BsonDocument)bson).RawValue.ToDictionary(kv => Enum.Parse<MovementType>(kv.Key), kv => kv.Value.AsInt32)
             );
-            return new LiteDatabase(DatabaseFile);
+            return new LiteDatabase($"Filename={DatabaseFile};Upgrade=true");
         }
 
         public IQueryable<T> GetQueryable<T>()
