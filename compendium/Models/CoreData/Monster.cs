@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using compendium.Database;
 using compendium.Models.CoreData.Enums;
+using compendium.Renderer;
 
 namespace compendium.Models.CoreData
 {
@@ -8,7 +9,6 @@ namespace compendium.Models.CoreData
     {
         public string Name { get; set; }
         public Size Size { get; set; }
-
         public MonsterRace Race { get; set; }
         public AlignmentDistribution Alignment { get; set; }
         public string Armor { get; set; }
@@ -31,5 +31,7 @@ namespace compendium.Models.CoreData
         public List<Action> Actions { get; set; }
         public List<Reaction> Reactions { get; set; }
         public List<LegendaryAction> LegendaryActions { get; set; }
+        
+        public string Markup => (new MonsterRenderer().RenderMonster(this));
     }
 }
