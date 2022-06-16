@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using compendium.Models.CoreData;
+﻿using compendium.Models.CoreData;
 using compendium.Provider;
 using LiteDB;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace compendium.Controllers
 {
@@ -32,6 +32,13 @@ namespace compendium.Controllers
             return _dataProvider.GetAllMonsters().FirstOrDefault(m => m.Id.ToString().Equals(id));
         }
 
+        [HttpPost]
+        [Route("monsters")]
+        public IEnumerable<Monster> GetAllMonsters([FromBody] string[] ids)
+        {
+            return _dataProvider.GetAllMonstersWithIds(ids.Select(id => new ObjectId(id)).ToArray());
+        }
+
         [HttpGet]
         [Route("spells")]
         public IEnumerable<Spell> GetAllSpells()
@@ -48,7 +55,7 @@ namespace compendium.Controllers
 
         [HttpPost]
         [Route("spells")]
-        public IEnumerable<Spell> GetAllSpells([FromBody]string[] ids)
+        public IEnumerable<Spell> GetAllSpells([FromBody] string[] ids)
         {
             return _dataProvider.GetAllSpellsWithIds(ids.Select(id => new ObjectId(id)).ToArray());
         }

@@ -61,6 +61,11 @@ namespace compendium.Provider
             }
         }
 
+        internal IEnumerable<Monster> GetAllMonstersWithIds(ObjectId[] ids)
+        {
+            return _db.GetQueryable<Monster>().Where(s => ids.Contains(s.Id)).ToArray();
+        }
+
         internal void DeleteProject(Project project)
         {
             var old = GetAllProjects().FirstOrDefault(p => p.Id.Equals(project.Id));
@@ -81,6 +86,14 @@ namespace compendium.Provider
                 jDb.Rename(project.Name);
             _db.Update(project);
             jDb.Update(project);
+            foreach (var monsters in GetAllMonsters().Where(m => project.MonsterIds.Contains(m.Id)))
+            {
+                jDb.Update(monsters);
+            }
+            foreach (var spell in GetAllSpells().Where(m => project.SpellIds.Contains(m.Id)))
+            {
+                jDb.Update(spell);
+            }
             return project;
         }
 

@@ -15,14 +15,33 @@ export class SpellListComponent {
 
     spells: Spell[] = [];
     search: any;
+    @Input() ids: string[]
 
     constructor(private dataService: DataService, private router: Router) {
-        this.dataService.getSpells().subscribe(response => this.spells = response);
+        this.loadSpells();
         this.search = {};
     }
 
     public redirect(id: string) {
         this.router.navigateByUrl('/spellDetails/' + id);
+    }
+
+
+    ngOnChanges(changes: any) {
+        console.log(changes);
+        this.loadSpells();
+    }
+
+    private loadSpells() {
+        if (this.ids) {
+            this.dataService.getSpellsFromIds(this.ids).subscribe(response => this.spells = response);
+        }
+        else {
+            this.dataService.getSpells().subscribe(response => {
+                if (this.ids === undefined)
+                    this.spells = response
+            });
+        }
     }
 }
 

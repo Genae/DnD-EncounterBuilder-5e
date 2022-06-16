@@ -15,10 +15,28 @@ export class MonsterListComponent {
 
     monsters: Monster[] = [];
     search: any;
+    @Input() ids: string[];
 
     constructor(private dataService: DataService, private router: Router) {
-        this.dataService.getMonsters().subscribe(response => this.monsters = response);
+        this.loadMonsters();
         this.search = {};
+    }
+
+    ngOnChanges(changes: any) {
+        console.log(changes);
+        this.loadMonsters();
+    }
+
+    private loadMonsters() {
+        if (this.ids) {
+            this.dataService.getMonstersFromIds(this.ids).subscribe(response => this.monsters = response);
+        }
+        else {
+            this.dataService.getMonsters().subscribe(response => {
+                if (this.ids === undefined)
+                    this.monsters = response
+            });
+        }
     }
 
     public redirect(id: string) {
