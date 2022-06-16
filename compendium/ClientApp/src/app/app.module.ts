@@ -10,6 +10,7 @@ import { HomeComponent } from './home/home.component';
 import { MonsterListComponent, FilterPipe } from './components/monsterListComponent/monsterList.component';
 import { MonsterDetailComponent } from './components/monsterDetailComponent/monsterDetail.component';
 import { StatBlockComponent } from './components/statBlockComponent/statBlock.component';
+import { SpellListComponent, FilterSpellsPipe } from './components/spellListComponent/spellList.component';
 import { SpellDetailComponent } from './components/spellDetailComponent/spellDetail.component';
 import { DataService } from './services/data.service';
 import { DataTableModule } from "angular-6-datatable";
@@ -22,8 +23,10 @@ import { DataTableModule } from "angular-6-datatable";
     MonsterListComponent,
     MonsterDetailComponent,
     SpellDetailComponent,
+    SpellListComponent,
     StatBlockComponent,
-    FilterPipe
+    FilterPipe,
+    FilterSpellsPipe
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -34,6 +37,8 @@ import { DataTableModule } from "angular-6-datatable";
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'monsterList', component: MonsterListComponent },
       { path: 'monsterDetail/:id', component: MonsterDetailComponent },
+      { path: 'spellList', component: SpellListComponent },
+      { path: 'spellDetail/:id', component: SpellDetailComponent },
     ])
   ],
   providers: [DataService],

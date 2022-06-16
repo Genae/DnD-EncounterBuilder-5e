@@ -39,6 +39,13 @@ namespace compendium.Controllers
             return _dataProvider.GetAllSpells();
         }
 
+        [HttpGet]
+        [Route("spells/{id}")]
+        public Spell GetSpell(string id)
+        {
+            return _dataProvider.GetAllSpells().FirstOrDefault(s => s.Id.ToString().Equals(id));
+        }
+
         [HttpPost]
         [Route("spells")]
         public IEnumerable<Spell> GetAllSpells([FromBody]string[] ids)

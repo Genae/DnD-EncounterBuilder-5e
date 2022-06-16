@@ -1,0 +1,39 @@
+<div>
+    <input type="text" class="form-control" [(ngModel)]="search.name"/>
+</div>
+
+<div>
+    <table class="table table-hover" [mfData]="spells | filterSpells:search" #mf="mfDataTable" [mfRowsOnPage]="25" style="width: 100%">
+        <thead>
+        <tr>
+            <th style="width: 50%">
+                <mfDefaultSorter by="name">Name</mfDefaultSorter>
+            </th>
+            <th style="width: 20%">
+                <mfDefaultSorter by="school">School</mfDefaultSorter>
+            </th>
+            <th style="width: 20%">
+                <mfDefaultSorter by="level">Level</mfDefaultSorter>
+            </th>
+            <th style="width: 10%">
+                <mfDefaultSorter by="classLists">Classes</mfDefaultSorter>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let spell of mf.data" [routerLink]='["/spellDetail/" + spell.id]'>
+            <td>{{spell.name}}</td>
+            <td>{{spell.school}}</td>
+            <td>{{spell.level}}</td>
+            <td>{{spell.classLists.join(', ')}}</td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="4">
+                <mfBootstrapPaginator [rowsOnPageSet]="[15,25,50,100]"></mfBootstrapPaginator>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+</div>

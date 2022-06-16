@@ -18,11 +18,15 @@ export class DataService {
     return this.http.get<Monster[]>(this.baseUrl + 'api/monsters');
   }
 
-  getSpells(): Observable<any[]> {
+  getSpells(): Observable<Spell[]> {
     return this.http.get<Spell[]>(this.baseUrl + 'api/spells');
   }
 
-  getSpellsFromIds(ids: string[]): Observable<any[]> {
+  getSpellById(id: string): Observable<Spell> {
+    return this.http.get<Spell>(this.baseUrl + 'api/spells/' + id);
+  }
+
+  getSpellsFromIds(ids: string[]): Observable<Spell[]> {
     return this.http.post<Spell[]>(this.baseUrl + 'api/spells', ids);
   }
 }
