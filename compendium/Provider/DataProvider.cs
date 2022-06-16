@@ -5,6 +5,7 @@ using System.Reflection;
 using compendium.Database;
 using compendium.Models.CoreData;
 using compendium.Models.ImportData;
+using compendium.Models.ProjectData;
 using compendium.Parser;
 using LiteDB;
 
@@ -57,6 +58,18 @@ namespace compendium.Provider
                 var monster = monsterParser.Parse(compendiumMonster, allSpells);
                 db.Add(monster);
             }
+        }
+
+        internal Project CreateProject(Project project)
+        {
+            _db.Add(project);
+            JsonDatabaseConnection.GetProjectDb(project.Name).Add(project);
+            return project;
+        }
+
+        internal IEnumerable<Project> GetAllProjects()
+        {
+            return _db.GetQueryable<Project>().ToArray();
         }
 
         public Monster[] GetAllMonsters()

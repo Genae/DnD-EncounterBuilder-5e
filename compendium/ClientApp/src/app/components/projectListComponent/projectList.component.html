@@ -1,0 +1,40 @@
+<div>
+    <button [routerLink]='["/projectDetail/0/edit"]'>New Project</button>
+    <input type="text" class="form-control" [(ngModel)]="search.name" />
+</div>
+
+<div>
+    <table class="table table-hover" [mfData]="projects | filter:search" #mf="mfDataTable" [mfRowsOnPage]="25" style="width: 100%">
+        <thead>
+            <tr>
+                <th style="width: 20%">
+                    <mfDefaultSorter by="name">Name</mfDefaultSorter>
+                </th>
+                <th style="width: 40%">
+                    <mfDefaultSorter by="description">Description</mfDefaultSorter>
+                </th>
+                <th style="width: 20%">
+                    <mfDefaultSorter by="createdDate">Created</mfDefaultSorter>
+                </th>
+                <th style="width: 20%">
+                    <mfDefaultSorter by="updatedDate">Updated</mfDefaultSorter>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let project of mf.data" [routerLink]='["/projectDetail/" + project.id]'>
+                <td>{{project.name}}</td>
+                <td>{{project.description}}</td>
+                <td>{{project.createdDate}}</td>
+                <td>{{project.updatedDate}}</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4">
+                    <mfBootstrapPaginator [rowsOnPageSet]="[15,25,50,100]"></mfBootstrapPaginator>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

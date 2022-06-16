@@ -18,6 +18,11 @@
                     </a>
                 </li>
                 <li [routerLinkActive]='["link-active"]'>
+                    <a [routerLink]='["/projectList"]' (click)='collapse()'>
+                        <span class='glyphicon glyphicon-education'></span> Project List
+                    </a>
+                </li>
+                <li [routerLinkActive]='["link-active"]'>
                     <a [routerLink]='["/monsterList"]' (click)='collapse()'>
                         <span class='glyphicon glyphicon-th-list'></span> Monster List
                     </a>

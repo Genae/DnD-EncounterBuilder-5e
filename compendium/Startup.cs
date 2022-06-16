@@ -29,7 +29,7 @@ namespace compendium
             services.AddMvc(options =>
             {
                 options.EnableEndpointRouting = false;
-            }).AddNewtonsoftJson(); ;
+            }).AddNewtonsoftJson();
 
             services.TryAddSingleton<DataProvider>();
             services.TryAddSingleton<IDatabaseConnection, LiteDbConnection>();

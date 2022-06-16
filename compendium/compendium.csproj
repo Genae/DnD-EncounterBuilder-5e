@@ -45,11 +45,6 @@
     </ItemGroup>
   </Target>
   <ItemGroup>
-    <Content Update="electron.manifest.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <None Update="ClientApp\src\app\assets\dark.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
