@@ -22,4 +22,14 @@ export class ProjectListComponent {
     public redirect(id: string) {
         this.router.navigateByUrl('/projectDetail/' + id);
     }
+
+    public edit(project: Project) {
+        this.router.navigateByUrl('/projectDetail/' + project.id + "/edit");
+    }
+
+    public delete(project: Project) {
+        if (confirm("Are you sure to delete " + name)) {
+            this.projectService.deleteProject(project).subscribe();
+        }
+    }
 }

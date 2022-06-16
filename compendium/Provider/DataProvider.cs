@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using compendium.Database;
+﻿using compendium.Database;
 using compendium.Models.CoreData;
 using compendium.Models.ImportData;
 using compendium.Models.ProjectData;
 using compendium.Parser;
 using LiteDB;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace compendium.Provider
 {
@@ -58,6 +59,29 @@ namespace compendium.Provider
                 var monster = monsterParser.Parse(compendiumMonster, allSpells);
                 db.Add(monster);
             }
+        }
+
+        internal void DeleteProject(Project project)
+        {
+            var old = GetAllProjects().FirstOrDefault(p => p.Id.Equals(project.Id));
+            if (old == null)
+                return;
+            JsonDatabaseConnection.GetProjectDb(old.Name).Delete();
+            _db.Remove(project);
+        }
+
+        internal Project EditProject(Project project)
+        {
+            var old = GetAllProjects().FirstOrDefault(p => p.Id.Equals(project.Id));
+            if (old == null)
+                return CreateProject(project);
+
+            var jDb = JsonDatabaseConnection.GetProjectDb(old.Name);
+            if (!old.Name.Equals(project.Name))
+                jDb.Rename(project.Name);
+            _db.Update(project);
+            jDb.Update(project);
+            return project;
         }
 
         internal Project CreateProject(Project project)

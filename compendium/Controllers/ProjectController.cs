@@ -26,7 +26,7 @@ namespace compendium.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public Project GetAllMonsters(string id)
+        public Project GetProject(string id)
         {
             return _dataProvider.GetAllProjects().FirstOrDefault(m => m.Id.ToString().Equals(id));
         }
@@ -36,6 +36,20 @@ namespace compendium.Controllers
         public Project CreateProject([FromBody] Project project)
         {
             return _dataProvider.CreateProject(project);// new Project { Name = name, Description = description });
+        }
+
+        [HttpPost]
+        [Route("{id}")]
+        public Project EditProject([FromBody] Project project)
+        {
+            return _dataProvider.EditProject(project);// new Project { Name = name, Description = description });
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public void DeleteProject(string id)
+        {
+            _dataProvider.DeleteProject(GetProject(id));// new Project { Name = name, Description = description });
         }
     }
 }

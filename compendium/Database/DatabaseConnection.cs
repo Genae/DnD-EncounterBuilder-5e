@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using compendium.Models.CoreData;
+﻿using compendium.Models.CoreData;
 using compendium.Models.CoreData.Enums;
 using LiteDB;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace compendium.Database
 {
@@ -11,6 +11,8 @@ namespace compendium.Database
     {
         IQueryable<T> GetQueryable<T>();
         void Add<T>(T item) where T : KeyedDocument;
+        void Remove<T>(T item) where T : KeyedDocument;
+        void Update<T>(T item) where T : KeyedDocument;
     }
 
     public class LiteDbConnection : IDatabaseConnection
@@ -54,5 +56,15 @@ namespace compendium.Database
         {
             Database.GetCollection<T>(typeof(T).Name).Insert(item);
         }
-    } 
+
+        public void Remove<T>(T item) where T : KeyedDocument
+        {
+            Database.GetCollection<T>(typeof(T).Name).Delete(item.Id);
+        }
+
+        public void Update<T>(T item) where T : KeyedDocument
+        {
+            Database.GetCollection<T>(typeof(T).Name).Update(item);
+        }
+    }
 }

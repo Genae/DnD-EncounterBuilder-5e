@@ -1,7 +1,7 @@
-using System;
-using System.Linq;
 using LiteDB;
 using Newtonsoft.Json;
+using System;
+using System.Linq;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace compendium
@@ -38,7 +38,7 @@ namespace compendium
 
         public override object ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            return new ObjectId((string)existingValue);
+            return new ObjectId((string)reader.Value);
         }
 
         public override bool CanConvert(Type objectType)

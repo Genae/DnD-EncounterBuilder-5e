@@ -31,6 +31,7 @@ export class ProjectEditComponent {
     onSubmit() {
         if (this.project.id) {
             //edited
+            this.projectService.updateProject(this.project).subscribe(response => this.goToProject(response));
         }
         else {
             //new
@@ -39,7 +40,7 @@ export class ProjectEditComponent {
     }
 
     goToProject(project: Project): void {
-        this.router.navigateByUrl('/projectDetails/' + project.id);
+        this.router.navigateByUrl('/projectDetail/' + project.id);
     }
 }
 

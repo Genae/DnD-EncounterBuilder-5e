@@ -37,14 +37,6 @@ namespace compendium.Database
             return myDb;
         }
 
-        public static JsonDatabaseConnection GetProjectDb(string projectName)
-        {
-            var db = new JsonDatabaseConnection(Path.Combine("ProjectFolders", projectName));
-            if (!Directory.Exists(db.DatabaseRoot))
-                Directory.CreateDirectory(db.DatabaseRoot);
-            return db;
-        }
-
         public void Add<T>(T item) where T : KeyedDocument
         {
             if (!Database.ContainsKey(typeof(T).Name))
@@ -59,12 +51,46 @@ namespace compendium.Database
             Database[typeof(T).Name].Add(item);
             File.WriteAllText(Path.Combine(DatabaseRoot, typeof(T).Name, item.Id + ".json"), JsonConvert.SerializeObject(item, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.Indented }));
         }
+        public void Remove<T>(T item) where T : KeyedDocument
+        {
+            if (Database.ContainsKey(typeof(T).Name))
+            {
+                Database[typeof(T).Name].Remove(item);
+                File.Delete(Path.Combine(DatabaseRoot, typeof(T).Name, item.Id + ".json"));
+            }
+        }
 
         public IQueryable<T> GetQueryable<T>()
         {
             if (!Database.ContainsKey(typeof(T).Name))
                 return new List<T>().AsQueryable();
             return Database[typeof(T).Name].Cast<T>().AsQueryable();
+        }
+
+        public void Delete()
+        {
+            if (Directory.Exists(DatabaseRoot))
+                Directory.Delete(DatabaseRoot, true);
+        }
+
+        public static JsonDatabaseConnection GetProjectDb(string projectName)
+        {
+            var db = new JsonDatabaseConnection(Path.Combine("ProjectFolders", projectName));
+            if (!Directory.Exists(db.DatabaseRoot))
+                Directory.CreateDirectory(db.DatabaseRoot);
+            return db;
+        }
+
+        public void Rename(string name)
+        {
+            var newSub = Path.Combine("ProjectFolders", name);
+            Directory.Move(DatabaseRoot, Path.Combine(Root, newSub));
+            Subfolder = newSub;
+        }
+
+        public void Update<T>(T item) where T : KeyedDocument
+        {
+            Add(item);
         }
     }
 }
