@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using compendium.Models.CoreData;
 using compendium.Models.CoreData.Enums;
 using compendium.Models.ImportData;
-using Microsoft.EntityFrameworkCore.Internal;
 using Action = compendium.Models.CoreData.Action;
 
 namespace compendium.Parser
@@ -39,7 +38,7 @@ namespace compendium.Parser
             var DCRegex = new Regex(@"(DC ([0-9]*) ([A-Za-z]*) saving throw)|(\(escape DC ([0-9]*)\))|(DC ([0-9]*) [A-Za-z]* \(([A-Za-z]*)\)( or [A-Za-z]* \(([A-Za-z]*)\)*)* check)", RegexOptions.None);
             var dcs = DCRegex.Matches(action.Text);
             var dcPositions = dcs.ToDictionary(d => d.Index, d => d);
-            var conditionRegex = new Regex(Enum.GetNames(typeof(Condition)).Select(c => "(" + c.ToLower() + ")").ToArray().Join("|"));
+            var conditionRegex = new Regex(string.Join("|", Enum.GetNames(typeof(Condition)).Select(c => "(" + c.ToLower() + ")").ToArray()));
             var conditions = conditionRegex.Matches(action.Text);
             var effects = new Dictionary<int, HitEffect>();
             foreach (var hitDie in positions)

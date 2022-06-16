@@ -9,7 +9,7 @@ namespace compendium.Controllers
 {
     [Produces("application/json")]
     [Route("api")]
-    public class DefaultController : Controller
+    public class DefaultController : Microsoft.AspNetCore.Mvc.Controller
     {
         private readonly DataProvider _dataProvider;
 
