@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { AfterViewInit, Component, Input } from '@angular/core';
 
 import { DataService } from "../../services/data.service";
 import { Monster, PreparedSpell } from "../../models/monster";
@@ -11,19 +11,21 @@ import { Pipe, PipeTransform } from '@angular/core';
     templateUrl: 'monsterList.component.html'
 })
 
-export class MonsterListComponent {
+export class MonsterListComponent implements AfterViewInit {
 
     monsters: Monster[] = [];
     search: any;
     @Input() ids: string[];
 
     constructor(private dataService: DataService, private router: Router) {
-        this.loadMonsters();
         this.search = {};
     }
 
+    ngAfterViewInit() {
+        this.loadMonsters();
+    }
+
     ngOnChanges(changes: any) {
-        console.log(changes);
         this.loadMonsters();
     }
 

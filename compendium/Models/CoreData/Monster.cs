@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
-using compendium.Database;
+﻿using compendium.Database;
 using compendium.Models.CoreData.Enums;
 using compendium.Renderer;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace compendium.Models.CoreData
 {
@@ -31,7 +33,22 @@ namespace compendium.Models.CoreData
         public List<Action> Actions { get; set; }
         public List<Reaction> Reactions { get; set; }
         public List<LegendaryAction> LegendaryActions { get; set; }
-        
+
         public string Markup => (new MonsterRenderer().RenderMonster(this));
+
+        public Monster()
+        {
+            Abilities = new Dictionary<Ability, AbilityScore>();
+            foreach (var ability in Enum.GetValues(typeof(Ability)).Cast<Ability>())
+                Abilities.Add(ability, new AbilityScore() { Value = 10 });
+            Race = new();
+            Senses = new();
+            ChallengeRating = new();
+            HitDie = new();
+            Skillmodifiers = new();
+            SavingThrows = new();
+            Alignment = new();
+            Speed = new();
+        }
     }
 }

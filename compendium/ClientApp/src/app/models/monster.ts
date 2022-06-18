@@ -1,4 +1,5 @@
 export class Monster {
+    id: string;
     name: string;
     size: Size;
     race: MonsterRace;

@@ -12,7 +12,7 @@ import { DataService } from "../../services/data.service";
 
 export class MonsterDetailComponent {
 
-    constructor(private dataService: DataService, private route: ActivatedRoute) {
+    constructor(private dataService: DataService, private route: ActivatedRoute, private router: Router) {
 
         this.route.params.subscribe(params => {
             this.dataService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
@@ -20,27 +20,21 @@ export class MonsterDetailComponent {
 
     }
 
-    myMonster: Monster;
+    monster: Monster;
     monsterSpells: Spell[];
-    edit: boolean = false;
+
+    public edit() {
+        this.router.navigateByUrl('/monsterDetail/' + this.monster.id + "/edit");
+    }
 
     public monsterUpdated(monster: Monster) {
         this.monsterSpells = [];
-        this.myMonster = monster;
+        this.monster = monster;
         if (monster.spellcasting !== undefined && monster.spellcasting.spells.length > 0) {
             var flattened = [].concat.apply([], monster.spellcasting.spells).filter((a: PreparedSpell) => a !== null);
             this.dataService.getSpellsFromIds(flattened.map((s: PreparedSpell) => s.spellId)).subscribe((data) => {
                 this.monsterSpells = data;
             });
-        }
-    }
-
-    public enumValues(enumType): any[] {
-        switch (enumType) {
-            case "Size":
-                return Object.keys(Size).filter(key => !isNaN(Number(Size[key])));
-            case "MonsterType":
-                return Object.keys(MonsterType).filter(key => !isNaN(Number(MonsterType[key])));
         }
     }
 }

@@ -18,6 +18,7 @@ import { ProjectService } from './services/project.service';
 import { ProjectListComponent } from './components/projectListComponent/projectList.component';
 import { ProjectEditComponent } from './components/projectEditComponent/projectEdit.component';
 import { ProjectDetailComponent } from './components/projectDetailComponent/projectDetail.component';
+import { MonsterEditComponent } from './components/monsterEditComponent/monsterEdit.component';
 
 @NgModule({
     declarations: [
@@ -29,6 +30,7 @@ import { ProjectDetailComponent } from './components/projectDetailComponent/proj
         ProjectEditComponent,
         MonsterListComponent,
         MonsterDetailComponent,
+        MonsterEditComponent,
         SpellDetailComponent,
         SpellListComponent,
         StatBlockComponent,
@@ -47,6 +49,7 @@ import { ProjectDetailComponent } from './components/projectDetailComponent/proj
             { path: 'projectDetail/:id/edit', component: ProjectEditComponent },
             { path: 'monsterList', component: MonsterListComponent },
             { path: 'monsterDetail/:id', component: MonsterDetailComponent },
+            { path: 'monsterDetail/:id/edit', component: MonsterEditComponent },
             { path: 'spellList', component: SpellListComponent },
             { path: 'spellDetail/:id', component: SpellDetailComponent },
         ])

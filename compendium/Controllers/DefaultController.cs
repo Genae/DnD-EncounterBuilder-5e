@@ -26,9 +26,19 @@ namespace compendium.Controllers
         }
 
         [HttpGet]
-        [Route("monsters/{id}")]
-        public Monster GetAllMonsters(string id)
+        [Route("cr")]
+        public Dictionary<int, AbilityDistribution> GetAllCrAbilityPoints()
         {
+            return _dataProvider.GetAllMonsters().GroupBy(m => m.ChallengeRating.Value).ToDictionary(g => g.Key, g => new AbilityDistribution(g.ToList()));
+        }
+
+
+        [HttpGet]
+        [Route("monsters/{id}")]
+        public Monster GetMonsterById(string id)
+        {
+            if (id == "0")
+                return new Monster();
             return _dataProvider.GetAllMonsters().FirstOrDefault(m => m.Id.ToString().Equals(id));
         }
 

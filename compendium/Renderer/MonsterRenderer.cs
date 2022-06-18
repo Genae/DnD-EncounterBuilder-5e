@@ -26,9 +26,9 @@ namespace compendium.Renderer
             stringBuilder.AppendLine($">|{monster.Abilities[Ability.Strength]}|{monster.Abilities[Ability.Dexterity]}|{monster.Abilities[Ability.Constitution]}|" +
                                        $"{monster.Abilities[Ability.Intelligence]}|{monster.Abilities[Ability.Wisdom]}|{monster.Abilities[Ability.Charisma]}|");
             stringBuilder.AppendLine($">___");
-            if(monster.SavingThrows?.Any() ?? false)
+            if (monster.SavingThrows?.Any() ?? false)
                 stringBuilder.AppendLine($"> - **Saving Throws** {RenderSavingThrows(monster.SavingThrows)}");
-            if(monster.Skillmodifiers?.Any() ?? false)
+            if (monster.Skillmodifiers?.Any() ?? false)
                 stringBuilder.AppendLine($"> - **Skills** {RenderSkills(monster.Skillmodifiers)}");
             if (monster.Vulnerable?.Any() ?? false)
                 stringBuilder.AppendLine($"> - **Damage Vulnerabilities** {string.Join(", ", monster.Vulnerable)}");
@@ -43,17 +43,18 @@ namespace compendium.Renderer
             stringBuilder.AppendLine($"> - **Languages** {monster.Languages ?? "-"}");
             stringBuilder.AppendLine($"> - **Challenge** {monster.ChallengeRating}");
             stringBuilder.AppendLine($">___");
-            foreach(var trait in monster.Traits)
-            {
-                stringBuilder.AppendLine($"> ***{trait.Name}.*** {trait.Text}");
-                stringBuilder.AppendLine($">");
-            }
+            if (monster.Traits != null)
+                foreach (var trait in monster.Traits)
+                {
+                    stringBuilder.AppendLine($"> ***{trait.Name}.*** {trait.Text}");
+                    stringBuilder.AppendLine($">");
+                }
             if (monster.Spellcasting != null || (monster.Actions?.Any() ?? false))
                 stringBuilder.AppendLine($"> ### Actions");
             if (monster.Spellcasting != null)
                 RenderSpellcasting(monster.Spellcasting, stringBuilder);
             if (monster.Actions != null)
-                foreach (var action in monster.Actions) 
+                foreach (var action in monster.Actions)
                     RenderAction(action, stringBuilder);
             if (monster.LegendaryActions?.Any() ?? false)
             {
@@ -80,7 +81,7 @@ namespace compendium.Renderer
         private void RenderSpellcasting(Spellcasting spellcasting, StringBuilder stringBuilder)
         {
             stringBuilder.AppendLine($"> ***Spellcasting***. {spellcasting.TextBeforeTable}");
-            for(var i = 0; i < spellcasting.Spells.GetLength(0); i++)
+            for (var i = 0; i < spellcasting.Spells.GetLength(0); i++)
             {
                 if (spellcasting.Spells[i] != null)
                 {
@@ -88,12 +89,12 @@ namespace compendium.Renderer
                     stringBuilder.AppendLine($">");
                 }
             }
-            if(!string.IsNullOrWhiteSpace(spellcasting.TextAfterTable))
+            if (!string.IsNullOrWhiteSpace(spellcasting.TextAfterTable))
                 stringBuilder.AppendLine($"> {spellcasting.TextAfterTable}");
             stringBuilder.AppendLine($">");
         }
 
-        private string SpellcastingHeader(Spellcasting spellcasting, int line) 
+        private string SpellcastingHeader(Spellcasting spellcasting, int line)
         {
             if (line == 0)
                 return "Cantrips (at will)";
@@ -155,10 +156,10 @@ namespace compendium.Renderer
 
         private string RenderSpeed(Speed speed)
         {
-            if(!string.IsNullOrWhiteSpace(speed.AdditionalInformation))
+            if (!string.IsNullOrWhiteSpace(speed.AdditionalInformation))
                 return speed.AdditionalInformation;
             var sb = new List<string>();
-            if(speed.Speeds.ContainsKey(MovementType.Normal))
+            if (speed.Speeds.ContainsKey(MovementType.Normal))
             {
                 sb.Add($"{speed.Speeds[MovementType.Normal]} ft.");
             }
@@ -197,7 +198,7 @@ namespace compendium.Renderer
 
         private string RenderRace(MonsterRace race)
         {
-            if(!string.IsNullOrWhiteSpace(race.Tags))
+            if (!string.IsNullOrWhiteSpace(race.Tags))
             {
                 return $"{race.MonsterType} ({race.Tags})";
             }
