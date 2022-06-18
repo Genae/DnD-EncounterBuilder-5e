@@ -1,4 +1,5 @@
 ﻿using compendium.Models.CoreData;
+using compendium.Models.CoreData.Enums;
 using compendium.Provider;
 using LiteDB;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,19 @@ namespace compendium.Controllers
         public Dictionary<int, AbilityDistribution> GetAllCrAbilityPoints()
         {
             return _dataProvider.GetAllMonsters().GroupBy(m => m.ChallengeRating.Value).ToDictionary(g => g.Key, g => new AbilityDistribution(g.ToList()));
+        }
+
+        [HttpGet]
+        [Route("tags")]
+        public Dictionary<MonsterType, string[]> GetTagsForType()
+        {
+            return _dataProvider.GetAllMonsters().
+                GroupBy(m => m.Race.MonsterType).
+                ToDictionary(g => g.Key, g => g.ToList().
+                    Select(m => m.Race.Tags).
+                    Where(t => t != null).
+                    Distinct().
+                    ToArray());
         }
 
 

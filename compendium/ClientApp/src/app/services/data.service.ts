@@ -33,4 +33,9 @@ export class DataService {
     getSpellsFromIds(ids: string[]): Observable<Spell[]> {
         return this.http.post<Spell[]>(this.baseUrl + 'api/spells', ids);
     }
+
+    getTags(): Observable<{ [id: string]: string; }> {
+        return this.http.get<{ [id: string]: string; }>(this.baseUrl + 'api/tags');
+    }
+
 }

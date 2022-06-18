@@ -1,17 +1,17 @@
 export class Monster {
     id: string;
     name: string;
-    size: Size;
+    size: Size | string;
     race: MonsterRace;
     alignment: AlignmentDistribution;
     armor: string;
     armorclass: number;
     maximumHitpoints: number;
     speed: Speed;
-    resist: DamageType[];
-    vulnerable: DamageType[];
-    immune: DamageType[];
-    conditionImmune: Condition[];
+    resist: DamageType[] | string[];
+    vulnerable: DamageType[] | string[];
+    immune: DamageType[] | string[];
+    conditionImmune: Condition[] | string[];
     senses: Senses;
     languages: string;
     abilities: { [id: string]: AbilityScore; };
@@ -37,7 +37,7 @@ export enum Size {
 }
 
 export class MonsterRace {
-    monsterType: MonsterType;
+    monsterType: MonsterType | string;
     tags: string;
 }
 

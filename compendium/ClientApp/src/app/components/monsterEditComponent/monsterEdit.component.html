@@ -11,7 +11,7 @@
             <label for="size" class="col-md-3">2. Size</label>
             <div class="col-md-3">
                 <select class="form-control" name="size" id="size" [(ngModel)]="monster.size" required>
-                    <option *ngFor="let size of enumValues('Size')" [value]="size">{{size}}</option>
+                    <option *ngFor="let size of sizeValues" [value]="size.value">{{size.key}}</option>
                 </select>
             </div>
         </div>
@@ -20,13 +20,18 @@
             <label for="type" class="col-md-3">3. Type</label>
             <div class="col-md-3">
                 <select class="form-control" name="race" id="race" [(ngModel)]="monster.race.monsterType" required>
-                    <option *ngFor="let race of enumValues('MonsterType')" [value]="race">{{race}}</option>
+                    <option *ngFor="let race of monsterTypeValues" [value]="race.value">{{race.key}}</option>
                 </select>
             </div>
             <div class="col-md-3">
-                <input type="text" [(ngModel)]="monster.race.tags" class="form-control" name="tags" id="tags">
+                <input type="text" [(ngModel)]="monster.race.tags" class="form-control" name="tags" id="tags" list="taglist">
             </div>
         </div>
+
+        <datalist id="taglist">
+            <option *ngFor="let t of getTags()">{{t}}</option>
+        </datalist>
+
 
         <div class="form-group row">
             <label for="alignment" class="col-md-3">4. Alignment</label>
@@ -39,7 +44,7 @@
             <label for="abilities" class="col-md-3">5. Ability Scores</label>
         </div>
 
-        <div class="form-group row" *ngFor="let ability of enumValues('Ability')">
+        <div class="form-group row" *ngFor="let ability of abilityValues">
             <label for="abilities_{{ability}}" class="col-md-3">{{ability}}</label>
             <div class="col-md-3">
                 <input type="range" [(ngModel)]="monster.abilities[ability].value" class="form-control" name="abilities_{{ability}}" id="abilities_{{ability}}" min="1" max="30" step="1" (ngModelChange)="abilityChange(ability)">
@@ -54,35 +59,44 @@
                 <input type="number" [ngModel]="monster.abilities[ability].modifier" class="form-control" name="abilities_mod_{{ability}}" id="abilities_mod_{{ability}}" disabled>
             </div>
         </div>
+
+        <div class="form-group row">
+            <label for="cr" class="col-md-3">6. Challenge Rating (expected)</label>
+            <div class="col-md-3">
+                <select class="form-control" name="cr" id="cr" [(ngModel)]="monster.challengeRating" (ngModelChange)="setCr()" required>
+                    <option *ngFor="let cr of crValues" [ngValue]="cr" >{{cr.description}}</option>
+                </select>
+            </div>
+        </div>
         <!--
-        <div class="form-group row">
-            <label for="armorclass" class="col-md-3">Armor</label>
-            <div class="col-md-3">
-                <input type="number" [(ngModel)]="monster.armorclass" class="form-control" name="armorclass" id="armorclass">
-            </div>
-            <div class="col-md-3">
-                <input type="text" [(ngModel)]="monster.armor" class="form-control" name="armor" id="armor">
-            </div>
+    <div class="form-group row">
+        <label for="armorclass" class="col-md-3">Armor</label>
+        <div class="col-md-3">
+            <input type="number" [(ngModel)]="monster.armorclass" class="form-control" name="armorclass" id="armorclass">
         </div>
+        <div class="col-md-3">
+            <input type="text" [(ngModel)]="monster.armor" class="form-control" name="armor" id="armor">
+        </div>
+    </div>
 
-        <div class="form-group row">
-            <label for="hp" class="col-md-3" style="color: red">Hit Points</label>
-            <div class="col-md-3">
-                <input type="text" [(ngModel)]="monster.hitDie.description" class="form-control" name="hp" id="hp">
-            </div>
+    <div class="form-group row">
+        <label for="hp" class="col-md-3" style="color: red">Hit Points</label>
+        <div class="col-md-3">
+            <input type="text" [(ngModel)]="monster.hitDie.description" class="form-control" name="hp" id="hp">
         </div>
+    </div>
 
-        <div class="form-group row">
-            <label for="speed" class="col-md-3" style="color: red">Speed</label>
-            <div class="col-md-3">
-                <input type="text" [(ngModel)]="monster.speed.additionalInformation" class="form-control" name="speed" id="speed">
-            </div>
+    <div class="form-group row">
+        <label for="speed" class="col-md-3" style="color: red">Speed</label>
+        <div class="col-md-3">
+            <input type="text" [(ngModel)]="monster.speed.additionalInformation" class="form-control" name="speed" id="speed">
         </div>
+    </div>
 
-        <div class="form-group row">
-            <label for="speed" class="col-md-3" style="color: red">Stats</label>
-        </div>
-            -->
+    <div class="form-group row">
+        <label for="speed" class="col-md-3" style="color: red">Stats</label>
+    </div>
+        -->
         <button type="submit" class="btn btn-success">Submit</button>
     </form>
 </div>
