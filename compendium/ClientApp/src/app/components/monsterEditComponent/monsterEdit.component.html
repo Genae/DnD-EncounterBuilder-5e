@@ -1,5 +1,6 @@
 <div *ngIf="monster">
-    <form>
+    <form autocomplete="off">
+        <input autocomplete="false" name="hidden" type="text" style="display:none;">
         <div class="form-group row">
             <label for="name" class="col-md-3">1. Name</label>
             <div class="col-md-3">
@@ -64,11 +65,41 @@
             <label for="cr" class="col-md-3">6. Challenge Rating (expected)</label>
             <div class="col-md-3">
                 <select class="form-control" name="cr" id="cr" [(ngModel)]="monster.challengeRating" (ngModelChange)="setCr()" required>
-                    <option *ngFor="let cr of crValues" [ngValue]="cr" >{{cr.description}}</option>
+                    <option *ngFor="let cr of crValues" [ngValue]="cr">{{cr.description}}</option>
                 </select>
             </div>
         </div>
-        <!--
+
+        <div class="form-group row">
+            <label for="armor" class="col-md-3">7. Armor</label>
+            <div class="col-md-3">
+                <select class="form-control" name="acgroup" id="acgroup" [(ngModel)]="monster.armorInfo.group" (ngModelChange)="acGroupChange()">
+                    <option *ngFor="let group of armorgroups" [ngValue]="group.value">{{group.name}}</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-control" name="acpiece" id="acpiece" [(ngModel)]="monster.armorInfo.piece" (ngModelChange)="acPieceChange()">
+                    <option *ngFor="let piece of getArmorPieces(monster.armorInfo.group)" [ngValue]="piece.value">{{piece.name}}</option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <label>Has Shield: </label>
+            </div>
+            <div class="col-md-1">
+                <input class="" type="checkbox" [(ngModel)]="monster.armorInfo.hasShield" class="form-control" name="acshield" id="acshield" (ngModelChange)="hasShieldChange()">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="armor2" class="col-md-3"></label>
+            <div class="col-md-1">
+                <input type="number" [(ngModel)]="monster.armorclass" class="form-control" name="ac" id="ac">
+            </div>
+            <div class="col-md-2">
+                <input type="text" [(ngModel)]="monster.armor" class="form-control" name="actext" id="actext">
+            </div>
+        </div>
+
+            <!--
     <div class="form-group row">
         <label for="armorclass" class="col-md-3">Armor</label>
         <div class="col-md-3">
@@ -97,6 +128,6 @@
         <label for="speed" class="col-md-3" style="color: red">Stats</label>
     </div>
         -->
-        <button type="submit" class="btn btn-success">Submit</button>
-    </form>
+            <button type="submit" class="btn btn-success">Submit</button>
+</form>
 </div>

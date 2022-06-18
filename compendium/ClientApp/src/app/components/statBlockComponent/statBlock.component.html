@@ -1,10 +1,10 @@
 <stat-block id="statBlockId">
   <creature-heading>
     <h1>{{monster.name}}</h1>
-    <h2>{{monster.size}} {{monster.race.monsterType + ((monster.race.tags !== undefined && monster.race.tags !== '')? ' (' + monster.race.tags + ')' : '')}}, {{monster.alignment.description}}</h2>
+    <!--<h2>{{size(monster.size)}} {{monster.race.monsterType + ((monster.race.tags !== undefined && monster.race.tags !== '')? ' (' + monster.race.tags + ')' : '')}}, {{monster.alignment.description}}</h2>-->
   </creature-heading>
 
-  <top-stats>
+  <!--<top-stats>
     <property-line>
       <h4>Armor Class</h4>
       <p>
@@ -53,15 +53,15 @@
     </property-line>
     <property-line *ngIf="monster.vulnerable">
       <h4>Damage Vulnerabilities</h4>
-      <p>{{monster.vulnerable.join(', ')}}</p>
+      <p>{{monster.vulnerable.map(v => DamageType(v)).join(', ')}}</p>
     </property-line>
     <property-line *ngIf="monster.resist">
       <h4>Damage Resistances</h4>
-      <p>{{monster.resist.join(', ')}}</p>
+      <p>{{monster.resist.map(v => DamageType(v)).join(', ')}}</p>
     </property-line>
     <property-line *ngIf="monster.immune">
       <h4>Damage Immunities</h4>
-      <p>{{monster.immune.join(', ')}}</p>
+      <p>{{monster.immune.map(v => DamageType(v)).join(', ')}}</p>
     </property-line>
     <property-line *ngIf="monster.conditionImmune">
       <h4>Condition Immunities</h4>
@@ -115,7 +115,7 @@
   <property-block *ngFor="let r of monster.reactions">
     <h4>{{r.action.name}}.</h4>
     <p>{{r.action.text}}</p>
-  </property-block>
+  </property-block>-->
 
   <h3>Homebrewery</h3>
   <pre>{{monster.markup}}</pre>

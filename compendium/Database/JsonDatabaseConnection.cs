@@ -1,5 +1,6 @@
 ﻿using LiteDB;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -31,7 +32,17 @@ namespace compendium.Database
                 foreach (var entry in Directory.GetFiles(db.FullName))
                 {
                     var json = File.ReadAllText(entry);
-                    myDb[db.Name].Add(JsonConvert.DeserializeObject(json, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }));
+                    myDb[db.Name].Add(JsonConvert.DeserializeObject(json,
+                        new JsonSerializerSettings
+                        {
+                            TypeNameHandling = TypeNameHandling.All,
+                            Converters = new List<JsonConverter>
+                            {
+                                new ObjectIdConverter(),
+                                new StringEnumConverter()
+                            }
+                        })
+                    );
                 }
             }
             return myDb;
@@ -49,7 +60,16 @@ namespace compendium.Database
                 item.Id = ObjectId.NewObjectId();
             }
             Database[typeof(T).Name].Add(item);
-            File.WriteAllText(Path.Combine(DatabaseRoot, typeof(T).Name, item.Id + ".json"), JsonConvert.SerializeObject(item, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.Indented }));
+            File.WriteAllText(Path.Combine(DatabaseRoot, typeof(T).Name, item.Id + ".json"), JsonConvert.SerializeObject(item, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+                Formatting = Formatting.Indented,
+                Converters = new List<JsonConverter>
+                            {
+                                new ObjectIdConverter(),
+                                new StringEnumConverter()
+                            }
+            }));
         }
         public void Remove<T>(T item) where T : KeyedDocument
         {

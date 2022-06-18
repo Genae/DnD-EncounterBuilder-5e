@@ -4,6 +4,7 @@ export class Monster {
     size: Size | string;
     race: MonsterRace;
     alignment: AlignmentDistribution;
+    armorInfo: ArmorInfo;
     armor: string;
     armorclass: number;
     maximumHitpoints: number;
@@ -24,6 +25,43 @@ export class Monster {
     actions: Action[];
     reactions: Reaction[];
     legendaryActions: LegendaryAction[];
+}
+
+export enum ArmorGroup {
+    NaturalArmor,
+    LightArmor,
+    MediumArmor,
+    HeavyArmor
+}
+export enum ArmorPiece {
+    Nat0,
+    Nat1,
+    Nat2,
+    Nat3,
+    Nat4,
+    Nat5,
+    Nat6,
+    Nat7,
+    Nat8,
+    Nat9,
+    Padded,
+    Leather,
+    StuddedLeather,
+    Hide,
+    ChainShirt,
+    ScaleMail,
+    Brestplate,
+    HalfPlate,
+    RingMail,
+    ChainMail,
+    Splint,
+    Plate
+}
+
+export class ArmorInfo {
+    group: ArmorGroup; 
+    piece: ArmorPiece;
+    hasShield: boolean;
 }
 
 export enum Size {

@@ -13,6 +13,7 @@ namespace compendium.Models.CoreData
         public Size Size { get; set; }
         public MonsterRace Race { get; set; }
         public AlignmentDistribution Alignment { get; set; }
+        public ArmorInfo ArmorInfo { get; set; }
         public string Armor { get; set; }
         public int Armorclass { get; set; }
         public int MaximumHitpoints { get; set; }
@@ -49,6 +50,7 @@ namespace compendium.Models.CoreData
             SavingThrows = new();
             Alignment = new();
             Speed = new();
+            ArmorInfo = new();
         }
     }
 }

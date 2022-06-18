@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using compendium.Database;
 using compendium.Parser;
 using compendium.Provider;
@@ -10,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Collections.Generic;
 
 namespace compendium
 {
@@ -66,8 +64,7 @@ namespace compendium
                 var settings = new JsonSerializerSettings();
                 settings.Converters = new List<JsonConverter>
                 {
-                    new ObjectIdConverter(),
-                    new StringEnumConverter { CamelCaseText = true }
+                    new ObjectIdConverter()
                 };
                 settings.DefaultValueHandling = DefaultValueHandling.Ignore;
                 return settings;

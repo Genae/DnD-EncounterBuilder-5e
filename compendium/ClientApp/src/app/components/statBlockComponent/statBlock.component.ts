@@ -1,6 +1,6 @@
 import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 
-import { Monster, SavingThrow, Skill, Spellcasting } from "../../models/monster";
+import { Monster, SavingThrow, Skill, Size, Spellcasting, DamageType } from "../../models/monster";
 import { ResizeSensor } from 'css-element-queries';
 
 var ResizeObserver: any = (window as any).ResizeObserver;
@@ -46,6 +46,14 @@ export class StatBlockComponent {
             }
         }
         return str.substr(0, str.length - 2);
+    }
+
+    public size(s: number) {
+        return Size[s];
+    }
+
+    public DamageType(dt: number) {
+        return DamageType[dt];
     }
 
     public getSpellLines(sc: Spellcasting) {
