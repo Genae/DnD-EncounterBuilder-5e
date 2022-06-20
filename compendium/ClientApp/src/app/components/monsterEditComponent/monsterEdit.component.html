@@ -11,7 +11,7 @@
         <div class="form-group row">
             <label for="size" class="col-md-3">2. Size</label>
             <div class="col-md-3">
-                <select class="form-control" name="size" id="size" [(ngModel)]="monster.size" required>
+                <select class="form-control" name="size" id="size" [(ngModel)]="monster.size" (ngModelChange)="sizeChanged()" required>
                     <option *ngFor="let size of sizeValues" [value]="size.value">{{size.key}}</option>
                 </select>
             </div>
@@ -98,8 +98,22 @@
                 <input type="text" [(ngModel)]="monster.armor" class="form-control" name="actext" id="actext">
             </div>
         </div>
+        <div class="form-group row">
+            <label for="hps" class="col-md-3">8. Hitpoints</label>
+            <div class="col-md-1">
+                <input type="number" [(ngModel)]="monster.hitDie.dieCount" class="form-control" name="hp_dieCount" id="hp_dieCount" (ngModelChange)="recalcHP()">
+            </div>
+            <div class="col-md-1">
+                <select class="form-control" name="hp_die" id="hp_die" [(ngModel)]="monster.hitDie.die" (ngModelChange)="recalcHP()">
+                    <option *ngFor="let d of hitDiceSize" [ngValue]="d.die">{{d.dieStr}}</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="text" [(ngModel)]="monster.hitDie.description" class="form-control" name="hp_dieDesc" id="hp_dieDesc" disabled>
+            </div>
+        </div>
 
-            <!--
+        <!--
     <div class="form-group row">
         <label for="armorclass" class="col-md-3">Armor</label>
         <div class="col-md-3">
@@ -128,6 +142,6 @@
         <label for="speed" class="col-md-3" style="color: red">Stats</label>
     </div>
         -->
-            <button type="submit" class="btn btn-success">Submit</button>
-</form>
+        <button type="submit" class="btn btn-success">Submit</button>
+    </form>
 </div>
