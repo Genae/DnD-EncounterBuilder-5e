@@ -206,6 +206,7 @@ export class MonsterEditComponent {
                 this.monster.armorclass = piece.ac + shield;
                 break;
         }
+        this.calcDefCR()
     }
     public acGroupChange() {
         this.monster.armorInfo.piece = undefined;
@@ -223,6 +224,16 @@ export class MonsterEditComponent {
         hd.offset = hd.dieCount * this.monster.abilities["Constitution"].modifier;
         hd.expectedRoll = parseInt(((hd.dieCount * (hd.die + 1)) / 2 + hd.offset) + "");
         hd.description = hd.expectedRoll + " (" + hd.dieCount + "d" + hd.die + " + " + hd.offset + ")"
+        this.calcDefCR();
+    }
+
+    public calcDefCR() {
+        let hp = this.monster.hitDie.expectedRoll;
+        let ac = this.monster.armorclass;
+        let hpLine = this.statByCr.find(l => l.hp[0] <= hp && l.hp[1] >= hp);
+        let hpCR = hpLine.cr;
+        let acCR = parseInt("" + ((ac - hpLine.ac) / 2))
+        let defCR = hpCR + acCR;
     }
 
     public hitDiceSize = [
@@ -236,10 +247,10 @@ export class MonsterEditComponent {
     ]
 
     public statByCr = [
-        { cr: -3, prof: 2, ac: 13, hp: [1, 6], atk: 3, dmg: [0, 1], save: 13 },
-        { cr: -2, prof: 2, ac: 13, hp: [7, 35], atk: 3, dmg: [2, 3], save: 13 },
-        { cr: -1, prof: 2, ac: 13, hp: [36, 49], atk: 3, dmg: [4, 5], save: 13 },
-        { cr: 0, prof: 2, ac: 13, hp: [50, 70], atk: 3, dmg: [6, 8], save: 13 },
+        { cr: 0, prof: 2, ac: 13, hp: [1, 6], atk: 3, dmg: [0, 1], save: 13 },
+        { cr: 1/8, prof: 2, ac: 13, hp: [7, 35], atk: 3, dmg: [2, 3], save: 13 },
+        { cr: 1/4, prof: 2, ac: 13, hp: [36, 49], atk: 3, dmg: [4, 5], save: 13 },
+        { cr: 1/2, prof: 2, ac: 13, hp: [50, 70], atk: 3, dmg: [6, 8], save: 13 },
         { cr: 1, prof: 2, ac: 13, hp: [71, 85], atk: 3, dmg: [9, 14], save: 13 },
         { cr: 2, prof: 2, ac: 13, hp: [86, 100], atk: 3, dmg: [15, 20], save: 13 },
         { cr: 3, prof: 2, ac: 13, hp: [101, 115], atk: 4, dmg: [21, 26], save: 13 },
