@@ -46,9 +46,9 @@ export class MonsterEditComponent {
 
     public abilityChange(ability: string) {
         this.monster.abilities[ability].modifier = parseInt((this.monster.abilities[ability].value / 2) + "") - 5
-        if (ability == "Dexterity")
+        if (ability === "Dexterity")
             this.recalcAc();
-        if (ability == "Constitution")
+        if (ability === "Constitution")
             this.recalcHP()
     }
 
@@ -69,7 +69,7 @@ export class MonsterEditComponent {
     public abilityValues = Object.keys(Ability).filter(key => !isNaN(Number(Ability[key])));
 
     public vulDesc(vul: DamageType[]): string {
-        return vul.map(v => this.dmgTypeValues.find(dt => dt.value == v).key).join(", ")
+        return vul.map(v => this.dmgTypeValues.find(dt => dt.value === v).key).join(", ")
     }
 
     public crValues: ChallengeRating[] = [
