@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace compendium.Models.CoreData.Enums
 {
     [Flags]
-    [JsonConverter(typeof(FlagConverter))]
+    //[JsonConverter(typeof(FlagConverter))]
     public enum Skill
     {
         Acrobatics = 1,

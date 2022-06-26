@@ -1,6 +1,7 @@
 ﻿using LiteDB;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,6 +19,8 @@ namespace compendium.Database
         {
             Subfolder = subfolder;
         }
+
+        public JsonDatabaseConnection() { }
 
         private Dictionary<string, List<object>> Database => _database ?? (_database = LoadDatabase());
 
@@ -71,6 +74,13 @@ namespace compendium.Database
                             }
             }));
         }
+
+        internal IEnumerable<string> GetAllProjectNames()
+        {
+            var dir = Path.Combine(Root, "ProjectFolders");
+            return Directory.EnumerateDirectories(dir).Select(d => new DirectoryInfo(d)).Where(d => !d.Name.StartsWith(".")).Select(d => d.Name);
+        }
+
         public void Remove<T>(T item) where T : KeyedDocument
         {
             if (Database.ContainsKey(typeof(T).Name))

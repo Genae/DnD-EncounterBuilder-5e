@@ -21,14 +21,15 @@ namespace compendium.Provider
         {
             _db = db;
             ImportXML(db);
+            LoadAllProjects(db);
         }
 
         private void ImportXML(IDatabaseConnection db)
         {
             var srd = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data", "SRD.xml");
-            if (File.Exists(@"D:\Dateien\OneDrive\Xerios\AllData.xml"))
+            if (File.Exists(@"D:\Eigene Dateien\OneDrive\Xerios\AllData.xml"))
             {
-                Compendium = new Importer().ImportCompendium(@"D:\Dateien\OneDrive\Xerios\AllData.xml");
+                Compendium = new Importer().ImportCompendium(@"D:\Eigene Dateien\OneDrive\Xerios\AllData.xml");
             }
             else if (File.Exists(srd))
             {
@@ -58,6 +59,21 @@ namespace compendium.Provider
                     continue;
                 var monster = monsterParser.Parse(compendiumMonster, allSpells);
                 db.Add(monster);
+            }
+        }
+
+        private void LoadAllProjects(IDatabaseConnection db)
+        {
+            var jDb = new JsonDatabaseConnection();
+            foreach (var project in jDb.GetAllProjectNames())
+            {
+                var pDb = JsonDatabaseConnection.GetProjectDb(project);
+                foreach(var p in pDb.GetQueryable<Project>().ToList())
+                    db.Add(p);
+                foreach (var m in pDb.GetQueryable<Monster>().ToList())
+                    db.Add(m);
+                foreach (var s in pDb.GetQueryable<Spell>().ToList())
+                    db.Add(s);
             }
         }
 
