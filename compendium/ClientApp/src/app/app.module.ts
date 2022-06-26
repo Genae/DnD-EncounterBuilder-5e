@@ -13,7 +13,7 @@ import { StatBlockComponent } from './components/statBlockComponent/statBlock.co
 import { SpellListComponent, FilterSpellsPipe } from './components/spellListComponent/spellList.component';
 import { SpellDetailComponent } from './components/spellDetailComponent/spellDetail.component';
 import { DataService } from './services/data.service';
-import { DataTableModule } from "angular-6-datatable";
+import { DataTablesModule } from "angular-datatables";
 import { ProjectService } from './services/project.service';
 import { ProjectListComponent } from './components/projectListComponent/projectList.component';
 import { ProjectEditComponent } from './components/projectEditComponent/projectEdit.component';
@@ -41,7 +41,7 @@ import { MonsterEditComponent } from './components/monsterEditComponent/monsterE
         BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
         HttpClientModule,
         FormsModule,
-        DataTableModule,
+        DataTablesModule,
         RouterModule.forRoot([
             { path: '', component: HomeComponent, pathMatch: 'full' },
             { path: 'projectList', component: ProjectListComponent },

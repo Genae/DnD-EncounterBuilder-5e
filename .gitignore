@@ -330,3 +330,5 @@ ASALocalRun/
 .mfractor/
 /compendium/MyData.db
 /compendium/MyData-backup.db
+
+/compendium/ClientApp/package-lock.json
