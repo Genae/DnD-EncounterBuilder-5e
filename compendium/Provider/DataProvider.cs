@@ -64,15 +64,18 @@ namespace compendium.Provider
 
         private void LoadAllProjects(IDatabaseConnection db)
         {
+            var allProjects = GetAllProjects();
+            var allMonsters = GetAllMonsters();
+            var allSpells = GetAllSpells();
             var jDb = new JsonDatabaseConnection();
             foreach (var project in jDb.GetAllProjectNames())
             {
                 var pDb = JsonDatabaseConnection.GetProjectDb(project);
-                foreach(var p in pDb.GetQueryable<Project>().ToList())
+                foreach(var p in pDb.GetQueryable<Project>().Where(p => !allProjects.Any(mp => p.Id == mp.Id)).ToList())
                     db.Add(p);
-                foreach (var m in pDb.GetQueryable<Monster>().ToList())
+                foreach (var m in pDb.GetQueryable<Monster>().Where(m => !allMonsters.Any(mm => m.Id == mm.Id)).ToList())
                     db.Add(m);
-                foreach (var s in pDb.GetQueryable<Spell>().ToList())
+                foreach (var s in pDb.GetQueryable<Spell>().Where(s => !allSpells.Any(ms => s.Id == ms.Id)).ToList())
                     db.Add(s);
             }
         }

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { Monster, PreparedSpell, Size, MonsterType, Ability, ChallengeRating, ArmorGroup, ArmorPiece } from "../../models/monster";
+import { Monster, PreparedSpell, Size, MonsterType, Ability, ChallengeRating, ArmorGroup, ArmorPiece, DamageType } from "../../models/monster";
 import { Spell } from "../../models/spell";
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { DataService } from "../../services/data.service";
@@ -58,10 +58,19 @@ export class MonsterEditComponent {
     public sizeValues = Object.values(Size).filter(key => !isNaN(Number(Size[key]))).map(
         o => { return { key: o, value: Size[o] } }
     );
+
+    public dmgTypeValues = Object.values(DamageType).filter(key => !isNaN(Number(DamageType[key]))).map(
+        o => { return { key: o, value: DamageType[o] } }
+    );
+
     public monsterTypeValues = Object.values(MonsterType).filter(key => !isNaN(Number(MonsterType[key]))).map(
         o => { return { key: o, value: MonsterType[o] } }
     );
     public abilityValues = Object.keys(Ability).filter(key => !isNaN(Number(Ability[key])));
+
+    public vulDesc(vul: DamageType[]): string {
+        return vul.map(v => this.dmgTypeValues.find(dt => dt.value == v).key).join(", ")
+    }
 
     public crValues: ChallengeRating[] = [
         { value: -3, experience: 0, description: "0 (0 XP)" },

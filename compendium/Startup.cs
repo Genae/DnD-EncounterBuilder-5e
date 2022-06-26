@@ -30,7 +30,7 @@ namespace compendium
             }).AddNewtonsoftJson();
 
             services.TryAddSingleton<DataProvider>();
-            services.TryAddSingleton<IDatabaseConnection, LiteDbConnection>();
+            services.TryAddSingleton<IDatabaseConnection, JsonDatabaseConnection>();
             services.TryAddScoped<ActionParser>();
             services.TryAddScoped<MonsterParser>();
             services.TryAddScoped<SpellcastingParser>();

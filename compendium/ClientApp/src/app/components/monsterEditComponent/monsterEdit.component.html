@@ -113,6 +113,46 @@
             </div>
         </div>
 
+
+        <div class="form-group row">
+            <label for="vulnerabilities" class="col-md-3">9. Vulnerabilities, Resistances and Immunities</label>
+        </div>
+
+        <div class="form-group row">
+            <label for="vul" class="col-md-3">Vulnerabilities</label>
+            <div class="col-md-3">
+                <select multiple class="form-control" name="vul" id="vul" [(ngModel)]="monster.vulnerable">
+                    <option [value]="-1">None</option>
+                    <option *ngFor="let dt of dmgTypeValues" [value]="dt.value">{{dt.key}}</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <input type="text" [value]="vulDesc(monster.vulnerable)" class="form-control" name="vulDesc" id="vulDesc" disabled>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="res" class="col-md-3">Resistances</label>
+            <div class="col-md-3">
+                <select multiple class="form-control" name="res" id="res" [(ngModel)]="monster.resist">
+                    <option *ngFor="let dt of dmgTypeValues" [value]="dt.value">{{dt.key}}</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <input type="text" [value]="vulDesc(monster.resist)" class="form-control" name="resDesc" id="resDesc" disabled>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="im" class="col-md-3">Immunities</label>
+            <div class="col-md-3">
+                <select multiple class="form-control" name="im" id="im" [(ngModel)]="monster.immune">
+                    <option *ngFor="let dt of dmgTypeValues" [value]="dt.value">{{dt.key}}</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <input type="text" [value]="vulDesc(monster.immune)" class="form-control" name="imDesc" id="imDesc" disabled>
+            </div>
+        </div>
+
         <!--
     <div class="form-group row">
         <label for="armorclass" class="col-md-3">Armor</label>
