@@ -25,6 +25,7 @@ export class Monster {
     actions: Action[];
     reactions: Reaction[];
     legendaryActions: LegendaryAction[];
+    markup: string;
 }
 
 export enum ArmorGroup {

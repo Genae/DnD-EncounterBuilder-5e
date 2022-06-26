@@ -1,20 +1,23 @@
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 
 import { DataService } from "../../services/data.service";
 import { Monster, PreparedSpell } from "../../models/monster";
 import { Spell } from "../../models/spell";
 import { Router } from '@angular/router';
 import { Pipe, PipeTransform } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'monsterList',
     templateUrl: 'monsterList.component.html'
 })
 
-export class MonsterListComponent implements AfterViewInit {
+export class MonsterListComponent implements AfterViewInit, OnDestroy {
 
     monsters: Monster[] = [];
     search: any;
+    dtTrigger: Subject<any> = new Subject<any>();
+
     @Input() ids: string[];
 
     constructor(private dataService: DataService, private router: Router) {
@@ -31,14 +34,23 @@ export class MonsterListComponent implements AfterViewInit {
 
     private loadMonsters() {
         if (this.ids) {
-            this.dataService.getMonstersFromIds(this.ids).subscribe(response => this.monsters = response);
+            this.dataService.getMonstersFromIds(this.ids).subscribe(response => {
+                this.monsters = response;
+                this.dtTrigger.next();
+            });
         }
         else {
             this.dataService.getMonsters().subscribe(response => {
                 if (this.ids === undefined)
                     this.monsters = response
+                this.dtTrigger.next();
             });
         }
+    }
+
+    ngOnDestroy(): void {
+        // Do not forget to unsubscribe the event
+        this.dtTrigger.unsubscribe();
     }
 
     public redirect(id: string) {

@@ -1,26 +1,34 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 
 import { DataService } from "../../services/data.service";
 import { Monster, PreparedSpell } from "../../models/monster";
 import { Spell } from "../../models/spell";
 import { Router } from '@angular/router';
 import { Pipe, PipeTransform } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'spellList',
     templateUrl: 'spellList.component.html'
 })
 
-export class SpellListComponent {
+export class SpellListComponent implements OnDestroy {
 
     spells: Spell[] = [];
     search: any;
     @Input() ids: string[]
+    dtTrigger: Subject<any> = new Subject<any>();
 
     constructor(private dataService: DataService, private router: Router) {
         this.loadSpells();
         this.search = {};
     }
+
+    ngOnDestroy(): void {
+        // Do not forget to unsubscribe the event
+        this.dtTrigger.unsubscribe();
+    }
+
 
     public redirect(id: string) {
         this.router.navigateByUrl('/spellDetails/' + id);
@@ -34,12 +42,16 @@ export class SpellListComponent {
 
     private loadSpells() {
         if (this.ids) {
-            this.dataService.getSpellsFromIds(this.ids).subscribe(response => this.spells = response);
+            this.dataService.getSpellsFromIds(this.ids).subscribe(response => {
+                this.spells = response;
+                this.dtTrigger.next();
+            });
         }
         else {
             this.dataService.getSpells().subscribe(response => {
                 if (this.ids === undefined)
                     this.spells = response
+                this.dtTrigger.next();
             });
         }
     }
