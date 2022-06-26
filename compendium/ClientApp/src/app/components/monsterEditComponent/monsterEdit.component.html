@@ -122,7 +122,6 @@
             <label for="vul" class="col-md-3">Vulnerabilities</label>
             <div class="col-md-3">
                 <select multiple class="form-control" name="vul" id="vul" [(ngModel)]="monster.vulnerable">
-                    <option [value]="-1">None</option>
                     <option *ngFor="let dt of dmgTypeValues" [value]="dt.value">{{dt.key}}</option>
                 </select>
             </div>
