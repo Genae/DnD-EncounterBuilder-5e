@@ -20,7 +20,7 @@ namespace encounter_builder.Provider
             _db = db;
             //Compendium = new Importer().ImportCompendium(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data", "SRD.xml"));
             Compendium = new Importer().ImportCompendium(@"D:\Dateien\OneDrive\Xerios\AllData.xml");
-            var monsterParser = new MonsterParser(new SpellcastingParser(), new ActionParser());
+            var monsterParser = new MonsterParser(new SpellcastingParser(), new ActionParser(), new DynamicEnumProvider(db));
             var spellParser = new SpellParser();
             var allMonsters = GetAllMonsters();
             var allSpells = GetAllSpells();

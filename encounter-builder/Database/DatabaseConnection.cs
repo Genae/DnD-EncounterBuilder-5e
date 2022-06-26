@@ -21,23 +21,12 @@ namespace encounter_builder.Database
 
         private LiteDatabase OpenDatabase()
         {
-
-            BsonMapper.Global.RegisterType<Dictionary<Ability, int>>
-            (
-                serialize: (dic) => new BsonDocument(dic.ToDictionary(kv => kv.Key.ToString(), kv => new BsonValue(kv.Value))),
-                deserialize: (bson) => ((BsonDocument)bson).RawValue.ToDictionary(kv => Enum.Parse<Ability>(kv.Key), kv => kv.Value.AsInt32)
-            );
-            BsonMapper.Global.RegisterType<Dictionary<Ability, AbilityScore>>
-            (
-                serialize: (dic) => new BsonDocument(dic.ToDictionary(kv => kv.Key.ToString(), kv => BsonMapper.Global.ToDocument(kv.Value) as BsonValue)),
-                deserialize: (bson) => ((BsonDocument)bson).RawValue.ToDictionary(kv => Enum.Parse<Ability>(kv.Key), kv => BsonMapper.Global.ToObject<AbilityScore>(kv.Value as BsonDocument))
-            );
-            BsonMapper.Global.RegisterType<Dictionary<Skill, int>>
+            BsonMapper.Global.RegisterType
             (
                 serialize: (dic) => new BsonDocument(dic.ToDictionary(kv => kv.Key.ToString(), kv => new BsonValue(kv.Value))),
                 deserialize: (bson) => ((BsonDocument)bson).RawValue.ToDictionary(kv => Enum.Parse<Skill>(kv.Key), kv => kv.Value.AsInt32)
             );
-            BsonMapper.Global.RegisterType<Dictionary<MovementType, int>>
+            BsonMapper.Global.RegisterType
             (
                 serialize: (dic) => new BsonDocument(dic.ToDictionary(kv => kv.Key.ToString(), kv => new BsonValue(kv.Value))),
                 deserialize: (bson) => ((BsonDocument)bson).RawValue.ToDictionary(kv => Enum.Parse<MovementType>(kv.Key), kv => kv.Value.AsInt32)

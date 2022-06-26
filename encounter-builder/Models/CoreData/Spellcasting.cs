@@ -1,5 +1,4 @@
-﻿using encounter_builder.Models.CoreData.Enums;
-
+﻿
 namespace encounter_builder.Models.CoreData
 {
     public class Spellcasting
@@ -7,7 +6,7 @@ namespace encounter_builder.Models.CoreData
         public string Name { get; set; }
         public string Text { get; set; }
         public int SpellcastingLevel { get; set; }
-        public Ability SpellcastingAbility { get; set; }
+        public string SpellcastingAbility { get; set; }
         public int[] Spellslots { get; set; }
         public int SpellDC { get; set; }
         public int SpellcastingModifier { get; set; }

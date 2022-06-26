@@ -1,5 +1,5 @@
 ﻿using System.Xml.Serialization;
-using encounter_builder.Models.CoreData.Enums;
+using encounter_builder.Provider;
 
 namespace encounter_builder.Models.ImportData
 {
@@ -9,6 +9,10 @@ namespace encounter_builder.Models.ImportData
         public int AbilityId;
         [XmlElement("modifier")]
         public int Modifier;
-        public Ability Ability => (Ability)AbilityId;
+
+        public string GetAbility(DynamicEnumProvider dep)
+        {
+            return dep.GetEnumValues("Ability").GetFromInt(AbilityId);
+        }
     }
 }
