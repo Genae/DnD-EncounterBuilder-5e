@@ -1,17 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Compendium.Models.CoreData;
 using Compendium.Models.CoreData.Enums;
 using Compendium.Models.ImportData;
+using Compendium.Provider;
 using Action = Compendium.Models.CoreData.Action;
 
 namespace Compendium.Parser
 {
     public class ActionParser
     {
-        public Action ParseAction(ActionRaw raw, List<string> errors)
+        public Action ParseAction(ActionRaw raw, List<string> errors, DynamicEnumProvider dep)
         {
             var action = new Action
             {
@@ -26,11 +24,11 @@ namespace Compendium.Parser
                 GetTargetFromText(action, errors, reachEnd);
             }
             var pos = 0;
-            FindHitEffects(action, errors, ref pos);
+            FindHitEffects(action, errors, ref pos, dep);
             return action;
         }
 
-        private void FindHitEffects(Action action, List<string> errors, ref int pos)
+        private void FindHitEffects(Action action, List<string> errors, ref int pos, DynamicEnumProvider dep)
         {
             var HitDieRegex = new Regex(@"([0-9]*) \(([0-9]*)d([0-9]*)( [\+|\-] [0-9]*)*\) ([a-z]*) damage");
             var hitDies = HitDieRegex.Matches(action.Text);
@@ -43,7 +41,7 @@ namespace Compendium.Parser
             var effects = new Dictionary<int, HitEffect>();
             foreach (var hitDie in positions)
             {
-                var hitEffect = FindEffectForPosition(hitDie.Key, effects, dcPositions);
+                var hitEffect = FindEffectForPosition(hitDie.Key, dep, effects, dcPositions);
                 var damageDie = new DieRoll(Convert.ToInt32(hitDie.Value.Groups[3].Value), Convert.ToInt32(hitDie.Value.Groups[2].Value), hitDie.Value.Groups[4].Value.Length > 0 ? Convert.ToInt32(hitDie.Value.Groups[4].Value.Replace(" ", "")) : 0);
                 var damageType = Enum.Parse<DamageType>(hitDie.Value.Groups[5].Value, true);
                 if (hitEffect.DamageDie != null)
@@ -63,14 +61,14 @@ namespace Compendium.Parser
             }
             foreach (var cond in conditions.ToArray())
             {
-                var hitEffect = FindEffectForPosition(cond.Index, effects, dcPositions);
+                var hitEffect = FindEffectForPosition(cond.Index, dep, effects, dcPositions);
                 hitEffect.Condition.Add(Enum.Parse<Condition>(cond.Value, true));
             }
 
             action.HitEffects.AddRange(effects.Values);
         }
 
-        private HitEffect FindEffectForPosition(int position, Dictionary<int, HitEffect> effects, Dictionary<int, Match> dcPositions)
+        private HitEffect FindEffectForPosition(int position, DynamicEnumProvider dep, Dictionary<int, HitEffect> effects, Dictionary<int, Match> dcPositions)
         {
             HitEffect effect;
             var dc = dcPositions.LastOrDefault(d => d.Key < position || d.Key - 20 < position && d.Value.Value.Contains("escape"));
@@ -96,7 +94,7 @@ namespace Compendium.Parser
                         var reg = new Regex(@"\([A-Za-z]*\)");
                         foreach (var s in reg.Matches(dc.Value.Value).Select(s => Enum.Parse<Skill>(s.Value.Trim('(', ')'), true)))
                         {
-                            ((SkillCheck)effects[dc.Key].DC).Skill |= s;
+                            ((SkillCheck) effects[dc.Key].DC).Skill |= s;
                         }
                     }
                     else if (dc.Value.Value.Contains("saving throw"))
@@ -105,7 +103,7 @@ namespace Compendium.Parser
                         effects[dc.Key].DC = new SavingThrow()
                         {
                             Value = Convert.ToInt32(dc.Value.Groups[2].Value),
-                            Ability = Enum.Parse<Ability>(str, true)
+                            Ability = dep.GetEnumValues("Ability").Parse(str)
                         };
                     }
                 }
@@ -190,7 +188,7 @@ namespace Compendium.Parser
                 {
                     var range = action.Text.Substring(start, end - start).Trim().Split('/');
                     action.Attack.ShortRange = Convert.ToInt32(range[0]);
-                    if (range.Length > 1)
+                    if(range.Length > 1)
                         action.Attack.LongRange = Convert.ToInt32(range[1]);
                     reachEnd = end + 3;
                 }

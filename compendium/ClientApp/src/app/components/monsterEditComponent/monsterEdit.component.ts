@@ -26,7 +26,10 @@ export class MonsterEditComponent {
     tags: { [id: string]: string; }
 
     public getTags() {
-        return this.tags[this.monsterTypeValues.find(mtv => this.monster.race.monsterType == mtv.value).key];
+        let mtv = this.monsterTypeValues.find(mtv => this.monster.race.monsterType == mtv.value)
+        if(mtv !== undefined)
+            return this.tags[mtv.key];
+        return "";
     }
 
     public monsterUpdated(monster: Monster) {
@@ -34,10 +37,13 @@ export class MonsterEditComponent {
         this.monster = monster;
 
         //fix dropdown values
-        this.monster.challengeRating = this.crValues.find(v => v.description === this.monster.challengeRating.description);
+        let fixCr = this.crValues.find(v => v.description === this.monster.challengeRating.description);
+        if (fixCr !== undefined) {
+            this.monster.challengeRating = fixCr;
+        }
 
         if (monster.spellcasting !== undefined && monster.spellcasting.spells.length > 0) {
-            var flattened = [].concat.apply([], monster.spellcasting.spells).filter((a: PreparedSpell) => a !== null);
+            var flattened = monster.spellcasting.spells.flat().filter((a: PreparedSpell) => a !== null);
             this.dataService.getSpellsFromIds(flattened.map((s: PreparedSpell) => s.spellId)).subscribe((data) => {
                 this.monsterSpells = data;
             });
@@ -55,21 +61,26 @@ export class MonsterEditComponent {
     public setCr() {
     }
 
-    public sizeValues = Object.values(Size).filter(key => !isNaN(Number(Size[key]))).map(
-        o => { return { key: o, value: Size[o] } }
+    public sizeValues = Object.values(Size).filter(key => !isNaN(Number(Size[key as any as number]))).map(
+        o => { return { key: o, value: Size[o as any as number] } }
     );
 
-    public dmgTypeValues = Object.values(DamageType).filter(key => !isNaN(Number(DamageType[key]))).map(
-        o => { return { key: o, value: DamageType[o] } }
+    public dmgTypeValues = Object.values(DamageType).filter(key => !isNaN(Number(DamageType[key as any as number]))).map(
+        o => { return { key: o, value: DamageType[o as any as number] } }
     );
 
-    public monsterTypeValues = Object.values(MonsterType).filter(key => !isNaN(Number(MonsterType[key]))).map(
-        o => { return { key: o, value: MonsterType[o] } }
+    public monsterTypeValues = Object.values(MonsterType).filter(key => !isNaN(Number(MonsterType[key as any as number]))).map(
+        o => { return { key: o, value: MonsterType[o as any as number] } }
     );
-    public abilityValues = Object.keys(Ability).filter(key => !isNaN(Number(Ability[key])));
+    public abilityValues = Object.keys(Ability).filter(key => !isNaN(Number(Ability[key as any as number])));
 
-    public vulDesc(vul: DamageType[]): string {
-        return vul.map(v => this.dmgTypeValues.find(dt => dt.value === v).key).join(", ")
+    public vulDesc(vul: DamageType[] | string[]): string {
+        return vul.map(v => {
+            let f = this.dmgTypeValues.find(dt => dt.value === ("" + v))
+            if (f !== undefined)
+                return f.key
+            return ""
+        }).join(", ")
     }
 
     public crValues: ChallengeRating[] = [
@@ -199,19 +210,23 @@ export class MonsterEditComponent {
         switch (this.monster.armorInfo.group) {
             case ArmorGroup.NaturalArmor:
                 let piece = this.agNat.find(n => this.monster.armorInfo.piece == n.value)
+                if (piece === undefined) return;
                 this.monster.armor = "natural armor";
                 this.monster.armorclass = 10 + this.monster.abilities["Dexterity"].modifier + piece.ac + shield;
                 break;
             case ArmorGroup.LightArmor:
                 piece = this.agLight.find(n => this.monster.armorInfo.piece == n.value)
+                if (piece === undefined) return;
                 this.monster.armorclass = this.monster.abilities["Dexterity"].modifier + piece.ac + shield;
                 break;
             case ArmorGroup.MediumArmor:
                 piece = this.agMedium.find(n => this.monster.armorInfo.piece == n.value)
+                if (piece === undefined) return;
                 this.monster.armorclass = Math.min(2, this.monster.abilities["Dexterity"].modifier) + piece.ac + shield;
                 break;
             case ArmorGroup.HeavyArmor:
                 piece = this.agHeavy.find(n => this.monster.armorInfo.piece == n.value)
+                if (piece === undefined) return;
                 this.monster.armorclass = piece.ac + shield;
                 break;
         }
@@ -224,7 +239,10 @@ export class MonsterEditComponent {
     }
 
     public sizeChanged() {
-        this.monster.hitDie.die = this.hitDiceSize.find(hd => hd.size == this.monster.size).die;
+        var hd = this.hitDiceSize.find(hd => hd.size == this.monster.size);
+        if (hd === undefined)
+            return;
+        this.monster.hitDie.die = hd.die;
         this.recalcHP();
     }
 
@@ -240,6 +258,7 @@ export class MonsterEditComponent {
         let hp = this.monster.hitDie.expectedRoll;
         let ac = this.monster.armorclass;
         let hpLine = this.statByCr.find(l => l.hp[0] <= hp && l.hp[1] >= hp);
+        if (hpLine === undefined) return;
         let hpCR = hpLine.cr;
         let acCR = parseInt("" + ((ac - hpLine.ac) / 2))
         let defCR = hpCR + acCR;

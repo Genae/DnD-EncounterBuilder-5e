@@ -33,7 +33,7 @@ export class MonsterDetailComponent {
         this.monsterSpells = [];
         this.monster = monster;
         if (monster.spellcasting !== undefined && monster.spellcasting.spells.length > 0) {
-            var flattened = [].concat.apply([], monster.spellcasting.spells).filter((a: PreparedSpell) => a !== null);
+            var flattened = monster.spellcasting.spells.flat().filter((a: PreparedSpell) => a !== null);
             this.dataService.getSpellsFromIds(flattened.map((s: PreparedSpell) => s.spellId)).subscribe((data) => {
                 this.monsterSpells = data;
             });

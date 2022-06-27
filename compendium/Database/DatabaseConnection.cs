@@ -23,17 +23,6 @@ namespace Compendium.Database
 
         private LiteDatabase OpenDatabase()
         {
-
-            BsonMapper.Global.RegisterType
-            (
-                serialize: (dic) => new BsonDocument(dic.ToDictionary(kv => kv.Key.ToString(), kv => new BsonValue(kv.Value))),
-                deserialize: (bson) => ((BsonDocument)bson).RawValue.ToDictionary(kv => Enum.Parse<Ability>(kv.Key), kv => kv.Value.AsInt32)
-            );
-            BsonMapper.Global.RegisterType
-            (
-                serialize: (dic) => new BsonDocument(dic.ToDictionary(kv => kv.Key.ToString(), kv => BsonMapper.Global.ToDocument(kv.Value) as BsonValue)),
-                deserialize: (bson) => ((BsonDocument)bson).RawValue.ToDictionary(kv => Enum.Parse<Ability>(kv.Key), kv => BsonMapper.Global.ToObject<AbilityScore>(kv.Value as BsonDocument))
-            );
             BsonMapper.Global.RegisterType
             (
                 serialize: (dic) => new BsonDocument(dic.ToDictionary(kv => kv.Key.ToString(), kv => new BsonValue(kv.Value))),

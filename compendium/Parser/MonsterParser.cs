@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Compendium.Models.CoreData;
 using Compendium.Models.CoreData.Enums;
 using Compendium.Models.ImportData;
+using Compendium.Provider;
 using Action = Compendium.Models.CoreData.Action;
 
 namespace Compendium.Parser
@@ -13,11 +11,13 @@ namespace Compendium.Parser
     {
         private readonly SpellcastingParser _spellParser;
         private readonly ActionParser _actionParser;
+        private readonly DynamicEnumProvider _dep;
 
-        public MonsterParser(SpellcastingParser spellParser, ActionParser actionParser)
+        public MonsterParser(SpellcastingParser spellParser, ActionParser actionParser, DynamicEnumProvider dep)
         {
             _spellParser = spellParser;
             _actionParser = actionParser;
+            _dep = dep;
         }
 
         public Monster Parse(MonsterRaw raw, List<Spell> spells)
@@ -27,7 +27,7 @@ namespace Compendium.Parser
             {
                 Name = raw.Name,
                 Abilities = ParseAbilities(raw, ref errors),
-                Actions = ParseActions(raw.Actions, errors),
+                Actions = ParseActions(raw.Actions, errors, _dep),
                 Alignment = ParseAlignment(raw, errors),
                 Armor = raw.Armor,
                 Armorclass = raw.Armorclass,
@@ -35,21 +35,21 @@ namespace Compendium.Parser
                 ConditionImmune = ParseConditions(raw.ConditionImmune, errors),
                 Immune = ParseDamageTypes(raw.Immune),
                 Languages = raw.Languages,
-                LegendaryActions = ParseActions(raw.LegendaryActions, errors).Select(a => new LegendaryAction { Action = a }).ToList(),
+                LegendaryActions = ParseActions(raw.LegendaryActions, errors, _dep).Select(a => new LegendaryAction {Action = a}).ToList(),
                 MaximumHitpoints = raw.MaximumHitpoints,
-                Reactions = ParseActions(raw.Reactions, errors).Select(a => new Reaction { Action = a }).ToList(),
+                Reactions = ParseActions(raw.Reactions, errors, _dep).Select(a => new Reaction { Action = a }).ToList(),
                 Resist = ParseDamageTypes(raw.Resist),
-                SavingThrows = raw.SavingThrows.ToDictionary(s => s.Ability, s => s.Modifier),
+                SavingThrows = raw.SavingThrows.ToDictionary(s => s.GetAbility(_dep), s => s.Modifier),
                 Senses = ParseSenses(raw.Senses, errors),
                 Size = (Size)(raw.SizeId ?? 2),
                 Skillmodifiers = raw.Skills.ToDictionary(s => s.Skill, s => s.Modifier),
                 Speed = ParseSpeed(raw.Speed, errors),
-                Spellcasting = CheckForSpellcasting(spells, raw, ref errors),
-                Traits = raw.Traits.Select(t => new Trait() { Name = t.Name, Text = t.Text }).ToList(),
+                Spellcasting = CheckForSpellcasting(spells, raw, ref errors, _dep),
+                Traits = raw.Traits.Select(t => new Trait(){Name = t.Name, Text = t.Text}).ToList(),
                 Race = ParseMonsterType(raw.Type),
                 Vulnerable = ParseDamageTypes(raw.Vulnerable)
             };
-            monster.HitDie = GetHealthDies(monster.MaximumHitpoints, monster.Abilities[Ability.Constitution], raw.SizeId);
+            monster.HitDie = GetHealthDies(monster.MaximumHitpoints, monster.Abilities["Constitution"], raw.SizeId);
             return monster;
         }
 
@@ -68,9 +68,9 @@ namespace Compendium.Parser
 
         private Speed ParseSpeed(string rawSpeed, List<string> errors)
         {
-            var speed = new Speed { AdditionalInformation = rawSpeed };
+            var speed = new Speed {AdditionalInformation = rawSpeed};
             var regex = new Regex("^([0-9]+)");
-            if (regex.IsMatch(rawSpeed))
+            if(regex.IsMatch(rawSpeed))
                 speed.Speeds[MovementType.Normal] = Convert.ToInt32(regex.Match(rawSpeed.ToLower()).Groups[1].Value);
 
             regex = new Regex("(burrow )([0-9]*)");
@@ -101,7 +101,7 @@ namespace Compendium.Parser
                 Description = rawSenses
             };
             var regex = new Regex("(passive perception )([0-9]*)");
-            if (regex.IsMatch(rawSenses.ToLower()))
+            if(regex.IsMatch(rawSenses.ToLower()))
                 senses.PassivePerception = Convert.ToInt32(regex.Match(rawSenses.ToLower()).Groups[2].Value);
 
             regex = new Regex("(blindsight )([0-9]*)");
@@ -133,13 +133,13 @@ namespace Compendium.Parser
             var damageTypes = new List<DamageType>();
             if (rawImmune.ToLower().Contains("from nonmagical attacks"))
             {
-                damageTypes.AddRange(new[] { DamageType.Piercing, DamageType.Slashing, DamageType.Bludgeoning }.Where(dt => rawImmune.ToLower().Contains(dt.ToString().ToLower())));
+                damageTypes.AddRange(new []{DamageType.Piercing, DamageType.Slashing, DamageType.Bludgeoning}.Where(dt => rawImmune.ToLower().Contains(dt.ToString().ToLower())));
             }
             else
             {
                 damageTypes.AddRange(new[] { DamageType.PiercingMagic, DamageType.SlashingMagic, DamageType.BludgeoningMagic }.Where(dt => rawImmune.ToLower().Contains(dt.ToString().Replace("Magic", "").ToLower())));
             }
-            damageTypes.AddRange(new[]
+            damageTypes.AddRange(new []
             {
                 DamageType.Acid,
                 DamageType.Cold,
@@ -174,7 +174,7 @@ namespace Compendium.Parser
             {
                 foreach (Order order in Enum.GetValues(typeof(Order)))
                 {
-                    if (raw.Alignment.ToLower().Contains($"{order} {morality}".ToLower()))
+                    if(raw.Alignment.ToLower().Contains($"{order} {morality}".ToLower()))
                         return new AlignmentDistribution(new Alignment(morality, order), raw.Alignment);
                 }
                 if (raw.Alignment.ToLower().Contains("any " + morality.ToString().ToLower() + "alignment"))
@@ -205,12 +205,12 @@ namespace Compendium.Parser
             return null;
         }
 
-        private List<Action> ParseActions(List<ActionRaw> raw, List<string> errors)
+        private List<Action> ParseActions(List<ActionRaw> raw, List<string> errors, DynamicEnumProvider dep)
         {
-            return raw.Select(r => _actionParser.ParseAction(r, errors)).ToList();
+            return raw.Select(r => _actionParser.ParseAction(r, errors, dep)).ToList();
         }
-
-        private Dictionary<Ability, AbilityScore> ParseAbilities(MonsterRaw raw, ref List<string> errors)
+        
+        private Dictionary<string, AbilityScore> ParseAbilities(MonsterRaw raw, ref List<string> errors)
         {
             return AbilityScore.GetFromString(raw.AbilityString, ref errors);
         }
@@ -223,14 +223,15 @@ namespace Compendium.Parser
             return new DieRoll(dieSize, level, level * abilityScore.Modifier);
         }
 
-        public Spellcasting CheckForSpellcasting(List<Spell> spells, MonsterRaw raw, ref List<string> errors)
+        public Spellcasting CheckForSpellcasting(List<Spell> spells, MonsterRaw raw, ref List<string> errors,
+            DynamicEnumProvider dep)
         {
             for (var i = 0; i < raw.Traits.Count; i++)
             {
                 var trait = raw.Traits[i];
                 if (trait.Name.Equals("Spellcasting"))
                 {
-                    var spellcasting = _spellParser.ParseSpellcasting(trait.Text, spells, ref errors);
+                    var spellcasting = _spellParser.ParseSpellcasting(trait.Text, spells, ref errors, dep);
                     raw.Traits.RemoveAt(i);
                     return spellcasting;
                 }

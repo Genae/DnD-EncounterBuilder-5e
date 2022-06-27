@@ -4,7 +4,7 @@ namespace compendiumOld.Models.CoreData
 {
     public class SavingThrow : ICheck
     {
-        public Ability Ability { get; set; }
+        public string Ability { get; set; }
         public int Value { get; set; }
 
         public override bool Equals(object obj)

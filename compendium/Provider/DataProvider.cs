@@ -5,10 +5,6 @@ using Compendium.Models.ImportData;
 using Compendium.Models.ProjectData;
 using Compendium.Parser;
 using LiteDB;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 
 namespace Compendium.Provider
@@ -41,7 +37,7 @@ namespace Compendium.Provider
                 return;
             }
 
-            var monsterParser = new MonsterParser(new SpellcastingParser(), new ActionParser());
+            var monsterParser = new MonsterParser(new SpellcastingParser(), new ActionParser(), new DynamicEnumProvider(db));
             var spellParser = new SpellParser();
             var allMonsters = GetAllMonsters();
             var allSpells = GetAllSpells();

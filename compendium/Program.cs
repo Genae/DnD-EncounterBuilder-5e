@@ -10,6 +10,7 @@ builder.Services.AddControllersWithViews();
 
 var services = builder.Services;
 
+services.AddSingleton<DynamicEnumProvider>();
 services.AddSingleton<DataProvider>();
 services.AddSingleton<IDatabaseConnection, JsonDatabaseConnection>();
 services.AddScoped<ActionParser>();

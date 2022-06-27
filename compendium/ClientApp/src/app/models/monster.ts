@@ -61,7 +61,7 @@ export enum ArmorPiece {
 
 export class ArmorInfo {
     group: ArmorGroup; 
-    piece: ArmorPiece;
+    piece: ArmorPiece | undefined;
     hasShield: boolean;
 }
 
@@ -233,7 +233,7 @@ export enum Ability {
 
 export class PreparedSpell {
     name: string;
-    spellId: number;
+    spellId: string;
     marked: boolean;
 }
 

@@ -11,10 +11,12 @@ namespace Compendium.Controllers
     public class DefaultController : Controller
     {
         private readonly DataProvider _dataProvider;
+        private readonly DynamicEnumProvider dep;
 
-        public DefaultController(DataProvider dataProvider)
+        public DefaultController(DataProvider dataProvider, DynamicEnumProvider dep)
         {
             _dataProvider = dataProvider;
+            this.dep = dep;
         }
 
         [HttpGet]
@@ -50,7 +52,7 @@ namespace Compendium.Controllers
         public Monster GetMonsterById(string id)
         {
             if (id == "0")
-                return new Monster();
+                return new Monster(dep);
             return _dataProvider.GetAllMonsters().FirstOrDefault(m => m.Id.ToString().Equals(id));
         }
 

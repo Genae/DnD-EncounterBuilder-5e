@@ -16,8 +16,6 @@ export class MonsterListComponent implements AfterViewInit, OnDestroy {
 
     monsters: Monster[] = [];
     search: any;
-    dtTrigger: Subject<any> = new Subject<any>();
-    dtOptions: DataTables.Settings = {};
 
     @Input() ids: string[];
 
@@ -37,21 +35,18 @@ export class MonsterListComponent implements AfterViewInit, OnDestroy {
         if (this.ids) {
             this.dataService.getMonstersFromIds(this.ids).subscribe(response => {
                 this.monsters = response;
-                this.dtTrigger.next();
             });
         }
         else {
             this.dataService.getMonsters().subscribe(response => {
                 if (this.ids === undefined)
                     this.monsters = response
-                this.dtTrigger.next();
             });
         }
     }
 
     ngOnDestroy(): void {
         // Do not forget to unsubscribe the event
-        this.dtTrigger.unsubscribe();
     }
 
     public redirect(id: string) {

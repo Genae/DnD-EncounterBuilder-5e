@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using Compendium.Models.CoreData.Enums;
+using Compendium.Provider;
 
 namespace Compendium.Models.ImportData
 {
@@ -9,6 +10,9 @@ namespace Compendium.Models.ImportData
         public int AbilityId;
         [XmlElement("modifier")]
         public int Modifier;
-        public Ability Ability => (Ability)AbilityId;
+        public string GetAbility(DynamicEnumProvider dep)
+        {
+            return dep.GetEnumValues("Ability").GetFromInt(AbilityId);
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace Compendium.Controllers
             PointsAvg = points.Average();
         }
 
-        private int GetPoints(Dictionary<Ability, AbilityScore> values)
+        private int GetPoints(Dictionary<string, AbilityScore> values)
         {
             var sum = 0;
             foreach (var v in values.Values.Where(v => v.Value < 30))

@@ -1,6 +1,7 @@
 ﻿
 using Compendium.Database;
 using Compendium.Models.CoreData.Enums;
+using Compendium.Provider;
 using Compendium.Renderer;
 
 namespace Compendium.Models.CoreData
@@ -22,11 +23,11 @@ namespace Compendium.Models.CoreData
         public Condition[] ConditionImmune { get; set; }
         public Senses Senses { get; set; }
         public string Languages { get; set; }
-        public Dictionary<Ability, AbilityScore> Abilities { get; set; }
+        public Dictionary<string, AbilityScore> Abilities { get; set; }
         public DieRoll HitDie { get; set; }
         public ChallengeRating ChallengeRating { get; set; }
         public Spellcasting Spellcasting { get; set; }
-        public Dictionary<Ability, int> SavingThrows { get; set; }
+        public Dictionary<string, int> SavingThrows { get; set; }
         public Dictionary<Skill, int> Skillmodifiers { get; set; }
         public List<Trait> Traits { get; set; }
         public List<Action> Actions { get; set; }
@@ -35,10 +36,12 @@ namespace Compendium.Models.CoreData
 
         public string Markup => new MonsterRenderer().RenderMonster(this);
 
-        public Monster()
+        public Monster() { }
+
+        public Monster(DynamicEnumProvider dep)
         {
-            Abilities = new Dictionary<Ability, AbilityScore>();
-            foreach (var ability in Enum.GetValues(typeof(Ability)).Cast<Ability>())
+            Abilities = new Dictionary<string, AbilityScore>();
+            foreach (var ability in dep.GetEnumValues("Ability").Data)
                 Abilities.Add(ability, new AbilityScore() { Value = 10 });
             Race = new();
             Senses = new();

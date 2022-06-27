@@ -17,8 +17,6 @@ export class SpellListComponent implements OnDestroy {
     spells: Spell[] = [];
     search: any;
     @Input() ids: string[]
-    dtTrigger: Subject<any> = new Subject<any>();
-    dtOptions: DataTables.Settings = {};
 
     constructor(private dataService: DataService, private router: Router) {
         this.loadSpells();
@@ -27,7 +25,6 @@ export class SpellListComponent implements OnDestroy {
 
     ngOnDestroy(): void {
         // Do not forget to unsubscribe the event
-        this.dtTrigger.unsubscribe();
     }
 
 
@@ -45,14 +42,12 @@ export class SpellListComponent implements OnDestroy {
         if (this.ids) {
             this.dataService.getSpellsFromIds(this.ids).subscribe(response => {
                 this.spells = response;
-                this.dtTrigger.next();
             });
         }
         else {
             this.dataService.getSpells().subscribe(response => {
                 if (this.ids === undefined)
-                    this.spells = response
-                this.dtTrigger.next();
+                    this.spells = response;
             });
         }
     }

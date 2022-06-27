@@ -1,8 +1,5 @@
 ﻿using Compendium.Models.CoreData;
 using Compendium.Models.CoreData.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Compendium.Renderer
@@ -23,8 +20,8 @@ namespace Compendium.Renderer
             stringBuilder.AppendLine($">___");
             stringBuilder.AppendLine($">|STR|DEX|CON|INT|WIS|CHA|");
             stringBuilder.AppendLine($">|:---:|:---:|:---:|:---:|:---:|:---:|");
-            stringBuilder.AppendLine($">|{monster.Abilities[Ability.Strength]}|{monster.Abilities[Ability.Dexterity]}|{monster.Abilities[Ability.Constitution]}|" +
-                                       $"{monster.Abilities[Ability.Intelligence]}|{monster.Abilities[Ability.Wisdom]}|{monster.Abilities[Ability.Charisma]}|");
+            stringBuilder.AppendLine($">|{monster.Abilities["Strength"]}|{monster.Abilities["Dexterity"]}|{monster.Abilities["Constitution"]}|" +
+                                       $"{monster.Abilities["Intelligence"]}|{monster.Abilities["Wisdom"]}|{monster.Abilities["Charisma"]}|");
             stringBuilder.AppendLine($">___");
             if (monster.SavingThrows?.Any() ?? false)
                 stringBuilder.AppendLine($"> - **Saving Throws** {RenderSavingThrows(monster.SavingThrows)}");
@@ -135,21 +132,21 @@ namespace Compendium.Renderer
             return string.Join(", ", skillmodifiers.Select(s => $"{s.Key} {(s.Value > 0 ? "+" : "")}{s.Value}"));
         }
 
-        private string RenderSavingThrows(Dictionary<Ability, int> savingThrows)
+        private string RenderSavingThrows(Dictionary<string, int> savingThrows)
         {
             return string.Join(", ", savingThrows.Select(s => $"{ShortAbility(s.Key)} {(s.Value > 0 ? "+" : "")}{s.Value}"));
         }
 
-        private string ShortAbility(Ability key)
+        private string ShortAbility(string key)
         {
             switch (key)
             {
-                case Ability.Intelligence: return "Int";
-                case Ability.Wisdom: return "Wis";
-                case Ability.Strength: return "Str";
-                case Ability.Dexterity: return "Dex";
-                case Ability.Constitution: return "Con";
-                case Ability.Charisma: return "Cha";
+                case "Intelligence": return "Int";
+                case "Wisdom": return "Wis";
+                case "Strength": return "Str";
+                case "Dexterity": return "Dex";
+                case "Constitution": return "Con";
+                case "Charisma": return "Cha";
             }
             return "";
         }

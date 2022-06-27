@@ -21,19 +21,19 @@ namespace Compendium.Models.CoreData
             Modifier = value / 2 - 5;
         }
 
-        public static Dictionary<Ability, AbilityScore> GetFromString(string abilities, ref List<string> errors)
+        public static Dictionary<string, AbilityScore> GetFromString(string abilities, ref List<string> errors)
         {
             try
             {
                 var abilityArray = abilities.Trim(',').Split(',').Select(s => Convert.ToInt32(s)).ToArray();
-                return new Dictionary<Ability, AbilityScore>
+                return new Dictionary<string, AbilityScore>
                 {
-                    {Ability.Strength, new AbilityScore(abilityArray[0])},
-                    {Ability.Dexterity, new AbilityScore(abilityArray[1])},
-                    {Ability.Constitution, new AbilityScore(abilityArray[2])},
-                    {Ability.Intelligence, new AbilityScore(abilityArray[3])},
-                    {Ability.Wisdom, new AbilityScore(abilityArray[4])},
-                    {Ability.Charisma, new AbilityScore(abilityArray[5])}
+                    {"Strength", new AbilityScore(abilityArray[0])},
+                    {"Dexterity", new AbilityScore(abilityArray[1])},
+                    {"Constitution", new AbilityScore(abilityArray[2])},
+                    {"Intelligence", new AbilityScore(abilityArray[3])},
+                    {"Wisdom", new AbilityScore(abilityArray[4])},
+                    {"Charisma", new AbilityScore(abilityArray[5])}
                 };
             }
             catch (Exception ex)

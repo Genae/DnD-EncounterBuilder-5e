@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Compendium.Models.CoreData;
 using Compendium.Models.CoreData.Enums;
+using Compendium.Provider;
 
 namespace Compendium.Parser
 {
     public class SpellcastingParser
     {
-        public Spellcasting ParseSpellcasting(string spellcastingDescription, List<Spell> spells, ref List<string> errors)
+        public Spellcasting ParseSpellcasting(string spellcastingDescription, List<Spell> spells, ref List<string> errors, DynamicEnumProvider dep)
         {
             spellcastingDescription = spellcastingDescription
                 .Replace("spell caster", "spellcaster")
@@ -23,7 +24,7 @@ namespace Compendium.Parser
                 .Replace("st—", "st-");
             var SpellcastingLevel = TryFindLevel(spellcastingDescription, ref errors);
             var SpellListClass = TryFindSpellListClass(spellcastingDescription, ref errors);
-            var SpellcastingAbility = TryFindSpellcastingAbility(spellcastingDescription, ref errors);
+            var SpellcastingAbility = TryFindSpellcastingAbility(spellcastingDescription, dep, ref errors);
             var SpellslotsByLevel = GetSpellslotByLevel(SpellcastingLevel, SpellListClass);
             var Spellslots = CheckSpellslotsByDescription(SpellslotsByLevel, SpellListClass, spellcastingDescription);
             if (!Spellslots.SequenceEqual(SpellslotsByLevel))
@@ -65,7 +66,7 @@ namespace Compendium.Parser
             return (TextBeforeTable, OldTableText, TextAfterTable);
         }
 
-        private PreparedSpell[][] TryFindSpells(int[] spellslots, string spellcastingDescription, string spellListClass, List<Spell> spells, ref List<string> errors, out int _spellTableStart, out int _spellTableEnd)
+        private PreparedSpell[][] TryFindSpells(int[] spellslots, string spellcastingDescription, string spellListClass, List<Spell> spells, ref List<String> errors, out int _spellTableStart, out int _spellTableEnd)
         {
             _spellTableStart = 0;
             _spellTableEnd = 0;
@@ -117,7 +118,7 @@ namespace Compendium.Parser
             return spellList;
         }
 
-        private string TryFindSpellListClass(string spellcastingDescription, ref List<string> errors)
+        private string TryFindSpellListClass(string spellcastingDescription, ref List<String> errors)
         {
             var startStrings = new[] { "prepared from the ", "knows the following ", "has the following ", "has following " };
             foreach (var startStr in startStrings)
@@ -142,7 +143,7 @@ namespace Compendium.Parser
             return "";
         }
 
-        private int TryFindSpellcastingModifier(string spellcastingDescription, int spellDC, ref List<string> errors)
+        private int TryFindSpellcastingModifier(string spellcastingDescription, int spellDC, ref List<String> errors)
         {
             var guess = spellDC - 8;
             if (spellcastingDescription.Contains(guess + " to hit"))
@@ -156,7 +157,7 @@ namespace Compendium.Parser
             return -1;
         }
 
-        private int TryFindSpellsaveDC(string spellcastingDescription, ref List<string> errors)
+        private int TryFindSpellsaveDC(string spellcastingDescription, ref List<String> errors)
         {
             for (var i = 10; i < 40; i++)
             {
@@ -280,25 +281,25 @@ namespace Compendium.Parser
             new[] {0, 0, 0, 0, 4, 0, 0, 0, 0} //20
         };
 
-        private Ability TryFindSpellcastingAbility(string spellcastingDescription, ref List<string> errors)
+        private string TryFindSpellcastingAbility(string spellcastingDescription, DynamicEnumProvider dep, ref List<String> errors)
         {
             var desc = spellcastingDescription.ToLower();
-            foreach (Ability attr in Enum.GetValues(typeof(Ability)))
+            foreach (var attr in dep.GetEnumValues("Ability").Data)
             {
-                if (desc.Contains("ability is " + attr.ToString().ToLower()))
+                if (desc.Contains("ability is " + attr.ToLower()))
                 {
                     return attr;
                 }
-                if (desc.Contains("that uses " + attr.ToString().ToLower() + " as "))
+                if (desc.Contains("that uses " + attr.ToLower() + " as "))
                 {
                     return attr;
                 }
             }
             errors.Add("Unable to find spellcasting ability in description: " + spellcastingDescription);
-            return Ability.Strength;
+            return "Strength";
         }
 
-        private int TryFindLevel(string spellcastingDescription, ref List<string> errors)
+        private int TryFindLevel(string spellcastingDescription, ref List<String> errors)
         {
             for (var i = 1; i <= 20; i++)
             {
