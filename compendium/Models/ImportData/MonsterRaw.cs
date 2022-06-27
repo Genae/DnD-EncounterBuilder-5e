@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
-using compendium.Database;
-using compendium.Models.CoreData.Enums;
+using Compendium.Database;
+using Compendium.Models.CoreData.Enums;
 
-namespace compendium.Models.ImportData
+namespace Compendium.Models.ImportData
 {
     public class MonsterRaw : KeyedDocument
     {

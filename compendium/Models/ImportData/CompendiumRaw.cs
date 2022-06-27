@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace compendium.Models.ImportData
+namespace Compendium.Models.ImportData
 {
     [XmlRoot("data")]
     public class CompendiumRaw

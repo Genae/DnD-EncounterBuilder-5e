@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using compendium.Models.CoreData;
-using compendium.Models.CoreData.Enums;
+using Compendium.Models.CoreData;
+using Compendium.Models.CoreData.Enums;
 
-namespace compendium.Parser
+namespace Compendium.Parser
 {
     public class SpellcastingParser
     {
-        public Spellcasting ParseSpellcasting(string spellcastingDescription, List<Spell> spells, ref List<String> errors)
+        public Spellcasting ParseSpellcasting(string spellcastingDescription, List<Spell> spells, ref List<string> errors)
         {
             spellcastingDescription = spellcastingDescription
                 .Replace("spell caster", "spellcaster")
@@ -65,7 +65,7 @@ namespace compendium.Parser
             return (TextBeforeTable, OldTableText, TextAfterTable);
         }
 
-        private PreparedSpell[][] TryFindSpells(int[] spellslots, string spellcastingDescription, string spellListClass, List<Spell> spells, ref List<String> errors, out int _spellTableStart, out int _spellTableEnd)
+        private PreparedSpell[][] TryFindSpells(int[] spellslots, string spellcastingDescription, string spellListClass, List<Spell> spells, ref List<string> errors, out int _spellTableStart, out int _spellTableEnd)
         {
             _spellTableStart = 0;
             _spellTableEnd = 0;
@@ -117,7 +117,7 @@ namespace compendium.Parser
             return spellList;
         }
 
-        private string TryFindSpellListClass(string spellcastingDescription, ref List<String> errors)
+        private string TryFindSpellListClass(string spellcastingDescription, ref List<string> errors)
         {
             var startStrings = new[] { "prepared from the ", "knows the following ", "has the following ", "has following " };
             foreach (var startStr in startStrings)
@@ -142,7 +142,7 @@ namespace compendium.Parser
             return "";
         }
 
-        private int TryFindSpellcastingModifier(string spellcastingDescription, int spellDC, ref List<String> errors)
+        private int TryFindSpellcastingModifier(string spellcastingDescription, int spellDC, ref List<string> errors)
         {
             var guess = spellDC - 8;
             if (spellcastingDescription.Contains(guess + " to hit"))
@@ -156,7 +156,7 @@ namespace compendium.Parser
             return -1;
         }
 
-        private int TryFindSpellsaveDC(string spellcastingDescription, ref List<String> errors)
+        private int TryFindSpellsaveDC(string spellcastingDescription, ref List<string> errors)
         {
             for (var i = 10; i < 40; i++)
             {
@@ -280,7 +280,7 @@ namespace compendium.Parser
             new[] {0, 0, 0, 0, 4, 0, 0, 0, 0} //20
         };
 
-        private Ability TryFindSpellcastingAbility(string spellcastingDescription, ref List<String> errors)
+        private Ability TryFindSpellcastingAbility(string spellcastingDescription, ref List<string> errors)
         {
             var desc = spellcastingDescription.ToLower();
             foreach (Ability attr in Enum.GetValues(typeof(Ability)))
@@ -298,7 +298,7 @@ namespace compendium.Parser
             return Ability.Strength;
         }
 
-        private int TryFindLevel(string spellcastingDescription, ref List<String> errors)
+        private int TryFindLevel(string spellcastingDescription, ref List<string> errors)
         {
             for (var i = 1; i <= 20; i++)
             {

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using compendium.Models.CoreData;
-using compendium.Models.CoreData.Enums;
-using compendium.Models.ImportData;
-using Action = compendium.Models.CoreData.Action;
+using Compendium.Models.CoreData;
+using Compendium.Models.CoreData.Enums;
+using Compendium.Models.ImportData;
+using Action = Compendium.Models.CoreData.Action;
 
-namespace compendium.Parser
+namespace Compendium.Parser
 {
     public class MonsterParser
     {
@@ -35,7 +35,7 @@ namespace compendium.Parser
                 ConditionImmune = ParseConditions(raw.ConditionImmune, errors),
                 Immune = ParseDamageTypes(raw.Immune),
                 Languages = raw.Languages,
-                LegendaryActions = ParseActions(raw.LegendaryActions, errors).Select(a => new LegendaryAction {Action = a}).ToList(),
+                LegendaryActions = ParseActions(raw.LegendaryActions, errors).Select(a => new LegendaryAction { Action = a }).ToList(),
                 MaximumHitpoints = raw.MaximumHitpoints,
                 Reactions = ParseActions(raw.Reactions, errors).Select(a => new Reaction { Action = a }).ToList(),
                 Resist = ParseDamageTypes(raw.Resist),
@@ -45,7 +45,7 @@ namespace compendium.Parser
                 Skillmodifiers = raw.Skills.ToDictionary(s => s.Skill, s => s.Modifier),
                 Speed = ParseSpeed(raw.Speed, errors),
                 Spellcasting = CheckForSpellcasting(spells, raw, ref errors),
-                Traits = raw.Traits.Select(t => new Trait(){Name = t.Name, Text = t.Text}).ToList(),
+                Traits = raw.Traits.Select(t => new Trait() { Name = t.Name, Text = t.Text }).ToList(),
                 Race = ParseMonsterType(raw.Type),
                 Vulnerable = ParseDamageTypes(raw.Vulnerable)
             };
@@ -68,9 +68,9 @@ namespace compendium.Parser
 
         private Speed ParseSpeed(string rawSpeed, List<string> errors)
         {
-            var speed = new Speed {AdditionalInformation = rawSpeed};
+            var speed = new Speed { AdditionalInformation = rawSpeed };
             var regex = new Regex("^([0-9]+)");
-            if(regex.IsMatch(rawSpeed))
+            if (regex.IsMatch(rawSpeed))
                 speed.Speeds[MovementType.Normal] = Convert.ToInt32(regex.Match(rawSpeed.ToLower()).Groups[1].Value);
 
             regex = new Regex("(burrow )([0-9]*)");
@@ -101,7 +101,7 @@ namespace compendium.Parser
                 Description = rawSenses
             };
             var regex = new Regex("(passive perception )([0-9]*)");
-            if(regex.IsMatch(rawSenses.ToLower()))
+            if (regex.IsMatch(rawSenses.ToLower()))
                 senses.PassivePerception = Convert.ToInt32(regex.Match(rawSenses.ToLower()).Groups[2].Value);
 
             regex = new Regex("(blindsight )([0-9]*)");
@@ -133,13 +133,13 @@ namespace compendium.Parser
             var damageTypes = new List<DamageType>();
             if (rawImmune.ToLower().Contains("from nonmagical attacks"))
             {
-                damageTypes.AddRange(new []{DamageType.Piercing, DamageType.Slashing, DamageType.Bludgeoning}.Where(dt => rawImmune.ToLower().Contains(dt.ToString().ToLower())));
+                damageTypes.AddRange(new[] { DamageType.Piercing, DamageType.Slashing, DamageType.Bludgeoning }.Where(dt => rawImmune.ToLower().Contains(dt.ToString().ToLower())));
             }
             else
             {
                 damageTypes.AddRange(new[] { DamageType.PiercingMagic, DamageType.SlashingMagic, DamageType.BludgeoningMagic }.Where(dt => rawImmune.ToLower().Contains(dt.ToString().Replace("Magic", "").ToLower())));
             }
-            damageTypes.AddRange(new []
+            damageTypes.AddRange(new[]
             {
                 DamageType.Acid,
                 DamageType.Cold,
@@ -174,7 +174,7 @@ namespace compendium.Parser
             {
                 foreach (Order order in Enum.GetValues(typeof(Order)))
                 {
-                    if(raw.Alignment.ToLower().Contains($"{order} {morality}".ToLower()))
+                    if (raw.Alignment.ToLower().Contains($"{order} {morality}".ToLower()))
                         return new AlignmentDistribution(new Alignment(morality, order), raw.Alignment);
                 }
                 if (raw.Alignment.ToLower().Contains("any " + morality.ToString().ToLower() + "alignment"))
@@ -209,7 +209,7 @@ namespace compendium.Parser
         {
             return raw.Select(r => _actionParser.ParseAction(r, errors)).ToList();
         }
-        
+
         private Dictionary<Ability, AbilityScore> ParseAbilities(MonsterRaw raw, ref List<string> errors)
         {
             return AbilityScore.GetFromString(raw.AbilityString, ref errors);

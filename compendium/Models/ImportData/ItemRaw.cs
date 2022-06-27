@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
-using compendium.Models.CoreData.Enums;
+using Compendium.Models.CoreData.Enums;
 
-namespace compendium.Models.ImportData
+namespace Compendium.Models.ImportData
 {
     public class ItemRaw
     {
@@ -42,7 +42,7 @@ namespace compendium.Models.ImportData
 
         public bool IsMagic => MagicId == 1;
         public bool DisadvantageOnStealth => StealthId == 1;
-        public ItemType? Type => (ItemType?) TypeId;
+        public ItemType? Type => (ItemType?)TypeId;
         public DamageType? DamageType => (DamageType?)DamageTypeId;
         public WeaponProperty? WeaponProperties => (WeaponProperty?)WeaponPropertyId;
     }

@@ -1,11 +1,11 @@
-﻿using compendium.Models.CoreData.Enums;
+﻿using Compendium.Models.CoreData.Enums;
 
-namespace compendium.Models.CoreData
+namespace Compendium.Models.CoreData
 {
     public class Alignment
     {
-        public Morality Morality { get; set; } 
-        public Order Order { get; set; } 
+        public Morality Morality { get; set; }
+        public Order Order { get; set; }
 
         public Alignment() { }
 

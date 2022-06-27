@@ -1,7 +1,7 @@
 using System.Xml.Serialization;
-using compendium.Models.CoreData.Enums;
+using Compendium.Models.CoreData.Enums;
 
-namespace compendium.Models.ImportData
+namespace Compendium.Models.ImportData
 {
     public class ModifierRaw
     {
@@ -10,6 +10,6 @@ namespace compendium.Models.ImportData
         [XmlElement("value")]
         public int Value;
 
-        public ModifierStat Stat => (ModifierStat) StatId;
+        public ModifierStat Stat => (ModifierStat)StatId;
     }
 }

@@ -1,6 +1,6 @@
 using System.Xml.Serialization;
 
-namespace compendium.Models.ImportData
+namespace Compendium.Models.ImportData
 {
     public class ReactionRaw
     {

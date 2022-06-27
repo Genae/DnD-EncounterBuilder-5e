@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using compendium.Models.CoreData;
-using compendium.Models.CoreData.Enums;
-using compendium.Models.ImportData;
-using Action = compendium.Models.CoreData.Action;
+using Compendium.Models.CoreData;
+using Compendium.Models.CoreData.Enums;
+using Compendium.Models.ImportData;
+using Action = Compendium.Models.CoreData.Action;
 
-namespace compendium.Parser
+namespace Compendium.Parser
 {
     public class ActionParser
     {
@@ -96,7 +96,7 @@ namespace compendium.Parser
                         var reg = new Regex(@"\([A-Za-z]*\)");
                         foreach (var s in reg.Matches(dc.Value.Value).Select(s => Enum.Parse<Skill>(s.Value.Trim('(', ')'), true)))
                         {
-                            ((SkillCheck) effects[dc.Key].DC).Skill |= s;
+                            ((SkillCheck)effects[dc.Key].DC).Skill |= s;
                         }
                     }
                     else if (dc.Value.Value.Contains("saving throw"))
@@ -190,7 +190,7 @@ namespace compendium.Parser
                 {
                     var range = action.Text.Substring(start, end - start).Trim().Split('/');
                     action.Attack.ShortRange = Convert.ToInt32(range[0]);
-                    if(range.Length > 1)
+                    if (range.Length > 1)
                         action.Attack.LongRange = Convert.ToInt32(range[1]);
                     reachEnd = end + 3;
                 }

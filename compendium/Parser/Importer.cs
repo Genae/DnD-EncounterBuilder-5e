@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using compendium.Models.ImportData;
+using Compendium.Models.ImportData;
 
-namespace compendium.Parser
+namespace Compendium.Parser
 {
     public class Importer
     {
@@ -20,6 +20,6 @@ namespace compendium.Parser
             return compendium;
         }
 
-        
+
     }
 }

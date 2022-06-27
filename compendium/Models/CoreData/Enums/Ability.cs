@@ -1,4 +1,4 @@
-namespace compendium.Models.CoreData.Enums
+namespace Compendium.Models.CoreData.Enums
 {
     public enum Ability
     {

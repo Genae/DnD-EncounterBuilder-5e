@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using compendium.Models.CoreData.Enums;
+using Compendium.Models.CoreData.Enums;
 
-namespace compendium.Models.CoreData
+namespace Compendium.Models.CoreData
 {
     public class Speed
     {

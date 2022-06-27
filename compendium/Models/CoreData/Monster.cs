@@ -1,11 +1,9 @@
-﻿using compendium.Database;
-using compendium.Models.CoreData.Enums;
-using compendium.Renderer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
+using Compendium.Database;
+using Compendium.Models.CoreData.Enums;
+using Compendium.Renderer;
 
-namespace compendium.Models.CoreData
+namespace Compendium.Models.CoreData
 {
     public class Monster : KeyedDocument
     {
@@ -35,7 +33,7 @@ namespace compendium.Models.CoreData
         public List<Reaction> Reactions { get; set; }
         public List<LegendaryAction> LegendaryActions { get; set; }
 
-        public string Markup => (new MonsterRenderer().RenderMonster(this));
+        public string Markup => new MonsterRenderer().RenderMonster(this);
 
         public Monster()
         {

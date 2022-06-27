@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using compendium.Database;
-using compendium.Models.CoreData.Enums;
+using Compendium.Database;
+using Compendium.Models.CoreData.Enums;
 
-namespace compendium.Models.CoreData
+namespace Compendium.Models.CoreData
 {
     public class Spell : KeyedDocument
     {

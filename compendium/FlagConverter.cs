@@ -4,17 +4,17 @@ using System;
 using System.Linq;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
-namespace compendium
+namespace Compendium
 {
     public class FlagConverter : JsonConverter
     {
-        public override object ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, Object existingValue, JsonSerializer serializer)
+        public override object ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             //If you need to deserialize, fill in the code here
             return null;
         }
 
-        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, Object value, JsonSerializer serializer)
+        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object value, JsonSerializer serializer)
         {
             var flags = value.ToString()
                 .Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries)

@@ -1,7 +1,7 @@
 using System.Xml.Serialization;
 using LiteDB;
 
-namespace compendium.Models.CoreData
+namespace Compendium.Models.CoreData
 {
     public class DieRoll
     {
@@ -24,10 +24,10 @@ namespace compendium.Models.CoreData
 
         public override string ToString()
         {
-            if(Offset > 0)
+            if (Offset > 0)
                 return $"{DieCount}d{Die} + {Offset}";
             if (Offset < 0)
-                return $"{DieCount}d{Die} - {Offset*-1}";
+                return $"{DieCount}d{Die} - {Offset * -1}";
             return $"{DieCount}d{Die}";
         }
 

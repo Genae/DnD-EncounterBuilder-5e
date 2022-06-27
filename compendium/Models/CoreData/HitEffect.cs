@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using compendium.Models.CoreData.Enums;
+using Compendium.Models.CoreData.Enums;
 
-namespace compendium.Models.CoreData
+namespace Compendium.Models.CoreData
 {
     public class HitEffect
     {
@@ -10,7 +10,7 @@ namespace compendium.Models.CoreData
         public DieRoll DamageDie { get; set; }
         public ICheck DC { get; set; }
         public List<Condition> Condition { get; set; } = new List<Condition>();
-        
+
         public HitEffect() { }
         public HitEffect(HitEffect hitEffect)
         {
@@ -26,7 +26,7 @@ namespace compendium.Models.CoreData
                    DamageType == effect.DamageType &&
                    EqualityComparer<DieRoll>.Default.Equals(DamageDie, effect.DamageDie) &&
                    EqualityComparer<ICheck>.Default.Equals(DC, effect.DC) &&
-                   (Condition.SequenceEqual(effect.Condition));
+                   Condition.SequenceEqual(effect.Condition);
         }
     }
 }

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using compendium.Models.CoreData.Enums;
+using Compendium.Models.CoreData.Enums;
 using LiteDB;
 
-namespace compendium.Models.CoreData
+namespace Compendium.Models.CoreData
 {
     public class AbilityScore
     {
@@ -25,7 +25,7 @@ namespace compendium.Models.CoreData
         {
             try
             {
-                var abilityArray = abilities.Trim(',').Split(',').Select(s => Convert.ToInt32((string) s)).ToArray();
+                var abilityArray = abilities.Trim(',').Split(',').Select(s => Convert.ToInt32(s)).ToArray();
                 return new Dictionary<Ability, AbilityScore>
                 {
                     {Ability.Strength, new AbilityScore(abilityArray[0])},

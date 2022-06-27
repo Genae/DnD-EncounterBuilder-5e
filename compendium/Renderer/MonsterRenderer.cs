@@ -1,11 +1,11 @@
-﻿using compendium.Models.CoreData;
-using compendium.Models.CoreData.Enums;
+﻿using Compendium.Models.CoreData;
+using Compendium.Models.CoreData.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace compendium.Renderer
+namespace Compendium.Renderer
 {
     public class MonsterRenderer
     {

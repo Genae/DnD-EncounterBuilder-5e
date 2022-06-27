@@ -1,8 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 
-import { Monster, PreparedSpell, Size, MonsterType } from "../../models/monster";
+import { Monster, PreparedSpell } from "../../models/monster";
 import { Spell } from "../../models/spell";
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { DataService } from "../../services/data.service";
 
 @Component({
@@ -20,10 +20,12 @@ export class MonsterDetailComponent {
 
     }
 
-    monster: Monster;
-    monsterSpells: Spell[];
+    monster: Monster | undefined = undefined;
+    monsterSpells: Spell[] = [];
 
     public edit() {
+        if (this.monster === undefined)
+            return;
         this.router.navigateByUrl('/monsterDetail/' + this.monster.id + "/edit");
     }
 

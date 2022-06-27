@@ -1,12 +1,10 @@
-﻿using compendium.Models.CoreData;
-using compendium.Models.CoreData.Enums;
-using compendium.Provider;
+﻿using Compendium.Models.CoreData;
+using Compendium.Models.CoreData.Enums;
+using Compendium.Provider;
 using LiteDB;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace compendium.Controllers
+namespace Compendium.Controllers
 {
     [Produces("application/json")]
     [Route("api")]

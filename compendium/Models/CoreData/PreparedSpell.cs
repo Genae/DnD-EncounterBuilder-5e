@@ -1,7 +1,7 @@
 ﻿using LiteDB;
 using Newtonsoft.Json;
 
-namespace compendium.Models.CoreData
+namespace Compendium.Models.CoreData
 {
     public class PreparedSpell
     {

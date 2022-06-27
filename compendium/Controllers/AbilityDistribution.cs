@@ -1,9 +1,9 @@
-﻿using compendium.Models.CoreData;
-using compendium.Models.CoreData.Enums;
+﻿using Compendium.Models.CoreData;
+using Compendium.Models.CoreData.Enums;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace compendium.Controllers
+namespace Compendium.Controllers
 {
     public class AbilityDistribution
     {

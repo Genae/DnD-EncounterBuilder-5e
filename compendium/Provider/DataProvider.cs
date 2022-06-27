@@ -1,8 +1,9 @@
-﻿using compendium.Database;
-using compendium.Models.CoreData;
-using compendium.Models.ImportData;
-using compendium.Models.ProjectData;
-using compendium.Parser;
+﻿
+using Compendium.Database;
+using Compendium.Models.CoreData;
+using Compendium.Models.ImportData;
+using Compendium.Models.ProjectData;
+using Compendium.Parser;
 using LiteDB;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace compendium.Provider
+namespace Compendium.Provider
 {
     public class DataProvider
     {
@@ -71,7 +72,7 @@ namespace compendium.Provider
             foreach (var project in jDb.GetAllProjectNames())
             {
                 var pDb = JsonDatabaseConnection.GetProjectDb(project);
-                foreach(var p in pDb.GetQueryable<Project>().Where(p => !allProjects.Any(mp => p.Id == mp.Id)).ToList())
+                foreach (var p in pDb.GetQueryable<Project>().Where(p => !allProjects.Any(mp => p.Id == mp.Id)).ToList())
                     db.Add(p);
                 foreach (var m in pDb.GetQueryable<Monster>().Where(m => !allMonsters.Any(mm => m.Id == mm.Id)).ToList())
                     db.Add(m);

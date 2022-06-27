@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace compendium.Database
+namespace Compendium.Database
 {
     public class JsonDatabaseConnection : IDatabaseConnection
     {

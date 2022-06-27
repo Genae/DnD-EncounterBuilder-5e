@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
-using compendium.Models.CoreData.Enums;
+using Compendium.Models.CoreData.Enums;
 
-namespace compendium.Models.ImportData
+namespace Compendium.Models.ImportData
 {
     public class SkillRaw
     {

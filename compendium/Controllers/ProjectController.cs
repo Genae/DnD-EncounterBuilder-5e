@@ -1,10 +1,10 @@
-﻿using compendium.Models.ProjectData;
-using compendium.Provider;
+﻿using Compendium.Models.ProjectData;
+using Compendium.Provider;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace compendium.Controllers
+namespace Compendium.Controllers
 {
     [Produces("application/json")]
     [Route("api/project")]

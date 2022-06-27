@@ -1,8 +1,9 @@
 ﻿using System.Xml.Serialization;
+using Compendium;
 using LiteDB;
 using Newtonsoft.Json;
 
-namespace compendium.Database
+namespace Compendium.Database
 {
     public class KeyedDocument
     {

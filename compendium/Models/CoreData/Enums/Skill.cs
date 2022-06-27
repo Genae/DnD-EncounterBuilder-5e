@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace compendium.Models.CoreData.Enums
+namespace Compendium.Models.CoreData.Enums
 {
     [Flags]
     //[JsonConverter(typeof(FlagConverter))]

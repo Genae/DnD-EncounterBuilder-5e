@@ -1,8 +1,8 @@
-﻿using compendium.Models.CoreData;
-using compendium.Models.CoreData.Enums;
-using compendium.Models.ImportData;
+﻿using Compendium.Models.CoreData;
+using Compendium.Models.CoreData.Enums;
+using Compendium.Models.ImportData;
 
-namespace compendium.Parser
+namespace Compendium.Parser
 {
     public class SpellParser
     {
@@ -17,7 +17,7 @@ namespace compendium.Parser
                 Materials = raw.Materials,
                 Name = raw.Name,
                 Range = raw.Range,
-                School = raw.SchoolId.HasValue ? (SpellSchool)(raw.SchoolId.Value) : SpellSchool.None,
+                School = raw.SchoolId.HasValue ? (SpellSchool)raw.SchoolId.Value : SpellSchool.None,
                 SomaticComponent = raw.SomaticId == 1,
                 Text = raw.Text,
                 Time = raw.Time,

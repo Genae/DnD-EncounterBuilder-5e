@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace compendium.Models.CoreData
+namespace Compendium.Models.CoreData
 {
     public class Action
     {

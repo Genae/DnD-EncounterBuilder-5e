@@ -1,4 +1,4 @@
-﻿namespace compendium.Models.CoreData
+﻿namespace Compendium.Models.CoreData
 {
     public interface ICheck
     {
