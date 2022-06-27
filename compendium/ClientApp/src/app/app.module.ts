@@ -18,41 +18,43 @@ import { ProjectEditComponent } from './components/projectEditComponent/projectE
 import { ProjectDetailComponent } from './components/projectDetailComponent/projectDetail.component';
 import { MonsterEditComponent } from './components/monsterEditComponent/monsterEdit.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from './material.module';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    NavMenuComponent,
-    HomeComponent,
-    ProjectListComponent,
-    ProjectDetailComponent,
-    ProjectEditComponent,
-    MonsterListComponent,
-    MonsterDetailComponent,
-    MonsterEditComponent,
-    SpellDetailComponent,
-    SpellListComponent,
-    FilterPipe,
-    FilterSpellsPipe
-  ],
-  imports: [
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
-    HttpClientModule,
-    FormsModule,
-    BrowserAnimationsModule,
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'projectList', component: ProjectListComponent },
-      { path: 'projectDetail/:id', component: ProjectDetailComponent },
-      { path: 'projectDetail/:id/edit', component: ProjectEditComponent },
-      { path: 'monsterList', component: MonsterListComponent },
-      { path: 'monsterDetail/:id', component: MonsterDetailComponent },
-      { path: 'monsterDetail/:id/edit', component: MonsterEditComponent },
-      { path: 'spellList', component: SpellListComponent },
-      { path: 'spellDetail/:id', component: SpellDetailComponent },
-    ])
-  ],
-  providers: [DataService, ProjectService],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        NavMenuComponent,
+        HomeComponent,
+        ProjectListComponent,
+        ProjectDetailComponent,
+        ProjectEditComponent,
+        MonsterListComponent,
+        MonsterDetailComponent,
+        MonsterEditComponent,
+        SpellDetailComponent,
+        SpellListComponent,
+        FilterPipe,
+        FilterSpellsPipe
+    ],
+    imports: [
+        MaterialModule,
+        BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+        HttpClientModule,
+        FormsModule,
+        BrowserAnimationsModule,
+        RouterModule.forRoot([
+            { path: '', component: HomeComponent, pathMatch: 'full' },
+            { path: 'projectList', component: ProjectListComponent },
+            { path: 'projectDetail/:id', component: ProjectDetailComponent },
+            { path: 'projectDetail/:id/edit', component: ProjectEditComponent },
+            { path: 'monsterList', component: MonsterListComponent },
+            { path: 'monsterDetail/:id', component: MonsterDetailComponent },
+            { path: 'monsterDetail/:id/edit', component: MonsterEditComponent },
+            { path: 'spellList', component: SpellListComponent },
+            { path: 'spellDetail/:id', component: SpellDetailComponent },
+        ])
+    ],
+    providers: [DataService, ProjectService],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
