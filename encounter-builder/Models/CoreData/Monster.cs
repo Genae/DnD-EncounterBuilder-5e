@@ -21,11 +21,11 @@ namespace encounter_builder.Models.CoreData
         public Condition[] ConditionImmune { get; set; }
         public Senses Senses { get; set; }
         public string Languages { get; set; }
-        public Dictionary<Ability, AbilityScore> Abilities { get; set; }
+        public Dictionary<string, AbilityScore> Abilities { get; set; }
         public DieRoll HitDie { get; set; }
         public ChallengeRating ChallengeRating { get; set; }
         public Spellcasting Spellcasting { get; set; }
-        public Dictionary<Ability, int> SavingThrows { get; set; }
+        public Dictionary<string, int> SavingThrows { get; set; }
         public Dictionary<Skill, int> Skillmodifiers { get; set; }
         public List<Trait> Traits { get; set; }
         public List<Action> Actions { get; set; }

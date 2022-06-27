@@ -3,6 +3,7 @@ using encounter_builder.Models.CoreData;
 using encounter_builder.Models.CoreData.Enums;
 using encounter_builder.Models.ImportData;
 using encounter_builder.Parser;
+using encounter_builder.Provider;
 using Xunit;
 
 namespace encounterBuilder.Tests
@@ -13,6 +14,7 @@ namespace encounterBuilder.Tests
         public void Test1()
         {
             var ap = new ActionParser();
+            var dep = new DynamicEnumProvider(null);
             List<string> errors = new List<string>();
             var action = ap.ParseAction(new ActionRaw()
             {
@@ -22,7 +24,7 @@ namespace encounterBuilder.Tests
                 damage, and the target is grappled (escape DC 13). Until this
                 grapple ends, the target is restrained, and the toad can't bite
                 another target. "
-            }, errors);
+            }, errors, dep);
             Assert.Equal(new Attack
             {
                 AttackBonus = 4,

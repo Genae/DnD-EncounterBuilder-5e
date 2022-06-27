@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using encounter_builder.Models.CoreData;
 using encounter_builder.Models.CoreData.Enums;
 using encounter_builder.Models.ImportData;
+using encounter_builder.Provider;
 using Action = encounter_builder.Models.CoreData.Action;
 
 namespace encounter_builder.Parser
@@ -13,11 +14,13 @@ namespace encounter_builder.Parser
     {
         private readonly SpellcastingParser _spellParser;
         private readonly ActionParser _actionParser;
+        private readonly DynamicEnumProvider _dep;
 
-        public MonsterParser(SpellcastingParser spellParser, ActionParser actionParser)
+        public MonsterParser(SpellcastingParser spellParser, ActionParser actionParser, DynamicEnumProvider dep)
         {
             _spellParser = spellParser;
             _actionParser = actionParser;
+            _dep = dep;
         }
 
         public Monster Parse(MonsterRaw raw, List<Spell> spells)
@@ -27,7 +30,7 @@ namespace encounter_builder.Parser
             {
                 Name = raw.Name,
                 Abilities = ParseAbilities(raw, ref errors),
-                Actions = ParseActions(raw.Actions, errors),
+                Actions = ParseActions(raw.Actions, errors, _dep),
                 Alignment = ParseAlignment(raw, errors),
                 Armor = raw.Armor,
                 Armorclass = raw.Armorclass,
@@ -35,21 +38,21 @@ namespace encounter_builder.Parser
                 ConditionImmune = ParseConditions(raw.ConditionImmune, errors),
                 Immune = ParseDamageTypes(raw.Immune),
                 Languages = raw.Languages,
-                LegendaryActions = ParseActions(raw.LegendaryActions, errors).Select(a => new LegendaryAction {Action = a}).ToList(),
+                LegendaryActions = ParseActions(raw.LegendaryActions, errors, _dep).Select(a => new LegendaryAction {Action = a}).ToList(),
                 MaximumHitpoints = raw.MaximumHitpoints,
-                Reactions = ParseActions(raw.Reactions, errors).Select(a => new Reaction { Action = a }).ToList(),
+                Reactions = ParseActions(raw.Reactions, errors, _dep).Select(a => new Reaction { Action = a }).ToList(),
                 Resist = ParseDamageTypes(raw.Resist),
-                SavingThrows = raw.SavingThrows.ToDictionary(s => s.Ability, s => s.Modifier),
+                SavingThrows = raw.SavingThrows.ToDictionary(s => s.GetAbility(_dep), s => s.Modifier),
                 Senses = ParseSenses(raw.Senses, errors),
                 Size = (Size)(raw.SizeId ?? 2),
                 Skillmodifiers = raw.Skills.ToDictionary(s => s.Skill, s => s.Modifier),
                 Speed = ParseSpeed(raw.Speed, errors),
-                Spellcasting = CheckForSpellcasting(spells, raw, ref errors),
+                Spellcasting = CheckForSpellcasting(spells, raw, ref errors, _dep),
                 Traits = raw.Traits.Select(t => new Trait(){Name = t.Name, Text = t.Text}).ToList(),
                 Race = ParseMonsterType(raw.Type),
                 Vulnerable = ParseDamageTypes(raw.Vulnerable)
             };
-            monster.HitDie = GetHealthDies(monster.MaximumHitpoints, monster.Abilities[Ability.Constitution], raw.SizeId);
+            monster.HitDie = GetHealthDies(monster.MaximumHitpoints, monster.Abilities["Constitution"], raw.SizeId);
             return monster;
         }
 
@@ -205,12 +208,12 @@ namespace encounter_builder.Parser
             return null;
         }
 
-        private List<Action> ParseActions(List<ActionRaw> raw, List<string> errors)
+        private List<Action> ParseActions(List<ActionRaw> raw, List<string> errors, DynamicEnumProvider dep)
         {
-            return raw.Select(r => _actionParser.ParseAction(r, errors)).ToList();
+            return raw.Select(r => _actionParser.ParseAction(r, errors, dep)).ToList();
         }
         
-        private Dictionary<Ability, AbilityScore> ParseAbilities(MonsterRaw raw, ref List<string> errors)
+        private Dictionary<string, AbilityScore> ParseAbilities(MonsterRaw raw, ref List<string> errors)
         {
             return AbilityScore.GetFromString(raw.AbilityString, ref errors);
         }
@@ -223,14 +226,15 @@ namespace encounter_builder.Parser
             return new DieRoll(dieSize, level, level * abilityScore.Modifier);
         }
 
-        public Spellcasting CheckForSpellcasting(List<Spell> spells, MonsterRaw raw, ref List<string> errors)
+        public Spellcasting CheckForSpellcasting(List<Spell> spells, MonsterRaw raw, ref List<string> errors,
+            DynamicEnumProvider dep)
         {
             for (var i = 0; i < raw.Traits.Count; i++)
             {
                 var trait = raw.Traits[i];
                 if (trait.Name.Equals("Spellcasting"))
                 {
-                    var spellcasting = _spellParser.ParseSpellcasting(trait.Text, spells, ref errors);
+                    var spellcasting = _spellParser.ParseSpellcasting(trait.Text, spells, ref errors, dep);
                     raw.Traits.RemoveAt(i);
                     return spellcasting;
                 }

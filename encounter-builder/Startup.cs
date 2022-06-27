@@ -38,11 +38,14 @@ namespace encounter_builder
                 options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             }); 
 
+            services.TryAddSingleton<DynamicEnumProvider>();
             services.TryAddSingleton<DataProvider>();
             services.TryAddSingleton<IDatabaseConnection, LiteDbConnection>();
             services.TryAddScoped<ActionParser>();
             services.TryAddScoped<MonsterParser>();
             services.TryAddScoped<SpellcastingParser>();
+
+            
 
         }
 

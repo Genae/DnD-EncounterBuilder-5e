@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using encounter_builder.Models.CoreData;
 using encounter_builder.Models.CoreData.Enums;
+using encounter_builder.Provider;
 
 namespace encounter_builder.Parser
 {
     public class SpellcastingParser
     {
-        public Spellcasting ParseSpellcasting(string spellcastingDescription, List<Spell> spells, ref List<String> errors)
+        public Spellcasting ParseSpellcasting(string spellcastingDescription, List<Spell> spells, ref List<string> errors, DynamicEnumProvider dep)
         {
             spellcastingDescription = spellcastingDescription
                 .Replace("spell caster", "spellcaster")
@@ -23,7 +24,7 @@ namespace encounter_builder.Parser
                 .Replace("st—", "st-");
             var SpellcastingLevel = TryFindLevel(spellcastingDescription, ref errors);
             var SpellListClass = TryFindSpellListClass(spellcastingDescription, ref errors);
-            var SpellcastingAbility = TryFindSpellcastingAbility(spellcastingDescription, ref errors);
+            var SpellcastingAbility = TryFindSpellcastingAbility(spellcastingDescription, dep, ref errors);
             var SpellslotsByLevel = GetSpellslotByLevel(SpellcastingLevel, SpellListClass);
             var Spellslots = CheckSpellslotsByDescription(SpellslotsByLevel, SpellListClass, spellcastingDescription);
             if (!Spellslots.SequenceEqual(SpellslotsByLevel))
@@ -280,22 +281,22 @@ namespace encounter_builder.Parser
             new[] {0, 0, 0, 0, 4, 0, 0, 0, 0} //20
         };
 
-        private Ability TryFindSpellcastingAbility(string spellcastingDescription, ref List<String> errors)
+        private string TryFindSpellcastingAbility(string spellcastingDescription, DynamicEnumProvider dep, ref List<String> errors)
         {
             var desc = spellcastingDescription.ToLower();
-            foreach (Ability attr in Enum.GetValues(typeof(Ability)))
+            foreach (var attr in dep.GetEnumValues("Ability").Data)
             {
-                if (desc.Contains("ability is " + attr.ToString().ToLower()))
+                if (desc.Contains("ability is " + attr.ToLower()))
                 {
                     return attr;
                 }
-                if (desc.Contains("that uses " + attr.ToString().ToLower() + " as "))
+                if (desc.Contains("that uses " + attr.ToLower() + " as "))
                 {
                     return attr;
                 }
             }
             errors.Add("Unable to find spellcasting ability in description: " + spellcastingDescription);
-            return Ability.Strength;
+            return "Strength";
         }
 
         private int TryFindLevel(string spellcastingDescription, ref List<String> errors)
