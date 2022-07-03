@@ -1,12 +1,23 @@
+using Compendium;
 using Compendium.Database;
 using Compendium.Parser;
 using Compendium.Provider;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddNewtonsoftJson(o =>
+{
+    o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+    o.SerializerSettings.Converters = new List<JsonConverter>
+                                {
+                                    new ObjectIdConverter(),
+                                    new StringEnumConverter()
+                                };
+});
 
 var services = builder.Services;
 

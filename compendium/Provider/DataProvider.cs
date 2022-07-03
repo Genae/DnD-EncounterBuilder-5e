@@ -24,9 +24,9 @@ namespace Compendium.Provider
         private void ImportXML(IDatabaseConnection db)
         {
             var srd = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data", "SRD.xml");
-            if (File.Exists(@"D:\Eigene Dateien\OneDrive\Xerios\AllData.xml"))
+            if (File.Exists(@"D:\Dateien\OneDrive\Xerios\AllData.xml"))
             {
-                Compendium = new Importer().ImportCompendium(@"D:\Eigene Dateien\OneDrive\Xerios\AllData.xml");
+                Compendium = new Importer().ImportCompendium(@"D:\Dateien\OneDrive\Xerios\AllData.xml");
             }
             else if (File.Exists(srd))
             {
