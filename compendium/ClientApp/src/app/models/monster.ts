@@ -29,34 +29,34 @@ export class Monster {
 }
 
 export enum ArmorGroup {
-    NaturalArmor,
-    LightArmor,
-    MediumArmor,
-    HeavyArmor
+    NaturalArmor = "NaturalArmor",
+    LightArmor = "LightArmor",
+    MediumArmor = "MediumArmor",
+    HeavyArmor = "HeavyArmor"
 }
 export enum ArmorPiece {
-    Nat0,
-    Nat1,
-    Nat2,
-    Nat3,
-    Nat4,
-    Nat5,
-    Nat6,
-    Nat7,
-    Nat8,
-    Nat9,
-    Padded,
-    Leather,
-    StuddedLeather,
-    Hide,
-    ChainShirt,
-    ScaleMail,
-    Brestplate,
-    HalfPlate,
-    RingMail,
-    ChainMail,
-    Splint,
-    Plate
+    Nat0 = "Nat0",
+    Nat1 = "Nat1",
+    Nat2 = "Nat2",
+    Nat3 = "Nat3",
+    Nat4 = "Nat4",
+    Nat5 = "Nat5",
+    Nat6 = "Nat6",
+    Nat7 = "Nat7",
+    Nat8 = "Nat8",
+    Nat9 = "Nat9",
+    Padded = "Padded",
+    Leather = "Leather",
+    StuddedLeather = "StuddedLeather",
+    Hide = "Hide",
+    ChainShirt = "ChainShirt",
+    ScaleMail = "ScaleMail",
+    Brestplate = "Brestplate",
+    HalfPlate = "HalfPlate",
+    RingMail = "RingMail",
+    ChainMail = "ChainMail",
+    Splint = "Splint",
+    Plate = "Plate"
 }
 
 export class ArmorInfo {
@@ -66,13 +66,13 @@ export class ArmorInfo {
 }
 
 export enum Size {
-    Tiny,
-    Small,
-    Medium,
-    Large,
-    Huge,
-    Gargantuan,
-    Collosal
+    Tiny = "Tiny",
+    Small = "Small",
+    Medium = "Medium",
+    Large = "Large",
+    Huge = "Huge",
+    Gargantuan = "Gargantuan",
+    Collosal = "Collosal"
 }
 
 export class MonsterRace {
@@ -81,20 +81,20 @@ export class MonsterRace {
 }
 
 export enum MonsterType {
-    Aberration,
-    Beast,
-    Celestial,
-    Construct,
-    Dragon,
-    Elemental,
-    Fey,
-    Fiend,
-    Giant,
-    Humanoid,
-    Monstrosity,
-    Ooze,
-    Plant,
-    Undead
+    Aberration = "Aberration",
+    Beast = "Beast",
+    Celestial = "Celestial",
+    Construct = "Construct",
+    Dragon = "Dragon",
+    Elemental = "Elemental",
+    Fey = "Fey",
+    Fiend = "Fiend",
+    Giant = "Giant",
+    Humanoid = "Humanoid",
+    Monstrosity = "Monstrosity",
+    Ooze = "Ooze",
+    Plant = "Plant",
+    Undead = "Undead"
 }
 
 export class AlignmentDistribution {
@@ -113,33 +113,33 @@ export class Alignment {
 }
 
 export enum Morality {
-    Good,
-    Neutral,
-    Evil
+    Good = "Good",
+    Neutral = "Neutral",
+    Evil = "Evil"
 }
 export enum Order {
-    Lawful,
-    Neutral,
-    Chaotic
+    Lawful = "Lawful",
+    Neutral = "Neutral",
+    Chaotic = "Chaotic"
 }
 
 export enum Condition {
-    Blinded,
-    Charmed,
-    Deafened,
-    Fatigued,
-    Frightened,
-    Grappled,
-    Incapacitated,
-    Invisible,
-    Paralyzed,
-    Petrified,
-    Poisoned,
-    Prone,
-    Restrained,
-    Stunned,
-    Unconscious,
-    Exhaustion
+    Blinded = "Blinded",
+    Charmed = "Charmed",
+    Deafened = "Deafened",
+    Fatigued = "Fatigued",
+    Frightened = "Frightened",
+    Grappled = "Grappled",
+    Incapacitated = "Incapacitated",
+    Invisible = "Invisible",
+    Paralyzed = "Paralyzed",
+    Petrified = "Petrified",
+    Poisoned = "Poisoned",
+    Prone = "Prone",
+    Restrained = "Restrained",
+    Stunned = "Stunned",
+    Unconscious = "Unconscious",
+    Exhaustion = "Exhaustion"
 }
 export class Speed {
     speeds: { [id: string]: number; };
@@ -147,31 +147,31 @@ export class Speed {
 }
 
 export enum MovementType {
-    Normal,
-    Fly,
-    Hover,
-    Swim,
-    Climb,
-    Burrow
+    Normal = "Normal",
+    Fly = "Fly",
+    Hover = "Hover",
+    Swim = "Swim",
+    Climb = "Climb",
+    Burrow = "Burrow"
 }
 
 export enum DamageType {
-    Acid,
-    Bludgeoning,
-    Cold,
-    Fire,
-    Force,
-    Lightning,
-    Necrotic,
-    Piercing,
-    Poison,
-    Psychic,
-    Radiant,
-    Slashing,
-    Thunder,
-    BludgeoningMagic,
-    PiercingMagic,
-    SlashingMagic
+    Acid = "Acid",
+    Bludgeoning = "Bludgeoning",
+    Cold = "Cold",
+    Fire = "Fire",
+    Force = "Force",
+    Lightning = "Lightning",
+    Necrotic = "Necrotic",
+    Piercing = "Piercing",
+    Poison = "Poison",
+    Psychic = "Psychic",
+    Radiant = "Radiant",
+    Slashing = "Slashing",
+    Thunder = "Thunder",
+    BludgeoningMagic = "BludgeoningMagic",
+    PiercingMagic = "PiercingMagic",
+    SlashingMagic = "SlashingMagic"
 }
 
 export class Senses {
@@ -182,10 +182,10 @@ export class Senses {
 }
 
 export enum Sense {
-    Blindsight,
-    Darkvision,
-    Tremorsense,
-    Truesight
+    Blindsight = "Blindsight",
+    Darkvision = "Darkvision",
+    Tremorsense = "Tremorsense",
+    Truesight = "Truesight"
 }
 
 export class AbilityScore {
@@ -223,12 +223,12 @@ export class Spellcasting {
 }
 
 export enum Ability {
-    Strength,
-    Dexterity,
-    Constitution,
-    Intelligence,
-    Wisdom,
-    Charisma
+    Strength = "Strength",
+    Dexterity = "Dexterity",
+    Constitution = "Constitution",
+    Intelligence = "Intelligence",
+    Wisdom = "Wisdom",
+    Charisma = "Charisma"
 }
 
 export class PreparedSpell {

@@ -12,7 +12,7 @@
             <label for="size" class="col-md-3">2. Size</label>
             <div class="col-md-3">
                 <select class="form-control" name="size" id="size" [(ngModel)]="monster.size" (ngModelChange)="sizeChanged()" required>
-                    <option *ngFor="let size of sizeValues" [value]="size.value">{{size.key}}</option>
+                    <option *ngFor="let size of sizeValues" [value]="size">{{size}}</option>
                 </select>
             </div>
         </div>
@@ -21,7 +21,7 @@
             <label for="type" class="col-md-3">3. Type</label>
             <div class="col-md-3">
                 <select class="form-control" name="race" id="race" [(ngModel)]="monster.race.monsterType" required>
-                    <option *ngFor="let race of monsterTypeValues" [value]="race.value">{{race.key}}</option>
+                    <option *ngFor="let race of monsterTypeValues" [value]="race">{{race}}</option>
                 </select>
             </div>
             <div class="col-md-3">
@@ -83,10 +83,7 @@
                 </select>
             </div>
             <div class="col-md-1">
-                <label>Has Shield: </label>
-            </div>
-            <div class="col-md-1">
-                <input class="" type="checkbox" [(ngModel)]="monster.armorInfo.hasShield" class="form-control" name="acshield" id="acshield" (ngModelChange)="hasShieldChange()">
+                <mat-checkbox [(ngModel)]="monster.armorInfo.hasShield" class="form-control" name="acshield" id="acshield" (ngModelChange)="hasShieldChange()">Has Shield</mat-checkbox>
             </div>
         </div>
         <div class="form-group row">
@@ -118,22 +115,30 @@
             <label for="vulnerabilities" class="col-md-3">9. Vulnerabilities, Resistances and Immunities</label>
         </div>
 
-        <div class="form-group row">
-            <label for="vul" class="col-md-3">Vulnerabilities</label>
-            <div class="col-md-3">
-                <select multiple class="form-control" name="vul" id="vul" [(ngModel)]="monster.vulnerable">
-                    <option *ngFor="let dt of dmgTypeValues" [value]="dt.value">{{dt.key}}</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <input type="text" [value]="vulDesc(monster.vulnerable)" class="form-control" name="vulDesc" id="vulDesc" disabled>
-            </div>
+        <mat-form-field appearance="fill">
+            <mat-label>Vulnerabilities</mat-label>
+            <mat-select [(ngModel)]="monster.vulnerable" [ngModelOptions]="{standalone: true}" multiple>
+                <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!--
+    <div class="form-group row">
+        <label for="vul" class="col-md-3">Vulnerabilities</label>
+        <div class="col-md-3">
+            <select multiple class="form-control" name="vul" id="vul" [(ngModel)]="monster.vulnerable">
+                <option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</option>
+            </select>
         </div>
+        <div class="col-md-6">
+            <input type="text" [value]="vulDesc(monster.vulnerable)" class="form-control" name="vulDesc" id="vulDesc" disabled>
+        </div>
+    </div>
+        -->
         <div class="form-group row">
             <label for="res" class="col-md-3">Resistances</label>
             <div class="col-md-3">
                 <select multiple class="form-control" name="res" id="res" [(ngModel)]="monster.resist">
-                    <option *ngFor="let dt of dmgTypeValues" [value]="dt.value">{{dt.key}}</option>
+                    <option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</option>
                 </select>
             </div>
             <div class="col-md-6">
@@ -144,7 +149,7 @@
             <label for="im" class="col-md-3">Immunities</label>
             <div class="col-md-3">
                 <select multiple class="form-control" name="im" id="im" [(ngModel)]="monster.immune">
-                    <option *ngFor="let dt of dmgTypeValues" [value]="dt.value">{{dt.key}}</option>
+                    <option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</option>
                 </select>
             </div>
             <div class="col-md-6">

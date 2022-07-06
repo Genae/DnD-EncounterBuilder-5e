@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
@@ -54,6 +54,7 @@ import { MaterialModule } from './material.module';
             { path: 'spellDetail/:id', component: SpellDetailComponent },
         ])
     ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
     providers: [DataService, ProjectService],
     bootstrap: [AppComponent]
 })

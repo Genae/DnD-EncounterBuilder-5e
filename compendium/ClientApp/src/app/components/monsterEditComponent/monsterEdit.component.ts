@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 
-import { Monster, PreparedSpell, Size, MonsterType, Ability, ChallengeRating, ArmorGroup, ArmorPiece, DamageType } from "../../models/monster";
+import { Monster, PreparedSpell, Size, MonsterType, Ability, ChallengeRating, ArmorGroup, ArmorPiece, DamageType, ArmorInfo } from "../../models/monster";
 import { Spell } from "../../models/spell";
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { DataService } from "../../services/data.service";
+import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'monsterEdit',
@@ -11,6 +12,8 @@ import { DataService } from "../../services/data.service";
 })
 
 export class MonsterEditComponent {
+
+    vul = new FormControl('');
 
     constructor(private dataService: DataService, private route: ActivatedRoute) {
 
@@ -26,14 +29,16 @@ export class MonsterEditComponent {
     tags: { [id: string]: string; }
 
     public getTags() {
-        let mtv = this.monsterTypeValues.find(mtv => this.monster.race.monsterType == mtv.value)
+        let mtv = this.monsterTypeValues.find(mtv => this.monster.race.monsterType == mtv)
         if(mtv !== undefined)
-            return this.tags[mtv.key];
+            return this.tags[mtv];
         return "";
     }
 
     public monsterUpdated(monster: Monster) {
         this.monsterSpells = [];
+        if (!monster.armorInfo)
+            monster.armorInfo = new ArmorInfo();
         this.monster = monster;
 
         //fix dropdown values
@@ -61,26 +66,17 @@ export class MonsterEditComponent {
     public setCr() {
     }
 
-    public sizeValues = Object.values(Size).filter(key => !isNaN(Number(Size[key as any as number]))).map(
-        o => { return { key: o, value: Size[o as any as number] } }
-    );
+    public sizeValues = Object.values(Size);
 
-    public dmgTypeValues = Object.values(DamageType).filter(key => !isNaN(Number(DamageType[key as any as number]))).map(
-        o => { return { key: o, value: DamageType[o as any as number] } }
-    );
+    public dmgTypeValues = Object.values(DamageType);
 
-    public monsterTypeValues = Object.values(MonsterType).filter(key => !isNaN(Number(MonsterType[key as any as number]))).map(
-        o => { return { key: o, value: MonsterType[o as any as number] } }
-    );
-    public abilityValues = Object.keys(Ability).filter(key => !isNaN(Number(Ability[key as any as number])));
+    public monsterTypeValues = Object.values(MonsterType);
+    public abilityValues = Object.values(Ability);
 
     public vulDesc(vul: DamageType[] | string[]): string {
-        return vul.map(v => {
-            let f = this.dmgTypeValues.find(dt => dt.value === ("" + v))
-            if (f !== undefined)
-                return f.key
-            return ""
-        }).join(", ")
+        if (vul === undefined)
+            return "";
+        return vul.map(v => {v + ""}).join(", ")
     }
 
     public crValues: ChallengeRating[] = [
