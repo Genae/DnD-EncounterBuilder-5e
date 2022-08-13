@@ -1,6 +1,11 @@
 <div *ngIf="monster" style="margin-top: 20px">
     <h1>Edit Monster {{monster.name}}</h1>
     <mat-stepper orientation="vertical" [linear]="false" #stepper>
+        <!----------------------------------
+    --
+    --  Basic Info
+    --
+    ---------------------------------------->
         <mat-step>
             <ng-template matStepLabel>Basic Info</ng-template>
             <form>
@@ -70,9 +75,23 @@
                         <span matSuffix><mat-slide-toggle [(ngModel)]="hover" [ngModelOptions]="{standalone: true}" (ngModelChange)="hoverToggle()"></mat-slide-toggle></span>
                         <input matInput [(ngModel)]="monster.speed.speeds['Hover']" [ngModelOptions]="{standalone: true}">
                     </mat-form-field>
+
+                    <div>
+                        <mat-form-field appearance="outline" class="col-md-3">
+                            <mat-label>Challenge Rating (expected)</mat-label>
+                            <mat-select [(ngModel)]="monster.challengeRating" [ngModelOptions]="{standalone: true}" (ngModelChange)="setCr()" required>
+                                <mat-option *ngFor="let cr of crValues" [value]="cr">{{cr.description}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
                 </div>
             </form>
         </mat-step>
+        <!-----------------------------------
+    --
+    --  Ability Scores
+    --
+    ---------------------------------------->
         <mat-step>
             <form>
                 <ng-template matStepLabel>Ability Scores</ng-template>
@@ -82,10 +101,95 @@
                         <span matSuffix>({{monster.abilities[ability].modifier >= 0 ? '+' : ''}}{{monster.abilities[ability].modifier}})<mat-slider [(ngModel)]="monster.abilities[ability].value" name="abilities_{{ability}}" id="abilities_{{ability}}" min="1" max="30" step="1" (ngModelChange)="abilityChange(ability)"></mat-slider></span>
                         <input matInput type="number" [(ngModel)]="monster.abilities[ability].value" (ngModelChange)="abilityChange(ability)" [ngModelOptions]="{standalone: true}">
                     </mat-form-field>
-                    <mat-slide-toggle class="col-md-1" style="margin-top: 20px" [(ngModel)]="save[ability]" [ngModelOptions]="{standalone: true}"  (ngModelChange)="changeSave(ability)"></mat-slide-toggle>
+                    <mat-slide-toggle class="col-md-1" style="margin-top: 20px" [(ngModel)]="save[ability]" [ngModelOptions]="{standalone: true}" (ngModelChange)="changeSave(ability)"></mat-slide-toggle>
                     <mat-form-field appearance="outline" class="col-md-2" *ngIf="save[ability]" [floatLabel]="'always'">
                         <mat-label>Saving Throw</mat-label>
                         <input matInput placeholder="{{monster.abilities[ability].modifier + proficency}}" [(ngModel)]="monster.savingThrows[ability]" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
+                </div>
+            </form>
+        </mat-step>
+        <!-----------------------------------
+    --
+    --  Defense
+    --
+    ---------------------------------------->
+        <mat-step>
+            <form>
+                <ng-template matStepLabel>Defense</ng-template>
+                <div class="form-group row">
+                    <label for="armor" class="col-md-3">7. Armor</label>
+                    <div class="col-md-3">
+                        <select class="form-control" name="acgroup" id="acgroup" [(ngModel)]="monster.armorInfo.group" (ngModelChange)="acGroupChange()">
+                            <option *ngFor="let group of armorgroups" [ngValue]="group.value">{{group.name}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-control" name="acpiece" id="acpiece" [(ngModel)]="monster.armorInfo.piece" (ngModelChange)="acPieceChange()">
+                            <option *ngFor="let piece of getArmorPieces(monster.armorInfo.group)" [ngValue]="piece.value">{{piece.name}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <mat-checkbox [(ngModel)]="monster.armorInfo.hasShield" class="form-control" name="acshield" id="acshield" (ngModelChange)="hasShieldChange()">Has Shield</mat-checkbox>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="armor2" class="col-md-3"></label>
+                    <div class="col-md-1">
+                        <input type="number" [(ngModel)]="monster.armorclass" class="form-control" name="ac" id="ac">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" [(ngModel)]="monster.armor" class="form-control" name="actext" id="actext">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="hps" class="col-md-3">8. Hitpoints</label>
+                    <div class="col-md-1">
+                        <input type="number" [(ngModel)]="monster.hitDie.dieCount" class="form-control" name="hp_dieCount" id="hp_dieCount" (ngModelChange)="recalcHP()">
+                    </div>
+                    <div class="col-md-1">
+                        <select class="form-control" name="hp_die" id="hp_die" [(ngModel)]="monster.hitDie.die" (ngModelChange)="recalcHP()">
+                            <option *ngFor="let d of hitDiceSize" [ngValue]="d.die">{{d.dieStr}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" [(ngModel)]="monster.hitDie.description" class="form-control" name="hp_dieDesc" id="hp_dieDesc" disabled>
+                    </div>
+                </div>
+
+                <div>
+                    <mat-form-field appearance="outline" class="col-md-3">
+                        <mat-label>Vulnerabilities</mat-label>
+                        <mat-select [(ngModel)]="monster.vulnerable" [ngModelOptions]="{standalone: true}" multiple>
+                            <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div>
+                    <mat-form-field appearance="outline" class="col-md-3">
+                        <mat-label>Resistances</mat-label>
+                        <mat-select [(ngModel)]="monster.resist" [ngModelOptions]="{standalone: true}" multiple>
+                            <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div>
+                    <mat-form-field appearance="outline" class="col-md-3">
+                        <mat-label>Immunities</mat-label>
+                        <mat-select [(ngModel)]="monster.immune" [ngModelOptions]="{standalone: true}" multiple>
+                            <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>                
+
+                <div>
+                    <mat-form-field appearance="outline" class="col-md-3">
+                        <mat-label>Condition Immunities</mat-label>
+                        <mat-select [(ngModel)]="monster.conditionImmune" [ngModelOptions]="{standalone: true}" multiple>
+                            <mat-option *ngFor="let con of conditionValues" [value]="con">{{con}}</mat-option>
+                        </mat-select>
                     </mat-form-field>
                 </div>
             </form>
@@ -94,90 +198,9 @@
 
     <form autocomplete="off">
 
-        <div class="form-group row">
-            <label for="cr" class="col-md-3">6. Challenge Rating (expected)</label>
-            <div class="col-md-3">
-                <select class="form-control" name="cr" id="cr" [(ngModel)]="monster.challengeRating" (ngModelChange)="setCr()" required>
-                    <option *ngFor="let cr of crValues" [ngValue]="cr">{{cr.description}}</option>
-                </select>
-            </div>
-        </div>
+        
 
-        <div class="form-group row">
-            <label for="armor" class="col-md-3">7. Armor</label>
-            <div class="col-md-3">
-                <select class="form-control" name="acgroup" id="acgroup" [(ngModel)]="monster.armorInfo.group" (ngModelChange)="acGroupChange()">
-                    <option *ngFor="let group of armorgroups" [ngValue]="group.value">{{group.name}}</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select class="form-control" name="acpiece" id="acpiece" [(ngModel)]="monster.armorInfo.piece" (ngModelChange)="acPieceChange()">
-                    <option *ngFor="let piece of getArmorPieces(monster.armorInfo.group)" [ngValue]="piece.value">{{piece.name}}</option>
-                </select>
-            </div>
-            <div class="col-md-1">
-                <mat-checkbox [(ngModel)]="monster.armorInfo.hasShield" class="form-control" name="acshield" id="acshield" (ngModelChange)="hasShieldChange()">Has Shield</mat-checkbox>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="armor2" class="col-md-3"></label>
-            <div class="col-md-1">
-                <input type="number" [(ngModel)]="monster.armorclass" class="form-control" name="ac" id="ac">
-            </div>
-            <div class="col-md-2">
-                <input type="text" [(ngModel)]="monster.armor" class="form-control" name="actext" id="actext">
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="hps" class="col-md-3">8. Hitpoints</label>
-            <div class="col-md-1">
-                <input type="number" [(ngModel)]="monster.hitDie.dieCount" class="form-control" name="hp_dieCount" id="hp_dieCount" (ngModelChange)="recalcHP()">
-            </div>
-            <div class="col-md-1">
-                <select class="form-control" name="hp_die" id="hp_die" [(ngModel)]="monster.hitDie.die" (ngModelChange)="recalcHP()">
-                    <option *ngFor="let d of hitDiceSize" [ngValue]="d.die">{{d.dieStr}}</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <input type="text" [(ngModel)]="monster.hitDie.description" class="form-control" name="hp_dieDesc" id="hp_dieDesc" disabled>
-            </div>
-        </div>
-
-
-        <div class="form-group row">
-            <label for="vulnerabilities" class="col-md-3">9. Vulnerabilities, Resistances and Immunities</label>
-        </div>
-        <mat-form-field appearance="fill" class="col-md-3">
-            <mat-label>Vulnerabilities</mat-label>
-            <mat-select [(ngModel)]="monster.vulnerable" [ngModelOptions]="{standalone: true}" multiple>
-                <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="col-md-3">
-            <mat-label>Resistances</mat-label>
-            <mat-select [(ngModel)]="monster.resist" [ngModelOptions]="{standalone: true}" multiple>
-                <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="col-md-3">
-            <mat-label>Immunities</mat-label>
-            <mat-select [(ngModel)]="monster.immune" [ngModelOptions]="{standalone: true}" multiple>
-                <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
-            </mat-select>
-        </mat-form-field>
-
-
-        <div class="form-group row">
-            <label for="vulnerabilities" class="col-md-3">Condition Immunities</label>
-        </div>
-        <mat-form-field appearance="fill" class="col-md-3">
-            <mat-label>Condition Immunities</mat-label>
-            <mat-select [(ngModel)]="monster.conditionImmune" [ngModelOptions]="{standalone: true}" multiple>
-                <mat-option *ngFor="let con of conditionValues" [value]="con">{{con}}</mat-option>
-            </mat-select>
-        </mat-form-field>
+        
         <!--
 
 
