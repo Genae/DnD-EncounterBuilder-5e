@@ -1,65 +1,98 @@
-<div *ngIf="monster">
+<div *ngIf="monster" style="margin-top: 20px">
+    <h1>Edit Monster {{monster.name}}</h1>
+    <mat-stepper orientation="vertical" [linear]="false" #stepper>
+        <mat-step>
+            <ng-template matStepLabel>Basic Info</ng-template>
+            <form>
+                <div>
+                    <mat-form-field appearance="outline" class="col-md-3">
+                        <mat-label>Name</mat-label>
+                        <input matInput [(ngModel)]="monster.name" [ngModelOptions]="{standalone: true}" required>
+                    </mat-form-field>
+                </div>
+
+                <div>
+                    <mat-form-field appearance="outline" class="col-md-3">
+                        <mat-label>Size</mat-label>
+                        <mat-select [(ngModel)]="monster.size" [ngModelOptions]="{standalone: true}" (ngModelChange)="sizeChanged()" required>
+                            <mat-option *ngFor="let size of sizeValues" [value]="size">{{size}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div>
+                    <mat-form-field appearance="outline" class="col-md-3">
+                        <mat-label>Type</mat-label>
+                        <mat-select [(ngModel)]="monster.race.monsterType" [ngModelOptions]="{standalone: true}" required>
+                            <mat-option *ngFor="let race of monsterTypeValues" [value]="race">{{race}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="col-md-3">
+                        <mat-label>Tag (optional)</mat-label>
+                        <input matInput [(ngModel)]="monster.race.tags" list="taglist" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
+                    <datalist id="taglist">
+                        <option *ngFor="let t of getTags()">{{t}}</option>
+                    </datalist>
+                </div>
+
+                <div>
+                    <mat-form-field appearance="outline" class="col-md-3">
+                        <mat-label>Alignment</mat-label>
+                        <input matInput [(ngModel)]="monster.alignment.description" [ngModelOptions]="{standalone: true}" required>
+                    </mat-form-field>
+                </div>
+
+                <div>
+                    <mat-form-field appearance="outline" class="col-md-2">
+                        <mat-label>Land Speed</mat-label>
+                        <input matInput [(ngModel)]="monster.speed.speeds['Normal']" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="col-md-2">
+                        <mat-label>Burrow Speed</mat-label>
+                        <input matInput [(ngModel)]="monster.speed.speeds['Burrow']" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="col-md-2">
+                        <mat-label>Climb Speed</mat-label>
+                        <input matInput [(ngModel)]="monster.speed.speeds['Climb']" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="col-md-2">
+                        <mat-label>Swim Speed</mat-label>
+                        <input matInput [(ngModel)]="monster.speed.speeds['Swim']" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="col-md-2" *ngIf="!hover">
+                        <mat-label>Fly Speed</mat-label>
+                        <span matSuffix><mat-slide-toggle [(ngModel)]="hover" [ngModelOptions]="{standalone: true}" (ngModelChange)="hoverToggle()"></mat-slide-toggle></span>
+                        <input matInput [(ngModel)]="monster.speed.speeds['Fly']" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="col-md-2" *ngIf="hover">
+                        <mat-label>Hover Speed</mat-label>
+                        <span matSuffix><mat-slide-toggle [(ngModel)]="hover" [ngModelOptions]="{standalone: true}" (ngModelChange)="hoverToggle()"></mat-slide-toggle></span>
+                        <input matInput [(ngModel)]="monster.speed.speeds['Hover']" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step>
+            <form>
+                <ng-template matStepLabel>Ability Scores</ng-template>
+                <div class="form-group row" *ngFor="let ability of abilityValues">
+                    <mat-form-field appearance="outline" class="col-md-3">
+                        <mat-label>{{ability}}</mat-label>
+                        <span matSuffix>({{monster.abilities[ability].modifier >= 0 ? '+' : ''}}{{monster.abilities[ability].modifier}})<mat-slider [(ngModel)]="monster.abilities[ability].value" name="abilities_{{ability}}" id="abilities_{{ability}}" min="1" max="30" step="1" (ngModelChange)="abilityChange(ability)"></mat-slider></span>
+                        <input matInput type="number" [(ngModel)]="monster.abilities[ability].value" (ngModelChange)="abilityChange(ability)" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
+                    <mat-slide-toggle class="col-md-1" style="margin-top: 20px" [(ngModel)]="save[ability]" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+                    <mat-form-field appearance="outline" class="col-md-2" *ngIf="save[ability]" [floatLabel]="'always'">
+                        <mat-label>Saving Throw</mat-label>
+                        <input matInput placeholder="{{monster.abilities[ability].modifier + proficency}}" [(ngModel)]="monster.savingThrows[ability]" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
+                </div>
+            </form>
+        </mat-step>
+    </mat-stepper>
+
     <form autocomplete="off">
-        <input autocomplete="false" name="hidden" type="text" style="display:none;">
-        <div class="form-group row">
-            <label for="name" class="col-md-3">1. Name</label>
-            <div class="col-md-3">
-                <input type="text" [(ngModel)]="monster.name" class="form-control" name="name" id="name" required>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label for="size" class="col-md-3">2. Size</label>
-            <div class="col-md-3">
-                <select class="form-control" name="size" id="size" [(ngModel)]="monster.size" (ngModelChange)="sizeChanged()" required>
-                    <option *ngFor="let size of sizeValues" [value]="size">{{size}}</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label for="type" class="col-md-3">3. Type</label>
-            <div class="col-md-3">
-                <select class="form-control" name="race" id="race" [(ngModel)]="monster.race.monsterType" required>
-                    <option *ngFor="let race of monsterTypeValues" [value]="race">{{race}}</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <input type="text" [(ngModel)]="monster.race.tags" class="form-control" name="tags" id="tags" list="taglist">
-            </div>
-        </div>
-
-        <datalist id="taglist">
-            <option *ngFor="let t of getTags()">{{t}}</option>
-        </datalist>
-
-
-        <div class="form-group row">
-            <label for="alignment" class="col-md-3">4. Alignment</label>
-            <div class="col-md-3">
-                <input type="text" [(ngModel)]="monster.alignment.description" class="form-control" name="alignment" id="alignment">
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <!--<label for="abilities" class="col-md-3">5. Ability Scores</label>-->
-        </div>
-
-        <div class="form-group row" *ngFor="let ability of abilityValues">
-            <label for="abilities_{{ability}}" class="col-md-3">{{ability}}</label>
-            <div class="col-md-3">
-                <mat-slider [(ngModel)]="monster.abilities[ability].value" class="form-control" name="abilities_{{ability}}" id="abilities_{{ability}}" min="1" max="30" step="1" (ngModelChange)="abilityChange(ability)"></mat-slider>
-            </div>
-            <div class="col-md-1">
-                <input type="number" [(ngModel)]="monster.abilities[ability].value" class="form-control" name="abilities_num_{{ability}}" id="abilities_num_{{ability}}" (ngModelChange)="abilityChange(ability)">
-            </div>
-            <div class="col-md-1">
-                <label for="abilities_mod_{{ability}}" class="col-md-3">Mod:</label>
-            </div>
-            <div class="col-md-1">
-                <input type="number" [ngModel]="monster.abilities[ability].modifier" class="form-control" name="abilities_mod_{{ability}}" id="abilities_mod_{{ability}}" disabled>
-            </div>
-        </div>
 
         <div class="form-group row">
             <label for="cr" class="col-md-3">6. Challenge Rating (expected)</label>
@@ -148,35 +181,35 @@
         <!--
 
 
-        <!--
-    <div class="form-group row">
-        <label for="armorclass" class="col-md-3">Armor</label>
-        <div class="col-md-3">
-            <input type="number" [(ngModel)]="monster.armorclass" class="form-control" name="armorclass" id="armorclass">
+            <!--
+        <div class="form-group row">
+            <label for="armorclass" class="col-md-3">Armor</label>
+            <div class="col-md-3">
+                <input type="number" [(ngModel)]="monster.armorclass" class="form-control" name="armorclass" id="armorclass">
+            </div>
+            <div class="col-md-3">
+                <input type="text" [(ngModel)]="monster.armor" class="form-control" name="armor" id="armor">
+            </div>
         </div>
-        <div class="col-md-3">
-            <input type="text" [(ngModel)]="monster.armor" class="form-control" name="armor" id="armor">
-        </div>
-    </div>
 
-    <div class="form-group row">
-        <label for="hp" class="col-md-3" style="color: red">Hit Points</label>
-        <div class="col-md-3">
-            <input type="text" [(ngModel)]="monster.hitDie.description" class="form-control" name="hp" id="hp">
+        <div class="form-group row">
+            <label for="hp" class="col-md-3" style="color: red">Hit Points</label>
+            <div class="col-md-3">
+                <input type="text" [(ngModel)]="monster.hitDie.description" class="form-control" name="hp" id="hp">
+            </div>
         </div>
-    </div>
 
-    <div class="form-group row">
-        <label for="speed" class="col-md-3" style="color: red">Speed</label>
-        <div class="col-md-3">
-            <input type="text" [(ngModel)]="monster.speed.additionalInformation" class="form-control" name="speed" id="speed">
+        <div class="form-group row">
+            <label for="speed" class="col-md-3" style="color: red">Speed</label>
+            <div class="col-md-3">
+                <input type="text" [(ngModel)]="monster.speed.additionalInformation" class="form-control" name="speed" id="speed">
+            </div>
         </div>
-    </div>
 
-    <div class="form-group row">
-        <label for="speed" class="col-md-3" style="color: red">Stats</label>
-    </div>
-        -->
+        <div class="form-group row">
+            <label for="speed" class="col-md-3" style="color: red">Stats</label>
+        </div>
+            -->
         <div class="form-group row">
             <button type="submit" class="btn btn-success">Submit</button>
         </div>

@@ -24,21 +24,12 @@
 </mat-toolbar> -->
 <mat-toolbar color="primary">
     <mat-toolbar-row>
-        <button mat-icon-button>
-            <mat-icon>menu</mat-icon>
-        </button>
-        <h1>Compedium</h1>
-        <span class="menu-spacer"></span>
-        <div>
-            <a mat-button [routerLink]="'/projectList'"> Project List </a>
-            <a mat-button [routerLink]="'/monsterList'"> Monster List </a>
-            <a mat-button [routerLink]="'/spellList'"> Spell List </a>
-        </div>
+        <a mat-button class="mat-button mat-button-base col-md-2" [routerLink]="'/'"> COMPEDIUM </a>
+        <a mat-button class="mat-button mat-button-base col-md-2" [routerLink]="'/projectList'"> Project List </a>
+        <a mat-button class="mat-button mat-button-base col-md-2" [routerLink]="'/monsterList'"> Monster List </a>
+        <a mat-button class="mat-button mat-button-base col-md-2" [routerLink]="'/spellList'"> Spell List </a>
     </mat-toolbar-row>
 
-    <mat-toolbar-row>
-        <span style="font-size: 12px;">All the monsters</span>
-    </mat-toolbar-row>
 </mat-toolbar>
 <!--
 

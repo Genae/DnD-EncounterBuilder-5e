@@ -25,6 +25,10 @@ export class MonsterEditComponent {
     }
 
     monster: Monster;
+    hover: boolean;
+    save: { [id: string]: boolean; } = {}
+    proficency: number;
+
     monsterSpells: Spell[];
     tags: { [id: string]: string; }
 
@@ -33,6 +37,18 @@ export class MonsterEditComponent {
         if(mtv !== undefined)
             return this.tags[mtv];
         return "";
+    }
+
+    public hoverToggle() {
+        if (this.hover) {
+            this.monster.speed.speeds['Hover'] = this.monster.speed.speeds['Fly'];
+            this.monster.speed.speeds['Fly'] = 0;
+        }
+        else {
+            this.monster.speed.speeds['Fly'] = this.monster.speed.speeds['Hover'];
+            this.monster.speed.speeds['Hover'] = 0;
+
+        }
     }
 
     public monsterUpdated(monster: Monster) {
@@ -53,6 +69,20 @@ export class MonsterEditComponent {
                 this.monsterSpells = data;
             });
         }
+
+        //fix hover
+        this.hover = this.monster.speed.speeds['Hover'] > 0;
+
+        //fix save
+        this.save = {};
+        for (let ability of this.abilityValues) {
+            if (this.monster.savingThrows[ability] > 0)
+                this.save[ability] = true;
+        }
+
+        //set CR
+        if (this.monster.challengeRating)
+            this.setCr();
     }
 
     public abilityChange(ability: string) {
@@ -64,6 +94,22 @@ export class MonsterEditComponent {
     }
 
     public setCr() {
+        var cr = this.crFromValue(this.monster.challengeRating.value);
+        var line = this.statByCr.find(l => l.cr === cr);
+        if(line)
+            this.proficency = line.prof;
+    }
+
+    public crFromValue(val: number):number{
+        if (val === -3)
+            return 0
+        if (val === -2)
+            return 1/8
+        if (val === -1)
+            return 1/4
+        if (val === 0)
+            return 1 / 2
+        return val;
     }
 
     public sizeValues = Object.values(Size);
