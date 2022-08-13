@@ -82,7 +82,7 @@
                         <span matSuffix>({{monster.abilities[ability].modifier >= 0 ? '+' : ''}}{{monster.abilities[ability].modifier}})<mat-slider [(ngModel)]="monster.abilities[ability].value" name="abilities_{{ability}}" id="abilities_{{ability}}" min="1" max="30" step="1" (ngModelChange)="abilityChange(ability)"></mat-slider></span>
                         <input matInput type="number" [(ngModel)]="monster.abilities[ability].value" (ngModelChange)="abilityChange(ability)" [ngModelOptions]="{standalone: true}">
                     </mat-form-field>
-                    <mat-slide-toggle class="col-md-1" style="margin-top: 20px" [(ngModel)]="save[ability]" [ngModelOptions]="{standalone: true}"></mat-slide-toggle>
+                    <mat-slide-toggle class="col-md-1" style="margin-top: 20px" [(ngModel)]="save[ability]" [ngModelOptions]="{standalone: true}"  (ngModelChange)="changeSave(ability)"></mat-slide-toggle>
                     <mat-form-field appearance="outline" class="col-md-2" *ngIf="save[ability]" [floatLabel]="'always'">
                         <mat-label>Saving Throw</mat-label>
                         <input matInput placeholder="{{monster.abilities[ability].modifier + proficency}}" [(ngModel)]="monster.savingThrows[ability]" [ngModelOptions]="{standalone: true}">

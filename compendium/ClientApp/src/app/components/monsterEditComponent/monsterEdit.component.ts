@@ -51,6 +51,13 @@ export class MonsterEditComponent {
         }
     }
 
+    public changeSave(ability: string) {
+        if (this.save[ability])
+            this.monster.savingThrows[ability] = this.monster.abilities[ability].modifier + this.proficency
+        else
+            delete this.monster.savingThrows[ability]
+    }
+
     public monsterUpdated(monster: Monster) {
         this.monsterSpells = [];
         if (!monster.armorInfo)
