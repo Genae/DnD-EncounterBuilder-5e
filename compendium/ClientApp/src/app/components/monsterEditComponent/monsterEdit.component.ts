@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { Monster, PreparedSpell, Size, MonsterType, Ability, ChallengeRating, ArmorGroup, ArmorPiece, DamageType, ArmorInfo, Condition } from "../../models/monster";
+import { Monster, PreparedSpell, Size, MonsterType, Ability, ChallengeRating, ArmorGroup, ArmorPiece, DamageType, ArmorInfo, Condition, Morality, Order } from "../../models/monster";
 import { Spell } from "../../models/spell";
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { DataService } from "../../services/data.service";
@@ -28,6 +28,8 @@ export class MonsterEditComponent {
     hover: boolean;
     save: { [id: string]: boolean; } = {}
     proficency: number;
+    alignment: { [id: string]: boolean; } = {};
+    alignmentList: string[] = [];
 
     monsterSpells: Spell[];
     tags: { [id: string]: string; }
@@ -77,6 +79,9 @@ export class MonsterEditComponent {
             });
         }
 
+        //fix hp
+        this.recalcHP();
+
         //fix hover
         this.hover = this.monster.speed.speeds['Hover'] > 0;
 
@@ -90,6 +95,39 @@ export class MonsterEditComponent {
         //set CR
         if (this.monster.challengeRating)
             this.setCr();
+
+        //alignment grid
+        for (let m of Object.values(Morality)) {
+            for (let o of Object.values(Order)) {
+                this.alignmentList.push(o + ' ' + m)
+                this.alignment[o + ' ' + m] = this.monster.alignment.alignmentChances.find(a => a.alignment.morality === m && a.alignment.order === o) !== undefined;
+            }
+        }
+    }
+
+    public getSkills() {
+        return Object.keys(this.monster.skillmodifiers)
+    }
+
+    public addSkillSelection: any;
+
+    public addSkill() {
+        this.monster.skillmodifiers[this.addSkillSelection] = this.getSkillDefaultValue(this.addSkillSelection);
+        this.addSkillSelection = "";
+    }
+
+    public removeSkill(skill:string) {
+        delete this.monster.skillmodifiers[skill];
+    }
+
+    public getSkillValues() {
+        var active = Object.keys(this.monster.skillmodifiers);
+        return Object.keys(this.skillList).filter(s => active.indexOf(s) === -1)
+    }
+
+    public getSkillDefaultValue(skill:string) {
+        let ability = this.skillList[skill];
+        return this.monster.abilities[ability].modifier + this.proficency
     }
 
     public abilityChange(ability: string) {
@@ -130,6 +168,28 @@ export class MonsterEditComponent {
             return "";
         return vul.map(v => {v + ""}).join(", ")
     }
+
+    public skillList: { [id: string]: string; } = {
+        "Acrobatics": "Dexterity",
+        "Animal_Handling": "Wisdom",
+        "Arcana": "Intelligence",
+        "Athletics": "Strength",
+        "Deception": "Charisma",
+        "History": "Intelligence",
+        "Insight": "Wisdom",
+        "Intimidation": "Charisma",
+        "Investigation": "Intelligence",
+        "Medicine": "Wisdom",
+        "Nature": "Intelligence",
+        "Perception": "Wisdom",
+        "Performance": "Charisma",
+        "Persuasion": "Charisma",
+        "Religion": "Intelligence",
+        "Sleight_Of_Hand": "Dexterity",
+        "Stealth": "Dexterity",
+        "Survival": "Wisdom"
+    }
+
 
     public crValues: ChallengeRating[] = [
         { value: -3, experience: 0, description: "0 (0 XP)" },
@@ -195,52 +255,34 @@ export class MonsterEditComponent {
         { name: "Heavy Armor", value: ArmorGroup.HeavyArmor }
     ]
 
-    private agNat = [
-        { name: "No Armor (10 + Dex)", value: ArmorPiece.Nat0, ac: 0 },
-        { name: "Thin Hide (11 + Dex)", value: ArmorPiece.Nat1, ac: 1 },
-        { name: "Hide (12 + Dex)", value: ArmorPiece.Nat2, ac: 2 },
-        { name: "Thick Hide (13 + Dex)", value: ArmorPiece.Nat3, ac: 3 },
-        { name: "- (14 + Dex)", value: ArmorPiece.Nat4, ac: 4  },
-        { name: "- (15 + Dex)", value: ArmorPiece.Nat5, ac: 5  },
-        { name: "- (16 + Dex)", value: ArmorPiece.Nat6, ac: 6  },
-        { name: "- (17 + Dex)", value: ArmorPiece.Nat7, ac: 7  },
-        { name: "- (18 + Dex)", value: ArmorPiece.Nat8, ac: 8 },
-        { name: "Steelplated Body (19 + Dex)", value: ArmorPiece.Nat9, ac: 9 }
-    ]
-
-    private agLight = [
-        { name: "Padded (11 + Dex)", value: ArmorPiece.Padded, ac: 11 },
-        { name: "Leather (11 + Dex)", value: ArmorPiece.Leather, ac: 11 },
-        { name: "Studded Leather (12 + Dex)", value: ArmorPiece.StuddedLeather, ac: 12 },
-    ]
-
-    private agMedium = [
-        { name: "Hide (12 + Dex)", value: ArmorPiece.Hide, ac: 12 },
-        { name: "Chain Shirt (13 + Dex)", value: ArmorPiece.ChainShirt, ac: 13 },
-        { name: "Scale Mail (14 + Dex)", value: ArmorPiece.ScaleMail, ac: 14 },
-        { name: "Breastplate (14 + Dex)", value: ArmorPiece.Brestplate, ac: 14 },
-        { name: "Half Plate (15 + Dex)", value: ArmorPiece.HalfPlate, ac: 15 },
-    ]
-
-    private agHeavy = [
-        { name: "Ring Mail (14)", value: ArmorPiece.RingMail, ac: 14 },
-        { name: "Chain Mail (16)", value: ArmorPiece.ChainMail, ac: 16 },
-        { name: "Splint (17)", value: ArmorPiece.Splint, ac: 17 },
-        { name: "Plate (18)", value: ArmorPiece.Plate, ac: 18 }
+    private armors = [
+        { group: ArmorGroup.NaturalArmor, name: "No Armor (10 + Dex)", value: ArmorPiece.Nat0, ac: 0 },
+        { group: ArmorGroup.NaturalArmor, name: "Thin Hide (11 + Dex)", value: ArmorPiece.Nat1, ac: 1 },
+        { group: ArmorGroup.NaturalArmor, name: "Hide (12 + Dex)", value: ArmorPiece.Nat2, ac: 2 },
+        { group: ArmorGroup.NaturalArmor, name: "Thick Hide (13 + Dex)", value: ArmorPiece.Nat3, ac: 3 },
+        { group: ArmorGroup.NaturalArmor, name: "- (14 + Dex)", value: ArmorPiece.Nat4, ac: 4  },
+        { group: ArmorGroup.NaturalArmor, name: "- (15 + Dex)", value: ArmorPiece.Nat5, ac: 5  },
+        { group: ArmorGroup.NaturalArmor, name: "- (16 + Dex)", value: ArmorPiece.Nat6, ac: 6  },
+        { group: ArmorGroup.NaturalArmor, name: "- (17 + Dex)", value: ArmorPiece.Nat7, ac: 7  },
+        { group: ArmorGroup.NaturalArmor, name: "- (18 + Dex)", value: ArmorPiece.Nat8, ac: 8 },
+        { group: ArmorGroup.NaturalArmor, name: "Steelplated Body (19 + Dex)", value: ArmorPiece.Nat9, ac: 9 },
+        { group: ArmorGroup.LightArmor, name: "Padded (11 + Dex)", value: ArmorPiece.Padded, ac: 11 },
+        { group: ArmorGroup.LightArmor, name: "Leather (11 + Dex)", value: ArmorPiece.Leather, ac: 11 },
+        { group: ArmorGroup.LightArmor, name: "Studded Leather (12 + Dex)", value: ArmorPiece.StuddedLeather, ac: 12 },
+        { group: ArmorGroup.MediumArmor, name: "Hide (12 + Dex)", value: ArmorPiece.Hide, ac: 12 },
+        { group: ArmorGroup.MediumArmor, name: "Chain Shirt (13 + Dex)", value: ArmorPiece.ChainShirt, ac: 13 },
+        { group: ArmorGroup.MediumArmor, name: "Scale Mail (14 + Dex)", value: ArmorPiece.ScaleMail, ac: 14 },
+        { group: ArmorGroup.MediumArmor, name: "Breastplate (14 + Dex)", value: ArmorPiece.Brestplate, ac: 14 },
+        { group: ArmorGroup.MediumArmor, name: "Half Plate (15 + Dex)", value: ArmorPiece.HalfPlate, ac: 15 },
+        { group: ArmorGroup.HeavyArmor, name: "Ring Mail (14)", value: ArmorPiece.RingMail, ac: 14 },
+        { group: ArmorGroup.HeavyArmor, name: "Chain Mail (16)", value: ArmorPiece.ChainMail, ac: 16 },
+        { group: ArmorGroup.HeavyArmor, name: "Splint (17)", value: ArmorPiece.Splint, ac: 17 },
+        { group: ArmorGroup.HeavyArmor, name: "Plate (18)", value: ArmorPiece.Plate, ac: 18 }
     ]
 
 
     public getArmorPieces(group: ArmorGroup) {
-        switch (group) {
-            case ArmorGroup.NaturalArmor:
-                return this.agNat;
-            case ArmorGroup.LightArmor:
-                return this.agLight;
-            case ArmorGroup.MediumArmor:
-                return this.agMedium;
-            case ArmorGroup.HeavyArmor:
-                return this.agHeavy;
-        }
+        return this.armors.filter(a => a.group === group);
     }
 
     public hasShieldChange() {
@@ -255,29 +297,29 @@ export class MonsterEditComponent {
         let shield = 0;
         if (this.monster.armorInfo.hasShield)
             shield = 2;
-        switch (this.monster.armorInfo.group) {
-            case ArmorGroup.NaturalArmor:
-                let piece = this.agNat.find(n => this.monster.armorInfo.piece == n.value)
-                if (piece === undefined) return;
-                this.monster.armor = "natural armor";
-                this.monster.armorclass = 10 + this.monster.abilities["Dexterity"].modifier + piece.ac + shield;
-                break;
-            case ArmorGroup.LightArmor:
-                piece = this.agLight.find(n => this.monster.armorInfo.piece == n.value)
-                if (piece === undefined) return;
-                this.monster.armorclass = this.monster.abilities["Dexterity"].modifier + piece.ac + shield;
-                break;
-            case ArmorGroup.MediumArmor:
-                piece = this.agMedium.find(n => this.monster.armorInfo.piece == n.value)
-                if (piece === undefined) return;
-                this.monster.armorclass = Math.min(2, this.monster.abilities["Dexterity"].modifier) + piece.ac + shield;
-                break;
-            case ArmorGroup.HeavyArmor:
-                piece = this.agHeavy.find(n => this.monster.armorInfo.piece == n.value)
-                if (piece === undefined) return;
-                this.monster.armorclass = piece.ac + shield;
-                break;
+        if (this.monster.armorInfo.piece) {
+            let piece = this.armors.find(n => this.monster.armorInfo.piece == n.value)
+            if (!piece)
+                return;
+            this.monster.armorInfo.group = piece.group
+            this.monster.armor = piece.name.split("(")[0].trim();
+            switch (this.monster.armorInfo.group) {
+                case ArmorGroup.NaturalArmor:
+                    this.monster.armor = "natural armor";
+                    this.monster.armorclass = 10 + this.monster.abilities["Dexterity"].modifier + piece.ac + shield;
+                    break;
+                case ArmorGroup.LightArmor:
+                    this.monster.armorclass = this.monster.abilities["Dexterity"].modifier + piece.ac + shield;
+                    break;
+                case ArmorGroup.MediumArmor:
+                    this.monster.armorclass = Math.min(2, this.monster.abilities["Dexterity"].modifier) + piece.ac + shield;
+                    break;
+                case ArmorGroup.HeavyArmor:
+                    this.monster.armorclass = piece.ac + shield;
+                    break;
+            }
         }
+        
         this.calcDefCR()
     }
     public acGroupChange() {
@@ -298,7 +340,8 @@ export class MonsterEditComponent {
         let hd = this.monster.hitDie;
         hd.offset = hd.dieCount * this.monster.abilities["Constitution"].modifier;
         hd.expectedRoll = parseInt(((hd.dieCount * (hd.die + 1)) / 2 + hd.offset) + "");
-        hd.description = hd.expectedRoll + " (" + hd.dieCount + "d" + hd.die + " + " + hd.offset + ")"
+        hd.description = "(" + hd.dieCount + "d" + hd.die + " + " + hd.offset + ")"
+        this.monster.maximumHitpoints = hd.expectedRoll;
         this.calcDefCR();
     }
 

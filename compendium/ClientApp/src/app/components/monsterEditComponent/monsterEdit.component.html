@@ -44,7 +44,13 @@
                 <div>
                     <mat-form-field appearance="outline" class="col-md-3">
                         <mat-label>Alignment</mat-label>
-                        <input matInput [(ngModel)]="monster.alignment.description" [ngModelOptions]="{standalone: true}" required>
+                        <mat-grid-list cols="4" rowHeight="1:1" style="border: 1px solid lightgray; border-radius: 5px;">
+                            <mat-grid-tile></mat-grid-tile>
+                            <mat-grid-tile [colspan]="3">Lawful vs Chaotic</mat-grid-tile>
+                            <mat-grid-tile [rowspan]="3"><span style="transform: rotate(90deg); white-space: nowrap">Good vs Evil</span></mat-grid-tile>
+                            <mat-grid-tile *ngFor="let al of alignmentList"><mat-checkbox disabled [(ngModel)]="alignment[al]" [ngModelOptions]="{standalone: true}" matTooltip="{{al}}" [matTooltipPosition]="'below'"></mat-checkbox></mat-grid-tile>
+                        </mat-grid-list>
+                        <input matInput [(ngModel)]="monster.alignment.description" [ngModelOptions]="{standalone: true}" style="text-align:center; margin-top:15px" required>
                     </mat-form-field>
                 </div>
 
@@ -78,10 +84,24 @@
 
                     <div>
                         <mat-form-field appearance="outline" class="col-md-3">
+                            <mat-label>Senses</mat-label>
+                            <input matInput [(ngModel)]="monster.senses.description" [ngModelOptions]="{standalone: true}">
+                        </mat-form-field>
+                    </div>
+
+                    <div>
+                        <mat-form-field appearance="outline" class="col-md-3">
                             <mat-label>Challenge Rating (expected)</mat-label>
                             <mat-select [(ngModel)]="monster.challengeRating" [ngModelOptions]="{standalone: true}" (ngModelChange)="setCr()" required>
                                 <mat-option *ngFor="let cr of crValues" [value]="cr">{{cr.description}}</mat-option>
                             </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div>
+                        <mat-form-field appearance="outline" class="col-md-3">
+                            <mat-label>Languages</mat-label>
+                            <input matInput [(ngModel)]="monster.languages" [ngModelOptions]="{standalone: true}">
                         </mat-form-field>
                     </div>
                 </div>
@@ -107,6 +127,23 @@
                         <input matInput placeholder="{{monster.abilities[ability].modifier + proficency}}" [(ngModel)]="monster.savingThrows[ability]" [ngModelOptions]="{standalone: true}">
                     </mat-form-field>
                 </div>
+                <mat-list role="list">
+                    <div mat-subheader>Skills</div>
+                    <mat-list-item *ngFor="let skill of getSkills()" role="listitem" style="height:70px">
+                        <mat-form-field appearance="outline" class="col-md-2" [floatLabel]="'always'">
+                            <mat-label>{{skill}}</mat-label>
+                            <span matSuffix>
+                               <button mat-icon-button (click)="removeSkill(skill)"><mat-icon>delete</mat-icon></button> 
+                            </span>
+                            <input matInput placeholder="{{getSkillDefaultValue(skill)}}" [(ngModel)]="monster.skillmodifiers[skill]" [ngModelOptions]="{standalone: true}">
+                        </mat-form-field>
+                    </mat-list-item>
+                    <mat-list-item role="listitem">
+                        <mat-select placeholder="add skill" [(ngModel)]="addSkillSelection" (ngModelChange)="addSkill()" [ngModelOptions]="{standalone: true}">
+                            <mat-option *ngFor="let sv of getSkillValues()" [value]="sv">{{sv}}</mat-option>
+                        </mat-select>
+                    </mat-list-item>
+                </mat-list>
             </form>
         </mat-step>
         <!-----------------------------------
@@ -117,44 +154,46 @@
         <mat-step>
             <form>
                 <ng-template matStepLabel>Defense</ng-template>
-                <div class="form-group row">
-                    <label for="armor" class="col-md-3">7. Armor</label>
-                    <div class="col-md-3">
-                        <select class="form-control" name="acgroup" id="acgroup" [(ngModel)]="monster.armorInfo.group" (ngModelChange)="acGroupChange()">
-                            <option *ngFor="let group of armorgroups" [ngValue]="group.value">{{group.name}}</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-control" name="acpiece" id="acpiece" [(ngModel)]="monster.armorInfo.piece" (ngModelChange)="acPieceChange()">
-                            <option *ngFor="let piece of getArmorPieces(monster.armorInfo.group)" [ngValue]="piece.value">{{piece.name}}</option>
-                        </select>
-                    </div>
-                    <div class="col-md-1">
-                        <mat-checkbox [(ngModel)]="monster.armorInfo.hasShield" class="form-control" name="acshield" id="acshield" (ngModelChange)="hasShieldChange()">Has Shield</mat-checkbox>
-                    </div>
+                <div>
+                    <mat-form-field appearance="outline" class="col-md-3">
+                        <mat-label>Armor Info</mat-label>
+                        <mat-select [(ngModel)]="monster.armorInfo.piece" (ngModelChange)="acPieceChange()" [ngModelOptions]="{standalone: true}">
+                            <mat-optgroup *ngFor="let group of armorgroups" label="{{group.name}}">
+                                <mat-option *ngFor="let piece of getArmorPieces(group.value)" [value]="piece.value">{{piece.name}}</mat-option>
+                            </mat-optgroup>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-slide-toggle class="col-md-2" style="margin: 20px" [(ngModel)]="monster.armorInfo.hasShield" [ngModelOptions]="{standalone: true}" (ngModelChange)="hasShieldChange()">Has Shield</mat-slide-toggle>
                 </div>
-                <div class="form-group row">
-                    <label for="armor2" class="col-md-3"></label>
-                    <div class="col-md-1">
-                        <input type="number" [(ngModel)]="monster.armorclass" class="form-control" name="ac" id="ac">
-                    </div>
-                    <div class="col-md-2">
-                        <input type="text" [(ngModel)]="monster.armor" class="form-control" name="actext" id="actext">
-                    </div>
+                <div>
+                    <mat-form-field appearance="outline" class="col-md-1">
+                        <mat-label>AC</mat-label>
+                        <input matInput [(ngModel)]="monster.armorclass" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="col-md-2">
+                        <mat-label>Description</mat-label>
+                        <input matInput [(ngModel)]="monster.armor" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
                 </div>
-                <div class="form-group row">
-                    <label for="hps" class="col-md-3">8. Hitpoints</label>
-                    <div class="col-md-1">
-                        <input type="number" [(ngModel)]="monster.hitDie.dieCount" class="form-control" name="hp_dieCount" id="hp_dieCount" (ngModelChange)="recalcHP()">
-                    </div>
-                    <div class="col-md-1">
-                        <select class="form-control" name="hp_die" id="hp_die" [(ngModel)]="monster.hitDie.die" (ngModelChange)="recalcHP()">
-                            <option *ngFor="let d of hitDiceSize" [ngValue]="d.die">{{d.dieStr}}</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="text" [(ngModel)]="monster.hitDie.description" class="form-control" name="hp_dieDesc" id="hp_dieDesc" disabled>
-                    </div>
+                <div>
+                    <mat-form-field appearance="outline" class="col-md-1">
+                        <mat-label>Hit Die Count</mat-label>
+                        <input matInput type="number" [(ngModel)]="monster.hitDie.dieCount" (ngModelChange)="recalcHP()" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="col-md-1">
+                        <mat-label>Hit Die</mat-label>
+                        <mat-select [(ngModel)]="monster.hitDie.die" [ngModelOptions]="{standalone: true}" (ngModelChange)="recalcHP()" required>
+                            <mat-option *ngFor="let d of hitDiceSize" [value]="d.die">{{d.dieStr}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="col-md-1">
+                        <mat-label>HP</mat-label>
+                        <input matInput [(ngModel)]="monster.maximumHitpoints" disabled [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="col-md-2">
+                        <mat-label>Description</mat-label>
+                        <input matInput [(ngModel)]="monster.hitDie.description" [ngModelOptions]="{standalone: true}" disabled>
+                    </mat-form-field>
                 </div>
 
                 <div>
@@ -182,7 +221,7 @@
                             <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
                         </mat-select>
                     </mat-form-field>
-                </div>                
+                </div>
 
                 <div>
                     <mat-form-field appearance="outline" class="col-md-3">

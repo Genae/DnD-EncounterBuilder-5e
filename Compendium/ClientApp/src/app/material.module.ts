@@ -10,6 +10,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatListModule } from '@angular/material/list';
+import { MatButtonModule } from '@angular/material/button';
+
 
 
 @NgModule({
@@ -23,7 +28,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
         MatSelectModule,
         MatInputModule,
         MatStepperModule,
-        MatSlideToggleModule
+        MatSlideToggleModule,
+        MatGridListModule,
+        MatTooltipModule,
+        MatListModule,
+        MatButtonModule
     ]
 })
 export class MaterialModule { }
