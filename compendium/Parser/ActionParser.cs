@@ -1,14 +1,66 @@
-using System.Text.RegularExpressions;
 using Compendium.Models.CoreData;
 using Compendium.Models.CoreData.Enums;
 using Compendium.Models.ImportData;
 using Compendium.Provider;
+using System.Text.RegularExpressions;
 using Action = Compendium.Models.CoreData.Action;
 
 namespace Compendium.Parser
 {
     public class ActionParser
     {
+        public Multiattack ParseMultiattack(ActionRaw raw, List<string> errors, List<Action> actions)
+        {
+            var action = new Multiattack
+            {
+                Name = raw.Name,
+                Text = new Regex("[ ]{2,}", RegexOptions.None).Replace(raw.Text.Replace("\r\n", " ").Replace("\n", " ").Replace("\r", " "), " "),
+                Actions = new Dictionary<string, int>()
+            };
+
+
+            var textSplit = action.Text.ToLower().Split(new[] { ":", ",", "and", "or", "." }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var t in textSplit)
+            {
+                FindActionInText(t, actions, action);
+            }
+
+            return action;
+        }
+
+        public void FindActionInText(string t, List<Action> actions, Multiattack action)
+        {
+            foreach (var a in actions)
+            {
+                if (t.Contains(a.Name, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    var count = FindCountInText(t);
+                    action.Actions[a.Name] = count;
+                    return;
+                }
+            }
+        }
+
+        public int FindCountInText(string text)
+        {
+            if (text.Contains("one"))
+                return 1;
+            if (text.Contains("two"))
+                return 2;
+            if (text.Contains("three"))
+                return 3;
+            if (text.Contains("four"))
+                return 4;
+            if (text.Contains("five"))
+                return 5;
+            if (text.Contains("once"))
+                return 1;
+            if (text.Contains("twice"))
+                return 2;
+            return 1;
+        }
+
         public Action ParseAction(ActionRaw raw, List<string> errors, DynamicEnumProvider dep)
         {
             var action = new Action
@@ -94,7 +146,7 @@ namespace Compendium.Parser
                         var reg = new Regex(@"\([A-Za-z]*\)");
                         foreach (var s in reg.Matches(dc.Value.Value).Select(s => Enum.Parse<Skill>(s.Value.Trim('(', ')'), true)))
                         {
-                            ((SkillCheck) effects[dc.Key].DC).Skill |= s;
+                            ((SkillCheck)effects[dc.Key].DC).Skill |= s;
                         }
                     }
                     else if (dc.Value.Value.Contains("saving throw"))
@@ -188,7 +240,7 @@ namespace Compendium.Parser
                 {
                     var range = action.Text.Substring(start, end - start).Trim().Split('/');
                     action.Attack.ShortRange = Convert.ToInt32(range[0]);
-                    if(range.Length > 1)
+                    if (range.Length > 1)
                         action.Attack.LongRange = Convert.ToInt32(range[1]);
                     reachEnd = end + 3;
                 }

@@ -1,8 +1,8 @@
-﻿using System.Text.RegularExpressions;
-using Compendium.Models.CoreData;
+﻿using Compendium.Models.CoreData;
 using Compendium.Models.CoreData.Enums;
 using Compendium.Models.ImportData;
 using Compendium.Provider;
+using System.Text.RegularExpressions;
 using Action = Compendium.Models.CoreData.Action;
 
 namespace Compendium.Parser
@@ -23,11 +23,17 @@ namespace Compendium.Parser
         public Monster Parse(MonsterRaw raw, List<Spell> spells)
         {
             var errors = new List<string>();
+            var actions = raw.Actions.Where(r => r.Name?.Trim()?.Trim('.')?.Equals("Multiattack", StringComparison.InvariantCultureIgnoreCase) == false).ToList();
+            var multiActions = raw.Actions.Where(r => r.Name?.Trim()?.Trim('.')?.Equals("Multiattack", StringComparison.InvariantCultureIgnoreCase) == true || r.Name == null).ToList();
+            if (multiActions.Count > 1)
+                return null;
+
+            var parsedActions = ParseActions(actions, errors, _dep);
             var monster = new Monster
             {
                 Name = raw.Name,
                 Abilities = ParseAbilities(raw, ref errors),
-                Actions = ParseActions(raw.Actions, errors, _dep),
+                Actions = parsedActions,
                 Alignment = ParseAlignment(raw, errors),
                 Armor = raw.Armor,
                 Armorclass = raw.Armorclass,
@@ -35,8 +41,9 @@ namespace Compendium.Parser
                 ConditionImmune = ParseConditions(raw.ConditionImmune, errors),
                 Immune = ParseDamageTypes(raw.Immune),
                 Languages = raw.Languages,
-                LegendaryActions = ParseActions(raw.LegendaryActions, errors, _dep).Select(a => new LegendaryAction {Action = a}).ToList(),
+                LegendaryActions = ParseActions(raw.LegendaryActions, errors, _dep).Select(a => new LegendaryAction { Action = a }).ToList(),
                 MaximumHitpoints = raw.MaximumHitpoints,
+                MultiattackAction = ParseMultiattack(multiActions, errors, parsedActions).FirstOrDefault(),
                 Reactions = ParseActions(raw.Reactions, errors, _dep).Select(a => new Reaction { Action = a }).ToList(),
                 Resist = ParseDamageTypes(raw.Resist),
                 SavingThrows = raw.SavingThrows.ToDictionary(s => s.GetAbility(_dep), s => s.Modifier),
@@ -45,7 +52,7 @@ namespace Compendium.Parser
                 Skillmodifiers = raw.Skills.ToDictionary(s => s.Skill, s => s.Modifier),
                 Speed = ParseSpeed(raw.Speed, errors),
                 Spellcasting = CheckForSpellcasting(spells, raw, ref errors, _dep),
-                Traits = raw.Traits.Select(t => new Trait(){Name = t.Name, Text = t.Text}).ToList(),
+                Traits = raw.Traits.Select(t => new Trait() { Name = t.Name, Text = t.Text }).ToList(),
                 Race = ParseMonsterType(raw.Type),
                 Vulnerable = ParseDamageTypes(raw.Vulnerable)
             };
@@ -68,9 +75,9 @@ namespace Compendium.Parser
 
         private Speed ParseSpeed(string rawSpeed, List<string> errors)
         {
-            var speed = new Speed {AdditionalInformation = rawSpeed};
+            var speed = new Speed { AdditionalInformation = rawSpeed };
             var regex = new Regex("^([0-9]+)");
-            if(regex.IsMatch(rawSpeed))
+            if (regex.IsMatch(rawSpeed))
                 speed.Speeds[MovementType.Normal] = Convert.ToInt32(regex.Match(rawSpeed.ToLower()).Groups[1].Value);
 
             regex = new Regex("(burrow )([0-9]*)");
@@ -101,7 +108,7 @@ namespace Compendium.Parser
                 Description = rawSenses
             };
             var regex = new Regex("(passive perception )([0-9]*)");
-            if(regex.IsMatch(rawSenses.ToLower()))
+            if (regex.IsMatch(rawSenses.ToLower()))
                 senses.PassivePerception = Convert.ToInt32(regex.Match(rawSenses.ToLower()).Groups[2].Value);
 
             regex = new Regex("(blindsight )([0-9]*)");
@@ -133,13 +140,13 @@ namespace Compendium.Parser
             var damageTypes = new List<DamageType>();
             if (rawImmune.ToLower().Contains("from nonmagical attacks"))
             {
-                damageTypes.AddRange(new []{DamageType.Piercing, DamageType.Slashing, DamageType.Bludgeoning}.Where(dt => rawImmune.ToLower().Contains(dt.ToString().ToLower())));
+                damageTypes.AddRange(new[] { DamageType.Piercing, DamageType.Slashing, DamageType.Bludgeoning }.Where(dt => rawImmune.ToLower().Contains(dt.ToString().ToLower())));
             }
             else
             {
                 damageTypes.AddRange(new[] { DamageType.PiercingMagic, DamageType.SlashingMagic, DamageType.BludgeoningMagic }.Where(dt => rawImmune.ToLower().Contains(dt.ToString().Replace("Magic", "").ToLower())));
             }
-            damageTypes.AddRange(new []
+            damageTypes.AddRange(new[]
             {
                 DamageType.Acid,
                 DamageType.Cold,
@@ -174,7 +181,7 @@ namespace Compendium.Parser
             {
                 foreach (Order order in Enum.GetValues(typeof(Order)))
                 {
-                    if(raw.Alignment.ToLower().Contains($"{order} {morality}".ToLower()))
+                    if (raw.Alignment.ToLower().Contains($"{order} {morality}".ToLower()))
                         return new AlignmentDistribution(new Alignment(morality, order), raw.Alignment);
                 }
                 if (raw.Alignment.ToLower().Contains("any " + morality.ToString().ToLower() + "alignment"))
@@ -209,7 +216,12 @@ namespace Compendium.Parser
         {
             return raw.Select(r => _actionParser.ParseAction(r, errors, dep)).ToList();
         }
-        
+
+        private List<Multiattack> ParseMultiattack(List<ActionRaw> raw, List<string> errors, List<Action> actions)
+        {
+            return raw.Select(r => _actionParser.ParseMultiattack(r, errors, actions)).ToList();
+        }
+
         private Dictionary<string, AbilityScore> ParseAbilities(MonsterRaw raw, ref List<string> errors)
         {
             return AbilityScore.GetFromString(raw.AbilityString, ref errors);

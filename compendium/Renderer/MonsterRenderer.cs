@@ -50,6 +50,9 @@ namespace Compendium.Renderer
                 stringBuilder.AppendLine($"> ### Actions");
             if (monster.Spellcasting != null)
                 RenderSpellcasting(monster.Spellcasting, stringBuilder);
+            if (monster.MultiattackAction != null)
+                RenderAction(monster.MultiattackAction, stringBuilder);
+
             if (monster.Actions != null)
                 foreach (var action in monster.Actions)
                     RenderAction(action, stringBuilder);
@@ -70,6 +73,12 @@ namespace Compendium.Renderer
         }
 
         private void RenderAction(Models.CoreData.Action action, StringBuilder stringBuilder)
+        {
+            stringBuilder.AppendLine($"> ***{action.Name}.*** {action.Text}");
+            stringBuilder.AppendLine($">");
+        }
+
+        private void RenderAction(Multiattack action, StringBuilder stringBuilder)
         {
             stringBuilder.AppendLine($"> ***{action.Name}.*** {action.Text}");
             stringBuilder.AppendLine($">");

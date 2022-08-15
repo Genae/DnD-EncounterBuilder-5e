@@ -22,6 +22,7 @@ export class Monster {
     savingThrows: { [id: string]: number; };
     skillmodifiers: { [id: string]: number; };
     traits: Trait[];
+    multiAttackAction: Action;
     actions: Action[];
     reactions: Reaction[];
     legendaryActions: LegendaryAction[];

@@ -31,10 +31,12 @@ namespace Compendium.Models.CoreData
         public Dictionary<Skill, int> Skillmodifiers { get; set; }
         public List<Trait> Traits { get; set; }
         public List<Action> Actions { get; set; }
+        public Multiattack MultiattackAction { get; set; }
         public List<Reaction> Reactions { get; set; }
         public List<LegendaryAction> LegendaryActions { get; set; }
 
         public string Markup => new MonsterRenderer().RenderMonster(this);
+
 
         public Monster() { }
 

@@ -133,7 +133,7 @@
                         <mat-form-field appearance="outline" class="col-md-2" [floatLabel]="'always'">
                             <mat-label>{{skill}}</mat-label>
                             <span matSuffix>
-                               <button mat-icon-button (click)="removeSkill(skill)"><mat-icon>delete</mat-icon></button> 
+                                <button mat-icon-button (click)="removeSkill(skill)"><mat-icon>delete</mat-icon></button>
                             </span>
                             <input matInput placeholder="{{getSkillDefaultValue(skill)}}" [(ngModel)]="monster.skillmodifiers[skill]" [ngModelOptions]="{standalone: true}">
                         </mat-form-field>
@@ -231,6 +231,17 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
+            </form>
+        </mat-step>
+        <!-----------------------------------
+    --
+    --  Actions
+    --
+    ---------------------------------------->
+        <mat-step>
+            <form>
+                <ng-template matStepLabel>Actions</ng-template>
+
             </form>
         </mat-step>
     </mat-stepper>
