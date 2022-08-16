@@ -139,9 +139,11 @@
                         </mat-form-field>
                     </mat-list-item>
                     <mat-list-item role="listitem">
-                        <mat-select placeholder="add skill" [(ngModel)]="addSkillSelection" (ngModelChange)="addSkill()" [ngModelOptions]="{standalone: true}">
-                            <mat-option *ngFor="let sv of getSkillValues()" [value]="sv">{{sv}}</mat-option>
-                        </mat-select>
+                        <div class="col-md-2">
+                            <mat-select placeholder="add skill" [(ngModel)]="addSkillSelection" (ngModelChange)="addSkill()" [ngModelOptions]="{standalone: true}">
+                                <mat-option *ngFor="let sv of getSkillValues()" [value]="sv">{{sv}}</mat-option>
+                            </mat-select>
+                        </div>
                     </mat-list-item>
                 </mat-list>
             </form>
@@ -241,7 +243,35 @@
         <mat-step>
             <form>
                 <ng-template matStepLabel>Actions</ng-template>
-
+                <mat-slide-toggle class="col-md-2" style="margin: 20px" [(ngModel)]="hasMultiattack" [ngModelOptions]="{standalone: true}" (ngModelChange)="hasMultiattackChange()">Multiattack</mat-slide-toggle>
+                <mat-card>
+                    <mat-card-header>
+                        <span style="font-weight: 500">{{monster.multiattackAction.name}}. </span><span>{{monster.multiattackAction.text}}</span>
+                    </mat-card-header>
+                    <mat-divider></mat-divider>
+                    <mat-card-content style="margin-top:20px">
+                        <mat-list role="list">
+                            <mat-list-item *ngFor="let action of getObjectKeys(monster.multiattackAction.actions)" role="listitem" style="height:70px">
+                                <mat-form-field appearance="outline" class="col-md-2" [floatLabel]="'always'">
+                                    <mat-label>{{action}}</mat-label>
+                                    <span matSuffix>
+                                        <button mat-icon-button (click)="removeActionFromMulti(action)"><mat-icon>delete</mat-icon></button>
+                                    </span>
+                                    <input type="number" matInput [(ngModel)]="monster.multiattackAction.actions[action]" [ngModelOptions]="{standalone: true}">
+                                </mat-form-field>
+                            </mat-list-item>
+                            <mat-list-item role="listitem">
+                                <div class="col-md-2">
+                                    <mat-select placeholder="add action" [(ngModel)]="addActionToMultiSelection" (ngModelChange)="addActionToMulti()" [ngModelOptions]="{standalone: true}">
+                                        <mat-option *ngFor="let ac of getUnusedMultiActions()" [value]="ac">{{ac}}</mat-option>
+                                    </mat-select>
+                                </div>
+                            </mat-list-item>
+                        </mat-list>
+                    </mat-card-content>
+                    <mat-card-actions>
+                    </mat-card-actions>
+                </mat-card>
             </form>
         </mat-step>
     </mat-stepper>

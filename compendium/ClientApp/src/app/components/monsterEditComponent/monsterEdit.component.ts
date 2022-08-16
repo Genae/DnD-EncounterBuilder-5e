@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { Monster, PreparedSpell, Size, MonsterType, Ability, ChallengeRating, ArmorGroup, ArmorPiece, DamageType, ArmorInfo, Condition, Morality, Order } from "../../models/monster";
+import { Monster, PreparedSpell, Size, MonsterType, Ability, ChallengeRating, ArmorGroup, ArmorPiece, DamageType, ArmorInfo, Condition, Morality, Order, Multiattack } from "../../models/monster";
 import { Spell } from "../../models/spell";
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { DataService } from "../../services/data.service";
@@ -30,6 +30,7 @@ export class MonsterEditComponent {
     proficency: number;
     alignment: { [id: string]: boolean; } = {};
     alignmentList: string[] = [];
+    hasMultiattack: boolean;
 
     monsterSpells: Spell[];
     tags: { [id: string]: string; }
@@ -51,6 +52,32 @@ export class MonsterEditComponent {
             this.monster.speed.speeds['Hover'] = 0;
 
         }
+    }
+
+    public getObjectKeys(dic: { [id: string]: number }) {
+        return Object.keys(dic);
+    }
+
+    public removeActionFromMulti(action: string) {
+        delete this.monster.multiattackAction.actions[action];
+    }
+
+    addActionToMultiSelection: string;
+
+    public addActionToMulti() {
+        this.monster.multiattackAction.actions[this.addActionToMultiSelection] = 1;
+        this.addActionToMultiSelection = "";
+    }
+
+    public getUnusedMultiActions() {
+        var used = this.getObjectKeys(this.monster.multiattackAction.actions);
+        var actions = this.monster.actions.map(a => a.name);
+        return actions.filter(a => !used.includes(a));
+    }
+
+    public hasMultiattackChange() {
+        this.monster.multiattackAction = new Multiattack()
+        this.monster.multiattackAction.name = "Multiattack"
     }
 
     public changeSave(ability: string) {
@@ -103,6 +130,9 @@ export class MonsterEditComponent {
                 this.alignment[o + ' ' + m] = this.monster.alignment.alignmentChances.find(a => a.alignment.morality === m && a.alignment.order === o) !== undefined;
             }
         }
+
+        //multiattack
+        this.hasMultiattack = this.monster.multiattackAction !== undefined;
     }
 
     public getSkills() {

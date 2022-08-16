@@ -14,6 +14,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 
 
 
@@ -32,7 +33,8 @@ import { MatButtonModule } from '@angular/material/button';
         MatGridListModule,
         MatTooltipModule,
         MatListModule,
-        MatButtonModule
+        MatButtonModule,
+        MatCardModule
     ]
 })
 export class MaterialModule { }
