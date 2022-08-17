@@ -17,6 +17,7 @@ builder.Services.AddControllersWithViews().AddNewtonsoftJson(o =>
                                     new ObjectIdConverter(),
                                     new StringEnumConverter()
                                 };
+    o.SerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
 });
 
 var services = builder.Services;

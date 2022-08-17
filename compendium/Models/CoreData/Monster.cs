@@ -9,6 +9,7 @@ namespace Compendium.Models.CoreData
     public class Monster : KeyedDocument
     {
         public string Name { get; set; }
+        public string? ShortName { get; set; }
         public Size Size { get; set; }
         public MonsterRace Race { get; set; }
         public AlignmentDistribution Alignment { get; set; }
@@ -16,17 +17,17 @@ namespace Compendium.Models.CoreData
         public string Armor { get; set; }
         public int Armorclass { get; set; }
         public int MaximumHitpoints { get; set; }
-        public Speed Speed { get; set; }
-        public DamageType[] Resist { get; set; }
-        public DamageType[] Vulnerable { get; set; }
-        public DamageType[] Immune { get; set; }
-        public Condition[] ConditionImmune { get; set; }
+        public Speed? Speed { get; set; }
+        public DamageType[]? Resist { get; set; }
+        public DamageType[]? Vulnerable { get; set; }
+        public DamageType[]? Immune { get; set; }
+        public Condition[]? ConditionImmune { get; set; }
         public Senses Senses { get; set; }
         public string Languages { get; set; }
         public Dictionary<string, AbilityScore> Abilities { get; set; }
-        public DieRoll HitDie { get; set; }
+        public DieRoll? HitDie { get; set; }
         public ChallengeRating ChallengeRating { get; set; }
-        public Spellcasting Spellcasting { get; set; }
+        public Spellcasting? Spellcasting { get; set; }
         public Dictionary<string, int> SavingThrows { get; set; }
         public Dictionary<Skill, int> Skillmodifiers { get; set; }
         public List<Trait> Traits { get; set; }

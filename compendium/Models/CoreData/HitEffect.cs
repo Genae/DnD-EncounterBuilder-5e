@@ -1,15 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Compendium.Models.CoreData.Enums;
+﻿using Compendium.Models.CoreData.Enums;
 
 namespace Compendium.Models.CoreData
 {
     public class HitEffect
     {
         public DamageType? DamageType { get; set; }
-        public DieRoll DamageDie { get; set; }
-        public ICheck DC { get; set; }
-        public List<Condition> Condition { get; set; } = new List<Condition>();
+        public DieRoll? DamageDie { get; set; }
+        public ICheck? DC { get; set; }
+        public List<Condition>? Condition { get; set; } = new List<Condition>();
 
         public HitEffect() { }
         public HitEffect(HitEffect hitEffect)

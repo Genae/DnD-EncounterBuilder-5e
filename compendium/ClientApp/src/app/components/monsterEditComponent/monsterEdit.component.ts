@@ -5,6 +5,7 @@ import { Spell } from "../../models/spell";
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { DataService } from "../../services/data.service";
 import { FormControl } from '@angular/forms';
+import { TextgenService } from '../../services/textgen.service';
 
 @Component({
     selector: 'monsterEdit',
@@ -15,7 +16,7 @@ export class MonsterEditComponent {
 
     vul = new FormControl('');
 
-    constructor(private dataService: DataService, private route: ActivatedRoute) {
+    constructor(private dataService: DataService, private textGen: TextgenService, private route: ActivatedRoute) {
 
         this.route.params.subscribe(params => {
             if (params['id'])
@@ -55,18 +56,30 @@ export class MonsterEditComponent {
     }
 
     public getObjectKeys(dic: { [id: string]: number }) {
-        return Object.keys(dic);
+        if(dic)
+            return Object.keys(dic);
+        return [];
     }
 
     public removeActionFromMulti(action: string) {
         delete this.monster.multiattackAction.actions[action];
+        this.updateMulti()
     }
 
     addActionToMultiSelection: string;
 
     public addActionToMulti() {
+        if (!this.monster.multiattackAction.actions)
+            this.monster.multiattackAction.actions = {}
         this.monster.multiattackAction.actions[this.addActionToMultiSelection] = 1;
         this.addActionToMultiSelection = "";
+        this.updateMulti()
+    }
+
+    public updateMulti() {
+        this.textGen.generateMultiattackText(this.monster).subscribe(res => {
+            this.monster.multiattackAction = res;
+        })
     }
 
     public getUnusedMultiActions() {

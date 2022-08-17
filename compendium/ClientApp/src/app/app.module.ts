@@ -19,6 +19,7 @@ import { ProjectDetailComponent } from './components/projectDetailComponent/proj
 import { MonsterEditComponent } from './components/monsterEditComponent/monsterEdit.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
+import { TextgenService } from './services/textgen.service';
 
 @NgModule({
     declarations: [
@@ -55,7 +56,7 @@ import { MaterialModule } from './material.module';
         ])
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    providers: [DataService, ProjectService],
+    providers: [DataService, ProjectService, TextgenService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

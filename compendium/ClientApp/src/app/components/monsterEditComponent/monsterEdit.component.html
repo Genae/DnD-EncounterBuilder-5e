@@ -244,7 +244,7 @@
             <form>
                 <ng-template matStepLabel>Actions</ng-template>
                 <mat-slide-toggle class="col-md-2" style="margin: 20px" [(ngModel)]="hasMultiattack" [ngModelOptions]="{standalone: true}" (ngModelChange)="hasMultiattackChange()">Multiattack</mat-slide-toggle>
-                <mat-card>
+                <mat-card *ngIf="hasMultiattack">
                     <mat-card-header>
                         <span style="font-weight: 500">{{monster.multiattackAction.name}}. </span><span>{{monster.multiattackAction.text}}</span>
                     </mat-card-header>
@@ -257,7 +257,7 @@
                                     <span matSuffix>
                                         <button mat-icon-button (click)="removeActionFromMulti(action)"><mat-icon>delete</mat-icon></button>
                                     </span>
-                                    <input type="number" matInput [(ngModel)]="monster.multiattackAction.actions[action]" [ngModelOptions]="{standalone: true}">
+                                    <input type="number" matInput [(ngModel)]="monster.multiattackAction.actions[action]" (ngModelChange)="updateMulti()" [ngModelOptions]="{standalone: true}">
                                 </mat-form-field>
                             </mat-list-item>
                             <mat-list-item role="listitem">
