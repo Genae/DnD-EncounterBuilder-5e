@@ -15,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 
 
@@ -34,7 +35,8 @@ import { MatCardModule } from '@angular/material/card';
         MatTooltipModule,
         MatListModule,
         MatButtonModule,
-        MatCardModule
+        MatCardModule,
+        MatExpansionModule
     ]
 })
 export class MaterialModule { }

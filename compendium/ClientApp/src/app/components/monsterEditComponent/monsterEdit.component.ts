@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { Monster, PreparedSpell, Size, MonsterType, Ability, ChallengeRating, ArmorGroup, ArmorPiece, DamageType, ArmorInfo, Condition, Morality, Order, Multiattack } from "../../models/monster";
+import { Monster, PreparedSpell, Size, MonsterType, Ability, ChallengeRating, ArmorGroup, ArmorPiece, DamageType, ArmorInfo, Condition, Morality, Order, Multiattack, Action, Attack, AttackType, Senses } from "../../models/monster";
 import { Spell } from "../../models/spell";
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { DataService } from "../../services/data.service";
@@ -17,12 +17,14 @@ export class MonsterEditComponent {
     vul = new FormControl('');
 
     constructor(private dataService: DataService, private textGen: TextgenService, private route: ActivatedRoute) {
-
-        this.route.params.subscribe(params => {
-            if (params['id'])
-                this.dataService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
+               
+        this.dataService.getTags().subscribe(res => {
+            this.tags = res
+            this.route.params.subscribe(params => {
+                if (params['id'])
+                    this.dataService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
+            });
         });
-        this.dataService.getTags().subscribe(res => this.tags = res);
     }
 
     monster: Monster;
@@ -91,6 +93,7 @@ export class MonsterEditComponent {
     public hasMultiattackChange() {
         this.monster.multiattackAction = new Multiattack()
         this.monster.multiattackAction.name = "Multiattack"
+        this.monster.multiattackAction.text = ""
     }
 
     public changeSave(ability: string) {
@@ -117,6 +120,12 @@ export class MonsterEditComponent {
             this.dataService.getSpellsFromIds(flattened.map((s: PreparedSpell) => s.spellId)).subscribe((data) => {
                 this.monsterSpells = data;
             });
+        }
+
+        //fix senses
+        if (!this.monster.senses) {
+            this.monster.senses = new Senses();
+            this.monster.senses.description = "";
         }
 
         //fix hp
@@ -146,6 +155,38 @@ export class MonsterEditComponent {
 
         //multiattack
         this.hasMultiattack = this.monster.multiattackAction !== undefined;
+
+        //attack
+        for (let act of monster.actions) {
+            act.hasAttack = act.attack !== undefined;
+        }
+        for (let act of monster.legendaryActions) {
+            act.action.hasAttack = act.action.attack !== undefined;
+        }
+        for (let act of monster.reactions) {
+            act.action.hasAttack = act.action.attack !== undefined;
+        }
+    }
+
+    public updateAction(act: Action) {
+        if (act.hasAttack) {
+            if(act.attack === undefined)
+                act.attack = new Attack();
+        }
+        else
+            act.attack = undefined;
+    }
+
+    public isAtkRanged(act: Action) {
+        let atk = act.attack;
+        if (!atk) return false;
+        return atk.type === AttackType.Melee_or_Ranged_Spell_Attack || atk.type === AttackType.Melee_or_Ranged_Weapon_Attack || atk.type === AttackType.Ranged_Spell_Attack || atk.type === AttackType.Ranged_Weapon_Attack;
+    }
+
+    public isAtkMelee(act: Action) {
+        let atk = act.attack;
+        if (!atk) return false;
+        return atk.type === AttackType.Melee_or_Ranged_Spell_Attack || atk.type === AttackType.Melee_or_Ranged_Weapon_Attack || atk.type === AttackType.Melee_Spell_Attack || atk.type === AttackType.Melee_Weapon_Attack;
     }
 
     public getSkills() {
@@ -205,6 +246,7 @@ export class MonsterEditComponent {
     public conditionValues = Object.values(Condition);
     public monsterTypeValues = Object.values(MonsterType);
     public abilityValues = Object.values(Ability);
+    public atkTypeValues = Object.values(AttackType);
 
     public vulDesc(vul: DamageType[] | string[]): string {
         if (vul === undefined)

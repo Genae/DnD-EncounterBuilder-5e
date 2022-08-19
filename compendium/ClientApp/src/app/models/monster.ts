@@ -246,7 +246,8 @@ export class Trait {
 export class Action {
     name: string;
     text: string;
-    attack: Attack;
+    attack?: Attack;
+    hasAttack: boolean;
     hitEffects: HitEffect[];
 }
 
@@ -286,12 +287,12 @@ export class Attack {
 }
 
 export enum AttackType {
-    Melee_Weapon_Attack,
-    Ranged_Weapon_Attack,
-    Melee_or_Ranged_Weapon_Attack,
-    Melee_Spell_Attack,
-    Ranged_Spell_Attack,
-    Melee_or_Ranged_Spell_Attack
+    Melee_Weapon_Attack = "Melee_Weapon_Attack",
+    Ranged_Weapon_Attack = "Ranged_Weapon_Attack",
+    Melee_or_Ranged_Weapon_Attack = "Melee_or_Ranged_Weapon_Attack",
+    Melee_Spell_Attack = "Melee_Spell_Attack",
+    Ranged_Spell_Attack = "Ranged_Spell_Attack",
+    Melee_or_Ranged_Spell_Attack = "Melee_or_Ranged_Spell_Attack"
 }
 
 export enum Skill {
