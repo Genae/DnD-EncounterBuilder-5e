@@ -273,6 +273,7 @@
                             <mat-panel-title style=" margin: 10px 0 5px 0;"><span><strong>{{action.name}}.</strong> {{action.text}}</span></mat-panel-title>
                         </mat-expansion-panel-header>
                         <mat-divider style="margin:5px 0 10px 0"></mat-divider>
+                        <!--Attack-->
                         <div>
                             <mat-form-field appearance="outline" class="col-md-3">
                                 <mat-label>Attack</mat-label>
@@ -306,6 +307,51 @@
                                 <span matSuffix></span>
                                 <input matInput [(ngModel)]="action.attack === undefined ? {} : action.attack.target" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
                             </mat-form-field>
+                        </div>
+                        <!--HitEffect-->
+                        <div>
+                            <mat-list role="list">
+                                <mat-list-item *ngFor="let hitEffect of action.hitEffects" role="listitem" style="height: 70px">
+                                    <div *ngIf="hitEffect.damageType" style="width:100%">
+                                        <mat-form-field appearance="outline" class="col-md-2">
+                                            <mat-label>Damage Type</mat-label>
+                                            <mat-select [(ngModel)]="hitEffect.damageType" [ngModelOptions]="{standalone: true}">
+                                                <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" class="col-md-1">
+                                            <mat-label>Dmg Die Count</mat-label>
+                                            <input matInput type="number" [(ngModel)]="hitEffect.damageDie.dieCount" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" class="col-md-1">
+                                            <mat-label>Dmg Die</mat-label>
+                                            <mat-select [(ngModel)]="hitEffect.damageDie.die" [ngModelOptions]="{standalone: true}" (ngModelChange)="updateAction(action)" required>
+                                                <mat-option *ngFor="let d of hitDiceSize" [value]="d.die">{{d.dieStr}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" class="col-md-1">
+                                            <mat-label>Damage</mat-label>
+                                            <input matInput [(ngModel)]="hitEffect.damageDie.expectedRoll" disabled [ngModelOptions]="{standalone: true}">
+                                        </mat-form-field>
+                                    </div>
+                                    <div *ngIf="hitEffect.dc" style="width:100%">
+                                        <mat-form-field appearance="outline" class="col-md-2">
+                                            <mat-label>Saving Throw</mat-label>
+                                            <mat-select [(ngModel)]="getSavingThrow(hitEffect).ability" [ngModelOptions]="{standalone: true}">
+                                                <mat-option *ngFor="let a of abilityValues" [value]="a">{{a}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" class="col-md-1">
+                                            <mat-label>DC</mat-label>
+                                            <input matInput type="number" [(ngModel)]="getSavingThrow(hitEffect).value" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
+                                        </mat-form-field>
+                                    </div>
+                                </mat-list-item>
+                                <mat-list-item role="listitem">
+                                    <button>Add</button>
+                                </mat-list-item>
+                            </mat-list>
+                            
                         </div>
                     </mat-expansion-panel>
                 </mat-accordion>

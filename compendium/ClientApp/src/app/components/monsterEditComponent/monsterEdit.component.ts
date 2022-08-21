@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { Monster, PreparedSpell, Size, MonsterType, Ability, ChallengeRating, ArmorGroup, ArmorPiece, DamageType, ArmorInfo, Condition, Morality, Order, Multiattack, Action, Attack, AttackType, Senses } from "../../models/monster";
+import { Monster, PreparedSpell, Size, MonsterType, Ability, ChallengeRating, ArmorGroup, ArmorPiece, DamageType, ArmorInfo, Condition, Morality, Order, Multiattack, Action, Attack, AttackType, Senses, HitEffect, SavingThrow } from "../../models/monster";
 import { Spell } from "../../models/spell";
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { DataService } from "../../services/data.service";
@@ -187,6 +187,10 @@ export class MonsterEditComponent {
         let atk = act.attack;
         if (!atk) return false;
         return atk.type === AttackType.Melee_or_Ranged_Spell_Attack || atk.type === AttackType.Melee_or_Ranged_Weapon_Attack || atk.type === AttackType.Melee_Spell_Attack || atk.type === AttackType.Melee_Weapon_Attack;
+    }
+
+    public getSavingThrow(he: HitEffect): SavingThrow {
+        return he.dc as SavingThrow;
     }
 
     public getSkills() {

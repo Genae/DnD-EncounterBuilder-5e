@@ -254,7 +254,7 @@ export class Action {
 export class HitEffect {
     damageType: DamageType;
     damageDie: DieRoll;
-    dC: ICheck;
+    dc: ICheck;
     condition: Condition[];
 }
 
