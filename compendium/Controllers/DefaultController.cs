@@ -83,5 +83,12 @@ namespace Compendium.Controllers
         {
             return _dataProvider.GetAllSpellsWithIds(ids.Select(id => new ObjectId(id)).ToArray());
         }
+
+        [HttpPost]
+        [Route("weapons")]
+        public IEnumerable<WeaponType> GetAllWeapons()
+        {
+            return _dataProvider.GetAllWeapons();
+        }
     }
 }

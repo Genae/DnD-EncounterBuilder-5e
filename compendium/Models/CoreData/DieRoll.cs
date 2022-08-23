@@ -1,5 +1,5 @@
-using System.Xml.Serialization;
 using LiteDB;
+using System.Xml.Serialization;
 
 namespace Compendium.Models.CoreData
 {
@@ -24,6 +24,8 @@ namespace Compendium.Models.CoreData
 
         public override string ToString()
         {
+            if (Die == 0)
+                return Offset.ToString();
             if (Offset > 0)
                 return $"{DieCount}d{Die} + {Offset}";
             if (Offset < 0)

@@ -1,5 +1,4 @@
-﻿
-using Compendium.Database;
+﻿using Compendium.Database;
 using Compendium.Models.CoreData;
 using Compendium.Models.ImportData;
 using Compendium.Models.ProjectData;
@@ -138,6 +137,11 @@ namespace Compendium.Provider
         public IEnumerable<Spell> GetAllSpellsWithIds(ObjectId[] ids)
         {
             return _db.GetQueryable<Spell>().Where(s => ids.Contains(s.Id)).ToArray();
+        }
+
+        internal IEnumerable<WeaponType> GetAllWeapons()
+        {
+            return WeaponType.All;
         }
     }
 }
