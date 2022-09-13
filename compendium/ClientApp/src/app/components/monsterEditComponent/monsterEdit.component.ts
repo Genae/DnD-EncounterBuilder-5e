@@ -6,6 +6,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { DataService } from "../../services/data.service";
 import { FormControl } from '@angular/forms';
 import { TextgenService } from '../../services/textgen.service';
+import { WeaponType } from '../../models/weapon';
 
 @Component({
     selector: 'monsterEdit',
@@ -20,10 +21,13 @@ export class MonsterEditComponent {
                
         this.dataService.getTags().subscribe(res => {
             this.tags = res
-            this.route.params.subscribe(params => {
-                if (params['id'])
-                    this.dataService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
-            });
+            this.dataService.getWeapons().subscribe(wep => {
+                this.weapons = wep;
+                this.route.params.subscribe(params => {
+                    if (params['id'])
+                        this.dataService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
+                });
+            });            
         });
     }
 
@@ -34,6 +38,7 @@ export class MonsterEditComponent {
     alignment: { [id: string]: boolean; } = {};
     alignmentList: string[] = [];
     hasMultiattack: boolean;
+    weapons: WeaponType[];
 
     monsterSpells: Spell[];
     tags: { [id: string]: string; }
@@ -96,6 +101,25 @@ export class MonsterEditComponent {
         this.monster.multiattackAction.text = ""
     }
 
+    addSelectedActionToMonster?: WeaponType;
+    public addActionToMonster() {
+        if (this.addSelectedActionToMonster == undefined)
+            return;
+        let action: Action = {
+            hasAttack: true,
+            name: this.addSelectedActionToMonster.name,
+            attack: this.addSelectedActionToMonster.attack,
+            hitEffects: [this.addSelectedActionToMonster.hitEffect],
+            text: "None"
+        };
+        this.monster.actions.push(action)
+        delete this.addSelectedActionToMonster;
+    }
+
+    public getWeapons(): WeaponType[] {
+        return this.weapons;
+    }
+
     public changeSave(ability: string) {
         if (this.save[ability])
             this.monster.savingThrows[ability] = this.monster.abilities[ability].modifier + this.proficency
@@ -104,10 +128,10 @@ export class MonsterEditComponent {
     }
 
     public monsterUpdated(monster: Monster) {
-        this.monsterSpells = [];
-        if (!monster.armorInfo)
-            monster.armorInfo = new ArmorInfo();
         this.monster = monster;
+        this.monsterSpells = [];
+        if (!this.monster.armorInfo)
+            this.monster.armorInfo = new ArmorInfo();
 
         //fix dropdown values
         let fixCr = this.crValues.find(v => v.description === this.monster.challengeRating.description);
@@ -115,8 +139,8 @@ export class MonsterEditComponent {
             this.monster.challengeRating = fixCr;
         }
 
-        if (monster.spellcasting !== undefined && monster.spellcasting.spells.length > 0) {
-            var flattened = monster.spellcasting.spells.flat().filter((a: PreparedSpell) => a !== null);
+        if (this.monster.spellcasting !== undefined && this.monster.spellcasting.spells.length > 0) {
+            var flattened = this.monster.spellcasting.spells.flat().filter((a: PreparedSpell) => a !== null);
             this.dataService.getSpellsFromIds(flattened.map((s: PreparedSpell) => s.spellId)).subscribe((data) => {
                 this.monsterSpells = data;
             });
@@ -157,15 +181,18 @@ export class MonsterEditComponent {
         this.hasMultiattack = this.monster.multiattackAction !== undefined;
 
         //attack
-        for (let act of monster.actions) {
-            act.hasAttack = act.attack !== undefined;
-        }
-        for (let act of monster.legendaryActions) {
-            act.action.hasAttack = act.action.attack !== undefined;
-        }
-        for (let act of monster.reactions) {
-            act.action.hasAttack = act.action.attack !== undefined;
-        }
+        if (this.monster.actions)
+            for (let act of this.monster.actions) {
+                act.hasAttack = act.attack !== undefined;
+            }
+        if (this.monster.legendaryActions)
+            for (let act of monster.legendaryActions) {
+                act.action.hasAttack = act.action.attack !== undefined;
+            }
+        if (this.monster.reactions)
+            for (let act of this.monster.reactions) {
+                act.action.hasAttack = act.action.attack !== undefined;
+            }
     }
 
     public updateAction(act: Action) {

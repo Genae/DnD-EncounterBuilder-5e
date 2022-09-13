@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Monster } from "../models/monster";
 import { Spell } from "../models/spell";
+import { WeaponType } from '../models/weapon';
 
 
 @Injectable()
@@ -38,4 +39,7 @@ export class DataService {
         return this.http.get<{ [id: string]: string; }>(this.baseUrl + 'api/tags');
     }
 
+    getWeapons(): Observable<WeaponType[]> {
+        return this.http.get<WeaponType[]>(this.baseUrl + 'api/weapons');
+    }
 }

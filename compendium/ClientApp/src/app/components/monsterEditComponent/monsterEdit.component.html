@@ -243,10 +243,11 @@
         <mat-step>
             <form>
                 <ng-template matStepLabel>Actions</ng-template>
+                <!--Multiattack-->
                 <mat-accordion class="example-headers-align" multi>
                     <mat-expansion-panel>
                         <mat-expansion-panel-header style="height:auto; min-height:48px">
-                            <mat-panel-title style=" margin: 10px 0 5px 0;"><mat-slide-toggle style="margin-right:10px" [(ngModel)]="hasMultiattack" [ngModelOptions]="{standalone: true}" (ngModelChange)="hasMultiattackChange()"></mat-slide-toggle><span><strong>{{monster.multiattackAction.name}}. </strong>{{monster.multiattackAction.text}}</span></mat-panel-title>
+                            <mat-panel-title style=" margin: 10px 0 5px 0;"><mat-slide-toggle style="margin-right:10px" [(ngModel)]="hasMultiattack" [ngModelOptions]="{standalone: true}" (ngModelChange)="hasMultiattackChange()"></mat-slide-toggle><span><strong>{{monster.multiattackAction?.name ?? "Multiattack"}}. </strong>{{monster.multiattackAction?.text ?? ""}}</span></mat-panel-title>
                         </mat-expansion-panel-header>
                         <mat-divider style="margin:5px 0 10px 0"></mat-divider>
                         <mat-list role="list" *ngIf="hasMultiattack">
@@ -268,6 +269,7 @@
                             </mat-list-item>
                         </mat-list>
                     </mat-expansion-panel>
+                    <!--Actions-->
                     <mat-expansion-panel *ngFor="let action of monster.actions" style="margin-top:20px">
                         <mat-expansion-panel-header style="height:auto; min-height:48px">
                             <mat-panel-title style=" margin: 10px 0 5px 0;"><span><strong>{{action.name}}.</strong> {{action.text}}</span></mat-panel-title>
@@ -351,53 +353,29 @@
                                     <button>Add</button>
                                 </mat-list-item>
                             </mat-list>
-                            
                         </div>
                     </mat-expansion-panel>
                 </mat-accordion>
+                <!--Add Action-->
+                <div>
+                    <mat-select placeholder="add weapon" [(ngModel)]="addSelectedActionToMonster" (ngModelChange)="addActionToMonster()" [ngModelOptions]="{standalone: true}">
+                        <mat-option *ngFor="let weapon of getWeapons()" [value]="weapon">{{weapon.name}}</mat-option>
+                    </mat-select>
+                </div>
+            </form>
+        </mat-step>
+        <!-----------------------------------
+    --
+    --  Ability Scores
+    --
+    ---------------------------------------->
+        <mat-step>
+            <form>
+                <ng-template matStepLabel>Finalize</ng-template>
+                <div class="form-group row">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
             </form>
         </mat-step>
     </mat-stepper>
-
-    <form autocomplete="off">
-
-        
-
-        
-        <!--
-
-
-            <!--
-        <div class="form-group row">
-            <label for="armorclass" class="col-md-3">Armor</label>
-            <div class="col-md-3">
-                <input type="number" [(ngModel)]="monster.armorclass" class="form-control" name="armorclass" id="armorclass">
-            </div>
-            <div class="col-md-3">
-                <input type="text" [(ngModel)]="monster.armor" class="form-control" name="armor" id="armor">
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label for="hp" class="col-md-3" style="color: red">Hit Points</label>
-            <div class="col-md-3">
-                <input type="text" [(ngModel)]="monster.hitDie.description" class="form-control" name="hp" id="hp">
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label for="speed" class="col-md-3" style="color: red">Speed</label>
-            <div class="col-md-3">
-                <input type="text" [(ngModel)]="monster.speed.additionalInformation" class="form-control" name="speed" id="speed">
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label for="speed" class="col-md-3" style="color: red">Stats</label>
-        </div>
-            -->
-        <div class="form-group row">
-            <button type="submit" class="btn btn-success">Submit</button>
-        </div>
-    </form>
 </div>
