@@ -1,6 +1,8 @@
 export class Monster {
     id: string;
+    projectTags: string[];
     name: string;
+    shortName: string;
     size: Size | string;
     race: MonsterRace;
     alignment: AlignmentDistribution;

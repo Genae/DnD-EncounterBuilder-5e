@@ -1,10 +1,6 @@
 ﻿using LiteDB;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Compendium.Database
 {
@@ -13,7 +9,7 @@ namespace Compendium.Database
         public static readonly string Root = @"D:\Database";
         private string Subfolder = "";
         private string DatabaseRoot => Path.Combine(Root, Subfolder);
-        private Dictionary<string, List<object>> _database;
+        private Dictionary<string, List<KeyedDocument>> _database;
 
         private JsonDatabaseConnection(string subfolder)
         {
@@ -22,20 +18,20 @@ namespace Compendium.Database
 
         public JsonDatabaseConnection() { }
 
-        private Dictionary<string, List<object>> Database => _database ?? (_database = LoadDatabase());
+        private Dictionary<string, List<KeyedDocument>> Database => _database ?? (_database = LoadDatabase());
 
-        private Dictionary<string, List<object>> LoadDatabase()
+        private Dictionary<string, List<KeyedDocument>> LoadDatabase()
         {
 
-            var myDb = new Dictionary<string, List<object>>();
+            var myDb = new Dictionary<string, List<KeyedDocument>>();
             var dbs = Directory.GetDirectories(DatabaseRoot);
             foreach (var db in dbs.Select(d => new DirectoryInfo(d)))
             {
-                myDb[db.Name] = new List<object>();
+                myDb[db.Name] = new List<KeyedDocument>();
                 foreach (var entry in Directory.GetFiles(db.FullName))
                 {
                     var json = File.ReadAllText(entry);
-                    myDb[db.Name].Add(JsonConvert.DeserializeObject(json,
+                    var obj = JsonConvert.DeserializeObject(json,
                         new JsonSerializerSettings
                         {
                             TypeNameHandling = TypeNameHandling.All,
@@ -44,8 +40,8 @@ namespace Compendium.Database
                                 new ObjectIdConverter(),
                                 new StringEnumConverter()
                             }
-                        })
-                    );
+                        });
+                    myDb[db.Name].Add((KeyedDocument)obj);
                 }
             }
             return myDb;
@@ -55,14 +51,21 @@ namespace Compendium.Database
         {
             if (!Database.ContainsKey(typeof(T).Name))
             {
-                Database[typeof(T).Name] = new List<object>();
+                Database[typeof(T).Name] = new List<KeyedDocument>();
                 Directory.CreateDirectory(Path.Combine(DatabaseRoot, typeof(T).Name));
             }
             if (item.Id == null)
             {
                 item.Id = ObjectId.NewObjectId();
             }
+            var old = Database[typeof(T).Name].FirstOrDefault(i => (i as T)?.Id == item.Id);
+            if (old != null)
+            {
+                Database[typeof(T).Name].Remove(old);
+            }
             Database[typeof(T).Name].Add(item);
+            Database[typeof(T).Name] = Database[typeof(T).Name].OrderBy(i => i.Id).ToList();
+
             File.WriteAllText(Path.Combine(DatabaseRoot, typeof(T).Name, item.Id + ".json"), JsonConvert.SerializeObject(item, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,

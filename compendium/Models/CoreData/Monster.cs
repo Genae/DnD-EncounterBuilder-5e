@@ -1,13 +1,14 @@
-﻿
-using Compendium.Database;
+﻿using Compendium.Database;
 using Compendium.Models.CoreData.Enums;
 using Compendium.Provider;
 using Compendium.Renderer;
+using LiteDB;
 
 namespace Compendium.Models.CoreData
 {
     public class Monster : KeyedDocument
     {
+        public List<ObjectId>? ProjectTags { get; set; }
         public string Name { get; set; }
         public string? ShortName { get; set; }
         public Size Size { get; set; }
@@ -55,6 +56,7 @@ namespace Compendium.Models.CoreData
             Alignment = new();
             Speed = new();
             ArmorInfo = new();
+            ProjectTags = new();
         }
     }
 }

@@ -17,7 +17,7 @@ export class MonsterEditComponent {
 
     vul = new FormControl('');
 
-    constructor(private dataService: DataService, private textGen: TextgenService, private route: ActivatedRoute) {
+    constructor(private dataService: DataService, private textGen: TextgenService, private route: ActivatedRoute, private router: Router) {
                
         this.dataService.getTags().subscribe(res => {
             this.tags = res
@@ -30,6 +30,12 @@ export class MonsterEditComponent {
                 });
             });            
         });
+    }
+
+    public view() {
+        if (this.monster === undefined)
+            return;
+        this.router.navigateByUrl('/monsterDetail/' + this.monster.id);
     }
 
     monster: Monster;
@@ -119,8 +125,12 @@ export class MonsterEditComponent {
         this.addSelectedActionToMonster = new WeaponType();
     }
 
+    public removeAction(a: Action) {
+        this.monster.actions.splice(this.monster.actions.indexOf(a), 1)
+    }
+
     public getUnusedWeapons(cat: WeaponCategory): WeaponType[] {
-        let used = this.monster.actions.map(a => a.name);
+        let used = this.monster.actions?.map(a => a.name) ?? [];
         return this.weapons.filter(w => !used.includes(w.name) && w.weaponCategory === cat);
     }
 
@@ -129,6 +139,13 @@ export class MonsterEditComponent {
             this.monster.savingThrows[ability] = this.monster.abilities[ability].modifier + this.proficency
         else
             delete this.monster.savingThrows[ability]
+    }
+
+    public submit() {
+        this.dataService.saveMonster(this.monster).subscribe(m => {
+            this.monster = m;
+            this.view();
+        });
     }
 
     public monsterUpdated(monster: Monster) {

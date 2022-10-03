@@ -59,6 +59,15 @@ namespace Compendium.Provider
             }
         }
 
+        internal Monster SaveMonster(Monster monster)
+        {
+            if (monster.Id == null || monster.Id == ObjectId.Empty)
+                _db.Add(monster);
+            else
+                _db.Update(monster);
+            return monster;
+        }
+
         private void LoadAllProjects(IDatabaseConnection db)
         {
             var allProjects = GetAllProjects();
@@ -326,5 +335,6 @@ namespace Compendium.Provider
                     new string[] { }),
             };
         }
+
     }
 }

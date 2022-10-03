@@ -43,7 +43,7 @@ namespace Compendium.Parser
                 Languages = raw.Languages,
                 LegendaryActions = ParseActions(raw.LegendaryActions, errors, _dep).Select(a => new LegendaryAction { Action = a }).ToList(),
                 MaximumHitpoints = raw.MaximumHitpoints,
-                MultiattackAction = ParseMultiattack(multiActions, errors, parsedActions).FirstOrDefault(),
+                MultiattackAction = ParseMultiattack(multiActions, errors, parsedActions, out var shortName),
                 Reactions = ParseActions(raw.Reactions, errors, _dep).Select(a => new Reaction { Action = a }).ToList(),
                 Resist = ParseDamageTypes(raw.Resist),
                 SavingThrows = raw.SavingThrows.ToDictionary(s => s.GetAbility(_dep), s => s.Modifier),
@@ -56,6 +56,8 @@ namespace Compendium.Parser
                 Race = ParseMonsterType(raw.Type),
                 Vulnerable = ParseDamageTypes(raw.Vulnerable)
             };
+            if (!string.IsNullOrWhiteSpace(shortName))
+                monster.ShortName = shortName;
             monster.HitDie = GetHealthDies(monster.MaximumHitpoints, monster.Abilities["Constitution"], raw.SizeId);
             return monster;
         }
@@ -217,9 +219,14 @@ namespace Compendium.Parser
             return raw.Select(r => _actionParser.ParseAction(r, errors, dep)).ToList();
         }
 
-        private List<Multiattack> ParseMultiattack(List<ActionRaw> raw, List<string> errors, List<Action> actions)
+        private Multiattack ParseMultiattack(List<ActionRaw> raw, List<string> errors, List<Action> actions, out string shortName)
         {
-            return raw.Select(r => _actionParser.ParseMultiattack(r, errors, actions)).ToList();
+            if (raw.Count == 0)
+            {
+                shortName = null;
+                return null;
+            }
+            return _actionParser.ParseMultiattack(raw.First(), errors, actions, out shortName);
         }
 
         private Dictionary<string, AbilityScore> ParseAbilities(MonsterRaw raw, ref List<string> errors)

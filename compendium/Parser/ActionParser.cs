@@ -9,7 +9,7 @@ namespace Compendium.Parser
 {
     public class ActionParser
     {
-        public Multiattack ParseMultiattack(ActionRaw raw, List<string> errors, List<Action> actions)
+        public Multiattack ParseMultiattack(ActionRaw raw, List<string> errors, List<Action> actions, out string shortName)
         {
             var action = new Multiattack
             {
@@ -26,7 +26,24 @@ namespace Compendium.Parser
                 FindActionInText(t, actions, action);
             }
 
+            shortName = FindShortNameInText(action.Text);
+
             return action;
+        }
+
+        private string FindShortNameInText(string text)
+        {
+            var regex1 = new Regex(@"^The ([a-zA-Z ]*) (can use|uses)");
+            var match1 = regex1.Match(text);
+            var regex2 = new Regex(@"^The ([a-zA-Z ]*) (can make|makes)");
+            var match2 = regex2.Match(text);
+            if (match1.Success && !match2.Success)
+                return match1.Groups[1].Value;
+            if (!match1.Success && match2.Success)
+                return match2.Groups[1].Value;
+            if (match1.Groups[1].Value.Length > match2.Groups[1].Value.Length)
+                return match2.Groups[1].Value;
+            return match1.Groups[1].Value;
         }
 
         public void FindActionInText(string t, List<Action> actions, Multiattack action)

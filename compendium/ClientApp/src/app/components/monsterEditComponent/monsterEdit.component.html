@@ -14,6 +14,10 @@
                         <mat-label>Name</mat-label>
                         <input matInput [(ngModel)]="monster.name" [ngModelOptions]="{standalone: true}" required>
                     </mat-form-field>
+                    <mat-form-field appearance="outline" class="col-md-3">
+                        <mat-label>Short Name</mat-label>
+                        <input matInput [(ngModel)]="monster.shortName" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
                 </div>
 
                 <div>
@@ -243,8 +247,8 @@
         <mat-step>
             <form>
                 <ng-template matStepLabel>Actions</ng-template>
-                <!--Multiattack-->
                 <mat-accordion class="example-headers-align" multi>
+                    <!--++  Multiattack  ++-->
                     <mat-expansion-panel>
                         <mat-expansion-panel-header style="height:auto; min-height:48px">
                             <mat-panel-title style=" margin: 10px 0 5px 0;"><mat-slide-toggle style="margin-right:10px" [(ngModel)]="hasMultiattack" [ngModelOptions]="{standalone: true}" (ngModelChange)="hasMultiattackChange()"></mat-slide-toggle><span><strong>{{monster.multiattackAction?.name ?? "Multiattack"}}. </strong>{{monster.multiattackAction?.text ?? ""}}</span></mat-panel-title>
@@ -269,12 +273,27 @@
                             </mat-list-item>
                         </mat-list>
                     </mat-expansion-panel>
-                    <!--Actions-->
+                    <!--++  Actions  ++-->
                     <mat-expansion-panel *ngFor="let action of monster.actions" style="margin-top:20px">
                         <mat-expansion-panel-header style="height:auto; min-height:48px">
                             <mat-panel-title style=" margin: 10px 0 5px 0;"><span><strong>{{action.name}}.</strong> {{action.text}}</span></mat-panel-title>
+                            <mat-panel-description>
+                                <button mat-icon-button style="margin-left:auto">
+                                    <mat-icon style="color:red" (click)="removeAction(action)">delete</mat-icon>
+                                </button>
+                            </mat-panel-description>
                         </mat-expansion-panel-header>
                         <mat-divider style="margin:5px 0 10px 0"></mat-divider>
+                        <div>
+                            <mat-form-field appearance="outline" class="col-md-2" [floatLabel]="'always'">
+                                <mat-label>Name</mat-label>
+                                <input matInput [(ngModel)]="action.name" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="col-md-10" [floatLabel]="'always'">
+                                <mat-label>Text</mat-label>
+                                <input matInput [(ngModel)]="action.text" [ngModelOptions]="{standalone: true}">
+                            </mat-form-field>
+                        </div>
                         <!--Attack-->
                         <div>
                             <mat-form-field appearance="outline" class="col-md-3">
@@ -375,7 +394,7 @@
             <form>
                 <ng-template matStepLabel>Finalize</ng-template>
                 <div class="form-group row">
-                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="submit" class="btn btn-success" (click)="submit()">Submit</button>
                 </div>
             </form>
         </mat-step>

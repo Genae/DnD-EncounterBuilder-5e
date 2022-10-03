@@ -23,6 +23,10 @@ export class DataService {
         return this.http.post<Monster[]>(this.baseUrl + 'api/monsters', ids);
     }
 
+    saveMonster(monster: Monster): Observable<Monster> {
+        return this.http.post<Monster>(this.baseUrl + 'api/monster', monster);
+    }
+
     getSpells(): Observable<Spell[]> {
         return this.http.get<Spell[]>(this.baseUrl + 'api/spells');
     }

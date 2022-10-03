@@ -63,6 +63,13 @@ namespace Compendium.Controllers
             return _dataProvider.GetAllMonstersWithIds(ids.Select(id => new ObjectId(id)).ToArray());
         }
 
+        [HttpPost]
+        [Route("monster")]
+        public Monster SaveMonsters([FromBody] Monster monster)
+        {
+            return _dataProvider.SaveMonster(monster);
+        }
+
         [HttpGet]
         [Route("spells")]
         public IEnumerable<Spell> GetAllSpells()
