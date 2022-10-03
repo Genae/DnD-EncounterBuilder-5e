@@ -292,17 +292,17 @@
                             <mat-form-field appearance="outline" class="col-md-1" [floatLabel]="'always'" *ngIf="action.hasAttack && isAtkMelee(action)">
                                 <mat-label>Reach</mat-label>
                                 <span matSuffix>ft.</span>
-                                <input type="number" matInput [(ngModel)]="action.attack === undefined ? {} : action.attack.reach" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
+                                <input type="number" step="5" matInput [(ngModel)]="action.attack === undefined ? {} : action.attack.reach" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
                             </mat-form-field>
                             <mat-form-field appearance="outline" class="col-md-1" [floatLabel]="'always'" *ngIf="action.hasAttack && isAtkRanged(action)">
                                 <mat-label>Short Range</mat-label>
                                 <span matSuffix>ft.</span>
-                                <input type="number" matInput [(ngModel)]="action.attack === undefined ? {} : action.attack.shortRange" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
+                                <input type="number" step="5" matInput [(ngModel)]="action.attack === undefined ? {} : action.attack.shortRange" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
                             </mat-form-field>
                             <mat-form-field appearance="outline" class="col-md-1" [floatLabel]="'always'" *ngIf="action.hasAttack && isAtkRanged(action)">
                                 <mat-label>Long Range</mat-label>
                                 <span matSuffix>ft.</span>
-                                <input type="number" matInput [(ngModel)]="action.attack === undefined ? {} : action.attack.longRange" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
+                                <input type="number" step="5" matInput [(ngModel)]="action.attack === undefined ? {} : action.attack.longRange" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
                             </mat-form-field>
                             <mat-form-field appearance="outline" class="col-md-1" [floatLabel]="'always'" *ngIf="action.hasAttack">
                                 <mat-label>Target</mat-label>
@@ -325,15 +325,15 @@
                                             <mat-label>Dmg Die Count</mat-label>
                                             <input matInput type="number" [(ngModel)]="hitEffect.damageDie.dieCount" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
                                         </mat-form-field>
-                                        <mat-form-field appearance="outline" class="col-md-1">
+                                        <mat-form-field appearance="outline" class="col-md-1" *ngIf="hitEffect.damageDie.dieCount > 0">
                                             <mat-label>Dmg Die</mat-label>
                                             <mat-select [(ngModel)]="hitEffect.damageDie.die" [ngModelOptions]="{standalone: true}" (ngModelChange)="updateAction(action)" required>
                                                 <mat-option *ngFor="let d of hitDiceSize" [value]="d.die">{{d.dieStr}}</mat-option>
                                             </mat-select>
                                         </mat-form-field>
                                         <mat-form-field appearance="outline" class="col-md-1">
-                                            <mat-label>Damage</mat-label>
-                                            <input matInput [(ngModel)]="hitEffect.damageDie.expectedRoll" disabled [ngModelOptions]="{standalone: true}">
+                                            <mat-label>Offset</mat-label>
+                                            <input matInput type="number" [(ngModel)]="hitEffect.damageDie.offset" [ngModelOptions]="{standalone: true}" (ngModelChange)="updateAction(action)">
                                         </mat-form-field>
                                     </div>
                                     <div *ngIf="hitEffect.dc" style="width:100%">
@@ -359,7 +359,9 @@
                 <!--Add Action-->
                 <div>
                     <mat-select placeholder="add weapon" [(ngModel)]="addSelectedActionToMonster" (ngModelChange)="addActionToMonster()" [ngModelOptions]="{standalone: true}">
-                        <mat-option *ngFor="let weapon of getWeapons()" [value]="weapon">{{weapon.name}}</mat-option>
+                        <mat-optgroup *ngFor="let group of weapongroups" label="{{group}}">
+                            <mat-option *ngFor="let weapon of getUnusedWeapons(group)" [value]="weapon">{{weapon.name}}</mat-option>
+                        </mat-optgroup>
                     </mat-select>
                 </div>
             </form>

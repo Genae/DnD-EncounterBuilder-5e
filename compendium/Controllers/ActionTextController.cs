@@ -1,6 +1,9 @@
 ﻿using Compendium.Models.CoreData;
+using Compendium.Models.CoreData.Enums;
 using Compendium.Provider;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Action = Compendium.Models.CoreData.Action;
 
 namespace Compendium.Controllers
 {
@@ -15,6 +18,57 @@ namespace Compendium.Controllers
         public ActionTextController(DataProvider dataProvider)
         {
             _dataProvider = dataProvider;
+        }
+
+
+        [HttpPost]
+        [Route("action")]
+        public string GenerateActionText([FromBody] Action action)
+        {
+            var text = "";
+            if (action.Attack != null)
+            {
+                text += AttackText(action.Attack);
+            }
+            if (action.HitEffects != null)
+            {
+                foreach (var hitEffect in action.HitEffects)
+                {
+                    text += HitEffectText(hitEffect);
+                }
+            }
+            return string.IsNullOrEmpty(text) ? action.Text : text;
+        }
+
+        private string HitEffectText(HitEffect hitEffect)
+        {
+            if (hitEffect.DamageDie != null && hitEffect.DamageDie.DieCount > 0)
+                return $"{hitEffect.DamageDie.ExpectedRoll} ({hitEffect.DamageDie}) {hitEffect.DamageType?.ToString()?.ToLower()} damage.";
+            if (hitEffect.DamageDie != null && hitEffect.DamageDie.DieCount == 0)
+                return $"{hitEffect.DamageDie.ExpectedRoll} {hitEffect.DamageType?.ToString()?.ToLower()} damage.";
+            return JsonConvert.SerializeObject(hitEffect);
+        }
+
+        private string AttackText(Attack atk)
+        {
+            switch (atk.Type)
+            {
+                case AttackType.Melee_Spell_Attack:
+                case AttackType.Melee_Weapon_Attack:
+                    return $"{atk.Type.ToString().Replace("_", " ")}: {AddPlus(atk.AttackBonus)} to hit, reach {atk.Reach} ft., {atk.Target}. Hit: ";
+                case AttackType.Melee_or_Ranged_Spell_Attack:
+                case AttackType.Melee_or_Ranged_Weapon_Attack:
+                    return $"{atk.Type.ToString().Replace("_", " ")}: {AddPlus(atk.AttackBonus)} to hit, reach {atk.Reach} ft. or range {atk.ShortRange}/{atk.LongRange} ft., {atk.Target}. Hit: ";
+                case AttackType.Ranged_Spell_Attack:
+                case AttackType.Ranged_Weapon_Attack:
+                    return $"{atk.Type.ToString().Replace("_", " ")}: {AddPlus(atk.AttackBonus)} to hit, range {atk.ShortRange}/{atk.LongRange} ft., {atk.Target}. Hit: ";
+            }
+            return "";
+        }
+
+        private string AddPlus(int attackBonus)
+        {
+            return attackBonus < 0 ? attackBonus + "" : "+" + attackBonus;
         }
 
         [HttpPost]

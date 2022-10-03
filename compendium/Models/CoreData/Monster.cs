@@ -14,7 +14,7 @@ namespace Compendium.Models.CoreData
         public MonsterRace Race { get; set; }
         public AlignmentDistribution Alignment { get; set; }
         public ArmorInfo ArmorInfo { get; set; }
-        public string Armor { get; set; }
+        public string? Armor { get; set; }
         public int Armorclass { get; set; }
         public int MaximumHitpoints { get; set; }
         public Speed? Speed { get; set; }

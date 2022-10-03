@@ -24,7 +24,7 @@ namespace Compendium.Models.CoreData
 
         public override string ToString()
         {
-            if (Die == 0)
+            if (DieCount == 0)
                 return Offset.ToString();
             if (Offset > 0)
                 return $"{DieCount}d{Die} + {Offset}";

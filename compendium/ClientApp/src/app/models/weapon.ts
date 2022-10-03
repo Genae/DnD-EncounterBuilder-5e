@@ -9,9 +9,9 @@ export class WeaponType {
 }
 
 export enum WeaponCategory {
-    Body,
-    SimpleMeleeWeapon,
-    SimpleRangedWeapon,
-    MartialMeleeWeapon,
-    MartialRangedWeapon
+    Body = "Body",
+    SimpleMeleeWeapon = "SimpleMeleeWeapon",
+    SimpleRangedWeapon = "SimpleRangedWeapon",
+    MartialMeleeWeapon = "MartialMeleeWeapon",
+    MartialRangedWeapon = "MartialRangedWeapon"
 }

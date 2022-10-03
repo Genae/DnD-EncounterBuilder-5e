@@ -6,7 +6,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { DataService } from "../../services/data.service";
 import { FormControl } from '@angular/forms';
 import { TextgenService } from '../../services/textgen.service';
-import { WeaponType } from '../../models/weapon';
+import { WeaponCategory, WeaponType } from '../../models/weapon';
 
 @Component({
     selector: 'monsterEdit',
@@ -23,6 +23,7 @@ export class MonsterEditComponent {
             this.tags = res
             this.dataService.getWeapons().subscribe(wep => {
                 this.weapons = wep;
+                this.weapongroups = Object.values(WeaponCategory);
                 this.route.params.subscribe(params => {
                     if (params['id'])
                         this.dataService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
@@ -39,6 +40,7 @@ export class MonsterEditComponent {
     alignmentList: string[] = [];
     hasMultiattack: boolean;
     weapons: WeaponType[];
+    weapongroups: WeaponCategory[];
 
     monsterSpells: Spell[];
     tags: { [id: string]: string; }
@@ -101,7 +103,7 @@ export class MonsterEditComponent {
         this.monster.multiattackAction.text = ""
     }
 
-    addSelectedActionToMonster?: WeaponType;
+    addSelectedActionToMonster: WeaponType;
     public addActionToMonster() {
         if (this.addSelectedActionToMonster == undefined)
             return;
@@ -112,12 +114,14 @@ export class MonsterEditComponent {
             hitEffects: [this.addSelectedActionToMonster.hitEffect],
             text: "None"
         };
-        this.monster.actions.push(action)
-        delete this.addSelectedActionToMonster;
+        this.monster.actions.push(action);
+        this.updateAction(action);
+        this.addSelectedActionToMonster = new WeaponType();
     }
 
-    public getWeapons(): WeaponType[] {
-        return this.weapons;
+    public getUnusedWeapons(cat: WeaponCategory): WeaponType[] {
+        let used = this.monster.actions.map(a => a.name);
+        return this.weapons.filter(w => !used.includes(w.name) && w.weaponCategory === cat);
     }
 
     public changeSave(ability: string) {
@@ -202,6 +206,11 @@ export class MonsterEditComponent {
         }
         else
             act.attack = undefined;
+
+        this.textGen.generateActionText(act).subscribe(res => {
+            act.text = res;
+        })
+    
     }
 
     public isAtkRanged(act: Action) {
