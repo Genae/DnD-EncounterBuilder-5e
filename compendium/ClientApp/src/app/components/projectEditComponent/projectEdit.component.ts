@@ -29,14 +29,7 @@ export class ProjectEditComponent {
     }
 
     onSubmit() {
-        if (this.project.id) {
-            //edited
-            this.projectService.updateProject(this.project).subscribe(response => this.goToProject(response));
-        }
-        else {
-            //new
-            this.projectService.createNewProject(this.project).subscribe(response => this.goToProject(response))
-        }
+        this.projectService.updateProject(this.project).subscribe(response => this.goToProject(response));
     }
 
     goToProject(project: Project): void {

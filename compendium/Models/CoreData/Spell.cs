@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using Compendium.Database;
+﻿using Compendium.Database;
 using Compendium.Models.CoreData.Enums;
 
 namespace Compendium.Models.CoreData
 {
-    public class Spell : KeyedDocument
+    public class Spell : ProjectKeyedDocument
     {
         public string Name { get; set; }
         public SpellSchool School { get; set; }

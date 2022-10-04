@@ -1,7 +1,6 @@
-﻿using System.Xml.Serialization;
-using Compendium;
-using LiteDB;
+﻿using LiteDB;
 using Newtonsoft.Json;
+using System.Xml.Serialization;
 
 namespace Compendium.Database
 {
@@ -10,5 +9,10 @@ namespace Compendium.Database
         [XmlIgnore]
         [JsonConverter(typeof(ObjectIdConverter))]
         public ObjectId Id { get; set; }
+    }
+
+    public class ProjectKeyedDocument : KeyedDocument
+    {
+        public List<ObjectId>? ProjectTags { get; set; } = new();
     }
 }

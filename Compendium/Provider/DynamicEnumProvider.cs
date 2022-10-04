@@ -3,19 +3,16 @@ using Compendium.Models.CoreData.Enums;
 
 namespace Compendium.Provider
 {
-    public partial class DynamicEnumProvider
+    public partial class DynamicEnumProvider : Provider<DynamicEnum>
     {
-        private readonly IDatabaseConnection _db;
-
-        public DynamicEnumProvider(IDatabaseConnection db)
+        public DynamicEnumProvider(IDatabaseConnection db) : base(db)
         {
-            _db = db;
             EnsureDefaultValues();
         }
 
-        public DynamicEnum GetEnumValues(string name)
+        public DynamicEnum? GetEnumValues(string name)
         {
-            return _db.GetQueryable<DynamicEnum>().FirstOrDefault(d => d.Name.Equals(name));
+            return Get(d => d.Name.Equals(name)).FirstOrDefault();
         }
 
         public void EnsureDefaultValues()

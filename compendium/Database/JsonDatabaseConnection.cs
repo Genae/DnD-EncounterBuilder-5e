@@ -125,5 +125,14 @@ namespace Compendium.Database
         {
             Add(item);
         }
+
+        public T Store<T>(T item) where T : KeyedDocument
+        {
+            if (item.Id == null || item.Id == ObjectId.Empty)
+                Add(item);
+            else
+                Update(item);
+            return item;
+        }
     }
 }

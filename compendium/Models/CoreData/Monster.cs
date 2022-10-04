@@ -2,13 +2,11 @@
 using Compendium.Models.CoreData.Enums;
 using Compendium.Provider;
 using Compendium.Renderer;
-using LiteDB;
 
 namespace Compendium.Models.CoreData
 {
-    public class Monster : KeyedDocument
+    public class Monster : ProjectKeyedDocument
     {
-        public List<ObjectId>? ProjectTags { get; set; }
         public string Name { get; set; }
         public string? ShortName { get; set; }
         public Size Size { get; set; }

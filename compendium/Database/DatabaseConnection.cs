@@ -1,9 +1,5 @@
-﻿using Compendium.Models.CoreData;
-using Compendium.Models.CoreData.Enums;
+﻿using Compendium.Models.CoreData.Enums;
 using LiteDB;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Compendium.Database
 {
@@ -13,6 +9,7 @@ namespace Compendium.Database
         void Add<T>(T item) where T : KeyedDocument;
         void Remove<T>(T item) where T : KeyedDocument;
         void Update<T>(T item) where T : KeyedDocument;
+        T Store<T>(T item) where T : KeyedDocument;
     }
 
     public class LiteDbConnection : IDatabaseConnection
@@ -54,6 +51,15 @@ namespace Compendium.Database
         public void Update<T>(T item) where T : KeyedDocument
         {
             Database.GetCollection<T>(typeof(T).Name).Update(item);
+        }
+
+        public T Store<T>(T item) where T : KeyedDocument
+        {
+            if (item.Id == null || item.Id == ObjectId.Empty)
+                Add(item);
+            else
+                Update(item);
+            return item;
         }
     }
 }

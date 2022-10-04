@@ -1,6 +1,6 @@
 using Compendium;
 using Compendium.Database;
-using Compendium.Parser;
+using Compendium.Models.CoreData;
 using Compendium.Provider;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -22,13 +22,26 @@ builder.Services.AddControllersWithViews().AddNewtonsoftJson(o =>
 
 var services = builder.Services;
 
-services.AddSingleton<DynamicEnumProvider>();
-services.AddSingleton<DataProvider>();
-services.AddSingleton<IDatabaseConnection, JsonDatabaseConnection>();
-services.AddScoped<ActionParser>();
-services.AddScoped<MonsterParser>();
-services.AddScoped<SpellcastingParser>();
+var dbConnection = new JsonDatabaseConnection();
+services.AddSingleton<IDatabaseConnection>(dbConnection);
 
+var dynamicEnumProvider = new DynamicEnumProvider(dbConnection);
+services.AddSingleton(dynamicEnumProvider);
+
+var monsterProvider = new ProjectDocumentProvider<Monster>(dbConnection);
+services.AddSingleton<Provider<Monster>>(monsterProvider);
+
+var spellProvider = new ProjectDocumentProvider<Spell>(dbConnection);
+services.AddSingleton<Provider<Spell>>(spellProvider);
+
+var projectProvider = new ProjectProvider(dbConnection, monsterProvider, spellProvider);
+projectProvider.RegisterAll();
+services.AddSingleton(projectProvider);
+
+var weaponTypeProvider = new WeaponTypeProvider(dbConnection);
+services.AddSingleton<Provider<WeaponType>>(weaponTypeProvider);
+
+new DataLoader(spellProvider, monsterProvider, projectProvider, dynamicEnumProvider).LoadData();
 
 var app = builder.Build();
 

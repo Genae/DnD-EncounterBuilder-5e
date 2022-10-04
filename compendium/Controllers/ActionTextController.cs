@@ -10,12 +10,12 @@ namespace Compendium.Controllers
     [ApiController, Produces("application/json"), Route("api/textgen")]
     public class ActionTextController : Controller
     {
-        private readonly DataProvider _dataProvider;
+        private readonly DataLoader _dataProvider;
 
         public static string[] TextifyNumber = { "zero", "one", "two", "three", "four", "five", "six" };
         public static string[] TextifyNumberCe = { "zero", "once", "twice", "three times", "four times", "five times", "six times" };
 
-        public ActionTextController(DataProvider dataProvider)
+        public ActionTextController(DataLoader dataProvider)
         {
             _dataProvider = dataProvider;
         }

@@ -1,9 +1,12 @@
-﻿namespace Compendium.Models.CoreData
+﻿using Compendium.Database;
+
+namespace Compendium.Models.CoreData
 {
-    public class WeaponType
+    public class WeaponType : KeyedDocument
     {
         public WeaponType(WeaponCategory weaponCategory, string name, Attack attack, HitEffect hitEffect, string[] properties)
         {
+            Id = ObjectIdExt.FromHash(name);
             WeaponCategory = weaponCategory;
             Name = name;
             Attack = attack;

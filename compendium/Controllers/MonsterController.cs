@@ -1,10 +1,37 @@
 ﻿using Compendium.Models.CoreData;
 using Compendium.Models.CoreData.Enums;
-using System.Collections.Generic;
-using System.Linq;
+using Compendium.Provider;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Compendium.Controllers
 {
+    [Route("api/monster")]
+    public class MonsterController : StandardController<Monster>
+    {
+        public MonsterController(Provider<Monster> monsterProvider) : base(monsterProvider)
+        { }
+
+        [HttpGet]
+        [Route("cr")]
+        public Dictionary<int, AbilityDistribution> GetAllCrAbilityPoints()
+        {
+            return provider.GetAll().GroupBy(m => m.ChallengeRating.Value).ToDictionary(g => g.Key, g => new AbilityDistribution(g.ToList()));
+        }
+
+        [HttpGet]
+        [Route("tags")]
+        public Dictionary<MonsterType, string[]> GetTagsForType()
+        {
+            return provider.GetAll().
+                GroupBy(m => m.Race.MonsterType).
+                ToDictionary(g => g.Key, g => g.ToList().
+                    Select(m => m.Race.Tags).
+                    Where(t => t != null).
+                    Distinct().
+                    ToArray());
+        }
+    }
+
     public class AbilityDistribution
     {
         public int AbilityMax;

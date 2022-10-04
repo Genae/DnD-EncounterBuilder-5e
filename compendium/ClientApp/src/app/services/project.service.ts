@@ -17,12 +17,8 @@ export class ProjectService {
         return this.http.get<Project[]>(this.baseUrl + 'api/project');
     }
 
-    createNewProject(project: Project): Observable<Project> {
-        return this.http.post<Project>(this.baseUrl + 'api/project', project);
-    }
-
     updateProject(project: Project): Observable<Project> {
-        return this.http.post<Project>(this.baseUrl + 'api/project/' + project.id, project);
+        return this.http.post<Project>(this.baseUrl + 'api/project', project);
     }
 
     deleteProject(project: Project): Observable<Project> {
