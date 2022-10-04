@@ -8,7 +8,7 @@ namespace Compendium.Controllers
     [Route("api/monster")]
     public class MonsterController : StandardController<Monster>
     {
-        public MonsterController(Provider<Monster> monsterProvider) : base(monsterProvider)
+        public MonsterController(Provider<Monster> monsterProvider, DynamicEnumProvider dep) : base(monsterProvider, dep)
         { }
 
         [HttpGet]

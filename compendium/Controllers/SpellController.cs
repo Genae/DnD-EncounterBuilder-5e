@@ -7,7 +7,7 @@ namespace Compendium.Controllers
     [Route("api/spell")]
     public class SpellController : StandardController<Spell>
     {
-        public SpellController(Provider<Spell> spellProvider) : base(spellProvider)
+        public SpellController(Provider<Spell> spellProvider, DynamicEnumProvider dep) : base(spellProvider, dep)
         { }
     }
 

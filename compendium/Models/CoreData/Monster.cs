@@ -40,8 +40,9 @@ namespace Compendium.Models.CoreData
 
         public Monster() { }
 
-        public Monster(DynamicEnumProvider dep)
+        public override void Init(DynamicEnumProvider dep)
         {
+            base.Init(dep);
             Abilities = new Dictionary<string, AbilityScore>();
             foreach (var ability in dep.GetEnumValues("Ability").Data)
                 Abilities.Add(ability, new AbilityScore() { Value = 10 });

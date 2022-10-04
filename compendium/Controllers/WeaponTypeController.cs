@@ -7,7 +7,7 @@ namespace Compendium.Controllers
     [Route("api/weaponType")]
     public class WeaponTypeController : StandardController<WeaponType>
     {
-        public WeaponTypeController(Provider<WeaponType> weaponTypeProvider) : base(weaponTypeProvider)
+        public WeaponTypeController(Provider<WeaponType> weaponTypeProvider, DynamicEnumProvider dep) : base(weaponTypeProvider, dep)
         { }
     }
 
