@@ -79,16 +79,16 @@ export class MonsterEditComponent {
     }
 
     public removeActionFromMulti(action: string) {
-        delete this.monster.multiattackAction.actions[action];
+        delete this.monster.multiattackAction!.actions[action];
         this.updateMulti()
     }
 
     addActionToMultiSelection: string;
 
     public addActionToMulti() {
-        if (!this.monster.multiattackAction.actions)
-            this.monster.multiattackAction.actions = {}
-        this.monster.multiattackAction.actions[this.addActionToMultiSelection] = 1;
+        if (!this.monster.multiattackAction!.actions)
+            this.monster.multiattackAction!.actions = {}
+        this.monster.multiattackAction!.actions[this.addActionToMultiSelection] = 1;
         this.addActionToMultiSelection = "";
         this.updateMulti()
     }
@@ -100,15 +100,20 @@ export class MonsterEditComponent {
     }
 
     public getUnusedMultiActions() {
-        var used = this.getObjectKeys(this.monster.multiattackAction.actions);
+        var used = this.getObjectKeys(this.monster.multiattackAction!.actions);
         var actions = this.monster.actions.map(a => a.name);
         return actions.filter(a => !used.includes(a));
     }
 
     public hasMultiattackChange() {
-        this.monster.multiattackAction = new Multiattack()
-        this.monster.multiattackAction.name = "Multiattack"
-        this.monster.multiattackAction.text = ""
+        if (this.hasMultiattack) {
+            this.monster.multiattackAction = new Multiattack()
+            this.monster.multiattackAction.name = "Multiattack"
+            this.monster.multiattackAction.text = ""
+        }
+        else {
+            delete this.monster.multiattackAction;
+        }
     }
 
     addSelectedActionToMonster: WeaponType;

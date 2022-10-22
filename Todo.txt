@@ -9,7 +9,5 @@ TODOs
 - Abilities!
 - atkbonus
 - projecttags
-- multiattack toggle not toggling off
 
 - Search monsterlist
-- AttackType recursive in Homebewery

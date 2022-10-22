@@ -255,13 +255,13 @@
                         </mat-expansion-panel-header>
                         <mat-divider style="margin:5px 0 10px 0"></mat-divider>
                         <mat-list role="list" *ngIf="hasMultiattack">
-                            <mat-list-item *ngFor="let action of getObjectKeys(monster.multiattackAction.actions)" role="listitem" style="height:70px">
+                            <mat-list-item *ngFor="let action of getObjectKeys(monster.multiattackAction!.actions)" role="listitem" style="height:70px">
                                 <mat-form-field appearance="outline" class="col-md-2" [floatLabel]="'always'">
                                     <mat-label>{{action}}</mat-label>
                                     <span matSuffix>
                                         <button mat-icon-button (click)="removeActionFromMulti(action)"><mat-icon>delete</mat-icon></button>
                                     </span>
-                                    <input type="number" matInput [(ngModel)]="monster.multiattackAction.actions[action]" (ngModelChange)="updateMulti()" [ngModelOptions]="{standalone: true}">
+                                    <input type="number" matInput [(ngModel)]="monster.multiattackAction!.actions[action]" (ngModelChange)="updateMulti()" [ngModelOptions]="{standalone: true}">
                                 </mat-form-field>
                             </mat-list-item>
                             <mat-list-item role="listitem">
