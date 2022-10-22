@@ -11,7 +11,6 @@ import { MonsterListComponent, FilterPipe } from './components/monsterListCompon
 import { MonsterDetailComponent } from './components/monsterDetailComponent/monsterDetail.component';
 import { SpellListComponent, FilterSpellsPipe } from './components/spellListComponent/spellList.component';
 import { SpellDetailComponent } from './components/spellDetailComponent/spellDetail.component';
-import { DataService } from './services/data.service';
 import { ProjectService } from './services/project.service';
 import { ProjectListComponent } from './components/projectListComponent/projectList.component';
 import { ProjectEditComponent } from './components/projectEditComponent/projectEdit.component';
@@ -20,6 +19,9 @@ import { MonsterEditComponent } from './components/monsterEditComponent/monsterE
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 import { TextgenService } from './services/textgen.service';
+import { MonsterService } from './services/monster.service';
+import { SpellService } from './services/spell.service';
+import { WeaponTypeService } from './services/weaponType.service';
 
 @NgModule({
     declarations: [
@@ -56,7 +58,7 @@ import { TextgenService } from './services/textgen.service';
         ])
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    providers: [DataService, ProjectService, TextgenService],
+    providers: [MonsterService, ProjectService, TextgenService, SpellService, WeaponTypeService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

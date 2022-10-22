@@ -3,7 +3,8 @@ import { Component } from '@angular/core';
 import { Monster, PreparedSpell } from "../../models/monster";
 import { Spell } from "../../models/spell";
 import { Router, ActivatedRoute } from '@angular/router';
-import { DataService } from "../../services/data.service";
+import { MonsterService } from '../../services/monster.service';
+import { SpellService } from '../../services/spell.service';
 
 @Component({
     selector: 'monsterDetail',
@@ -12,10 +13,10 @@ import { DataService } from "../../services/data.service";
 
 export class MonsterDetailComponent {
 
-    constructor(private dataService: DataService, private route: ActivatedRoute, private router: Router) {
+    constructor(private monsterService: MonsterService, private route: ActivatedRoute, private router: Router, private spellService: SpellService) {
 
         this.route.params.subscribe(params => {
-            this.dataService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
+            this.monsterService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
         });
 
     }
@@ -34,7 +35,7 @@ export class MonsterDetailComponent {
         this.monster = monster;
         if (monster.spellcasting !== undefined && monster.spellcasting.spells.length > 0) {
             var flattened = monster.spellcasting.spells.flat().filter((a: PreparedSpell) => a !== null);
-            this.dataService.getSpellsFromIds(flattened.map((s: PreparedSpell) => s.spellId)).subscribe((data) => {
+            this.spellService.getSpellsFromIds(flattened.map((s: PreparedSpell) => s.spellId)).subscribe((data) => {
                 this.monsterSpells = data;
             });
         }

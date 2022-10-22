@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 
-import { DataService } from "../../services/data.service";
 import { Spell } from "../../models/spell";
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { SpellService } from '../../services/spell.service';
 
 @Component({
     selector: 'spellDetail',
@@ -11,10 +11,10 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 export class SpellDetailComponent {
 
-    constructor(private dataService: DataService, private route: ActivatedRoute) {
+    constructor(private spellService: SpellService, private route: ActivatedRoute) {
       this.route.params.subscribe(params => {
           if (params['id'])
-            this.dataService.getSpellById(params['id']).subscribe(response => this.spellUpdated(response));
+              this.spellService.getSpellById(params['id']).subscribe(response => this.spellUpdated(response));
         });
     }
 

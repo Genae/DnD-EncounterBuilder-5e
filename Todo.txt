@@ -1,0 +1,15 @@
+TODOs
+- Alignment
+- Dropdowns searchable
+- Senses
+- Languages (understands Draconic but can't speak)
+- Skills double
+- CR block
+- Hit Die count?
+- Abilities!
+- atkbonus
+- projecttags
+- multiattack toggle not toggling off
+
+- Search monsterlist
+- AttackType recursive in Homebewery

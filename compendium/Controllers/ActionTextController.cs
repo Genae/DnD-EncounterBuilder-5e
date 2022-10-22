@@ -1,6 +1,5 @@
 ﻿using Compendium.Models.CoreData;
 using Compendium.Models.CoreData.Enums;
-using Compendium.Provider;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Action = Compendium.Models.CoreData.Action;
@@ -10,14 +9,11 @@ namespace Compendium.Controllers
     [ApiController, Produces("application/json"), Route("api/textgen")]
     public class ActionTextController : Controller
     {
-        private readonly DataLoader _dataProvider;
-
         public static string[] TextifyNumber = { "zero", "one", "two", "three", "four", "five", "six" };
         public static string[] TextifyNumberCe = { "zero", "once", "twice", "three times", "four times", "five times", "six times" };
 
-        public ActionTextController(DataLoader dataProvider)
+        public ActionTextController()
         {
-            _dataProvider = dataProvider;
         }
 
 
@@ -115,11 +111,11 @@ namespace Compendium.Controllers
 
     internal class MultiActionHelper
     {
-        public Models.CoreData.Action Action;
+        public Action Action;
         public bool IsAttack => Action.Attack != null;
         public int Amount { get; internal set; }
 
-        public MultiActionHelper(KeyValuePair<string, int> a, Models.CoreData.Action action)
+        public MultiActionHelper(KeyValuePair<string, int> a, Action action)
         {
             Amount = a.Value;
             Action = action;

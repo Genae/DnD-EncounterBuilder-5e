@@ -1,11 +1,9 @@
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 
-import { DataService } from "../../services/data.service";
-import { Monster, PreparedSpell } from "../../models/monster";
-import { Spell } from "../../models/spell";
+import { Monster } from "../../models/monster";
 import { Router } from '@angular/router';
 import { Pipe, PipeTransform } from '@angular/core';
-import { Subject } from 'rxjs';
+import { MonsterService } from '../../services/monster.service';
 
 @Component({
     selector: 'monsterList',
@@ -19,7 +17,7 @@ export class MonsterListComponent implements AfterViewInit, OnDestroy {
 
     @Input() ids: string[];
 
-    constructor(private dataService: DataService, private router: Router) {
+    constructor(private monsterService: MonsterService, private router: Router) {
         this.search = {};
     }
 
@@ -33,12 +31,12 @@ export class MonsterListComponent implements AfterViewInit, OnDestroy {
 
     private loadMonsters() {
         if (this.ids) {
-            this.dataService.getMonstersFromIds(this.ids).subscribe(response => {
+            this.monsterService.getMonstersFromIds(this.ids).subscribe(response => {
                 this.monsters = response;
             });
         }
         else {
-            this.dataService.getMonsters().subscribe(response => {
+            this.monsterService.getMonsters().subscribe(response => {
                 if (this.ids === undefined)
                     this.monsters = response
             });

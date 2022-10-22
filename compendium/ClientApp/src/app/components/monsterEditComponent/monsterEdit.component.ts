@@ -3,10 +3,12 @@ import { Component, Input } from '@angular/core';
 import { Monster, PreparedSpell, Size, MonsterType, Ability, ChallengeRating, ArmorGroup, ArmorPiece, DamageType, ArmorInfo, Condition, Morality, Order, Multiattack, Action, Attack, AttackType, Senses, HitEffect, SavingThrow } from "../../models/monster";
 import { Spell } from "../../models/spell";
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { DataService } from "../../services/data.service";
 import { FormControl } from '@angular/forms';
 import { TextgenService } from '../../services/textgen.service';
 import { WeaponCategory, WeaponType } from '../../models/weapon';
+import { MonsterService } from '../../services/monster.service';
+import { SpellService } from '../../services/spell.service';
+import { WeaponTypeService } from '../../services/weaponType.service';
 
 @Component({
     selector: 'monsterEdit',
@@ -17,16 +19,16 @@ export class MonsterEditComponent {
 
     vul = new FormControl('');
 
-    constructor(private dataService: DataService, private textGen: TextgenService, private route: ActivatedRoute, private router: Router) {
+    constructor(private monsterService: MonsterService, private spellService: SpellService, private weaponTypeService: WeaponTypeService, private textGen: TextgenService, private route: ActivatedRoute, private router: Router) {
                
-        this.dataService.getTags().subscribe(res => {
+        this.monsterService.getTags().subscribe(res => {
             this.tags = res
-            this.dataService.getWeapons().subscribe(wep => {
+            this.weaponTypeService.getWeapons().subscribe(wep => {
                 this.weapons = wep;
                 this.weapongroups = Object.values(WeaponCategory);
                 this.route.params.subscribe(params => {
                     if (params['id'])
-                        this.dataService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
+                        this.monsterService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
                 });
             });            
         });
@@ -142,7 +144,7 @@ export class MonsterEditComponent {
     }
 
     public submit() {
-        this.dataService.saveMonster(this.monster).subscribe(m => {
+        this.monsterService.saveMonster(this.monster).subscribe(m => {
             this.monster = m;
             this.view();
         });
@@ -162,7 +164,7 @@ export class MonsterEditComponent {
 
         if (this.monster.spellcasting !== undefined && this.monster.spellcasting.spells.length > 0) {
             var flattened = this.monster.spellcasting.spells.flat().filter((a: PreparedSpell) => a !== null);
-            this.dataService.getSpellsFromIds(flattened.map((s: PreparedSpell) => s.spellId)).subscribe((data) => {
+            this.spellService.getSpellsFromIds(flattened.map((s: PreparedSpell) => s.spellId)).subscribe((data) => {
                 this.monsterSpells = data;
             });
         }
@@ -206,6 +208,8 @@ export class MonsterEditComponent {
             for (let act of this.monster.actions) {
                 act.hasAttack = act.attack !== undefined;
             }
+        else
+            this.monster.actions = [];
         if (this.monster.legendaryActions)
             for (let act of monster.legendaryActions) {
                 act.action.hasAttack = act.action.attack !== undefined;

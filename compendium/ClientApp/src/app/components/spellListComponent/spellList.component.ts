@@ -1,11 +1,10 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 
-import { DataService } from "../../services/data.service";
-import { Monster, PreparedSpell } from "../../models/monster";
 import { Spell } from "../../models/spell";
 import { Router } from '@angular/router';
 import { Pipe, PipeTransform } from '@angular/core';
 import { Subject } from 'rxjs';
+import { SpellService } from '../../services/spell.service';
 
 @Component({
     selector: 'spellList',
@@ -18,7 +17,7 @@ export class SpellListComponent implements OnDestroy {
     search: any;
     @Input() ids: string[]
 
-    constructor(private dataService: DataService, private router: Router) {
+    constructor(private spellService: SpellService, private router: Router) {
         this.loadSpells();
         this.search = {};
     }
@@ -40,12 +39,12 @@ export class SpellListComponent implements OnDestroy {
 
     private loadSpells() {
         if (this.ids) {
-            this.dataService.getSpellsFromIds(this.ids).subscribe(response => {
+            this.spellService.getSpellsFromIds(this.ids).subscribe(response => {
                 this.spells = response;
             });
         }
         else {
-            this.dataService.getSpells().subscribe(response => {
+            this.spellService.getSpells().subscribe(response => {
                 if (this.ids === undefined)
                     this.spells = response;
             });
