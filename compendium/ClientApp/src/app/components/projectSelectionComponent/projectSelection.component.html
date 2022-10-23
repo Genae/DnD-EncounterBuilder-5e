@@ -1,0 +1,24 @@
+<mat-form-field class="example-chip-list" appearance="fill" style="width: 100%">
+    <mat-label>Projects</mat-label>
+    <mat-chip-list #chipList aria-label="Project selection">
+        <mat-chip *ngFor="let project of projects"
+                  (removed)="removeProject(project)">
+            {{project.name}}
+            <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+            </button>
+        </mat-chip>
+        <input placeholder="Add to project"
+               #projectInput
+               [formControl]="projectCtrl"
+               [matAutocomplete]="auto"
+               [matChipInputFor]="chipList"
+               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               (matChipInputTokenEnd)="addProject($event)">
+    </mat-chip-list>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedProject($event)">
+        <mat-option *ngFor="let project of filteredProjects | async" [value]="project">
+            {{project.name}}
+        </mat-option>
+    </mat-autocomplete>
+</mat-form-field>

@@ -34,6 +34,10 @@ export class MonsterEditComponent {
         });
     }
 
+
+
+
+
     public view() {
         if (this.monster === undefined)
             return;

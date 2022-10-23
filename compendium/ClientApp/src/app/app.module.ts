@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
@@ -22,6 +22,7 @@ import { TextgenService } from './services/textgen.service';
 import { MonsterService } from './services/monster.service';
 import { SpellService } from './services/spell.service';
 import { WeaponTypeService } from './services/weaponType.service';
+import { ProjectSelectionComponent } from './components/projectSelectionComponent/projectSelection.component';
 
 @NgModule({
     declarations: [
@@ -37,7 +38,8 @@ import { WeaponTypeService } from './services/weaponType.service';
         SpellDetailComponent,
         SpellListComponent,
         FilterPipe,
-        FilterSpellsPipe
+        FilterSpellsPipe,
+        ProjectSelectionComponent
     ],
     imports: [
         MaterialModule,
@@ -45,6 +47,7 @@ import { WeaponTypeService } from './services/weaponType.service';
         HttpClientModule,
         FormsModule,
         BrowserAnimationsModule,
+        ReactiveFormsModule,
         RouterModule.forRoot([
             { path: '', component: HomeComponent, pathMatch: 'full' },
             { path: 'projectList', component: ProjectListComponent },

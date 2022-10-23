@@ -1,11 +1,19 @@
 <div *ngIf="monster" style="margin-top: 20px">
     <h1>Edit Monster {{monster.name}}</h1>
-    <mat-stepper orientation="vertical" [linear]="false" #stepper>
-        <!----------------------------------
+    <!----------------------------------
     --
-    --  Basic Info
+    --  Project
     --
     ---------------------------------------->
+    <div class="row">
+        <projectSelection class="col-md-6"></projectSelection>
+    </div>
+    <mat-stepper orientation="vertical" [linear]="false" #stepper>
+        <!----------------------------------
+        --
+        --  Basic Info
+        --
+        ---------------------------------------->
         <mat-step>
             <ng-template matStepLabel>Basic Info</ng-template>
             <form>
@@ -112,10 +120,10 @@
             </form>
         </mat-step>
         <!-----------------------------------
-    --
-    --  Ability Scores
-    --
-    ---------------------------------------->
+        --
+        --  Ability Scores
+        --
+        ---------------------------------------->
         <mat-step>
             <form>
                 <ng-template matStepLabel>Ability Scores</ng-template>
@@ -153,10 +161,10 @@
             </form>
         </mat-step>
         <!-----------------------------------
-    --
-    --  Defense
-    --
-    ---------------------------------------->
+        --
+        --  Defense
+        --
+        ---------------------------------------->
         <mat-step>
             <form>
                 <ng-template matStepLabel>Defense</ng-template>
@@ -240,10 +248,10 @@
             </form>
         </mat-step>
         <!-----------------------------------
-    --
-    --  Actions
-    --
-    ---------------------------------------->
+        --
+        --  Actions
+        --
+        ---------------------------------------->
         <mat-step>
             <form>
                 <ng-template matStepLabel>Actions</ng-template>
@@ -386,10 +394,10 @@
             </form>
         </mat-step>
         <!-----------------------------------
-    --
-    --  Ability Scores
-    --
-    ---------------------------------------->
+        --
+        --  Ability Scores
+        --
+        ---------------------------------------->
         <mat-step>
             <form>
                 <ng-template matStepLabel>Finalize</ng-template>
