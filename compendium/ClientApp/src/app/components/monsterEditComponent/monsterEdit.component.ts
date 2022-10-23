@@ -9,6 +9,7 @@ import { WeaponCategory, WeaponType } from '../../models/weapon';
 import { MonsterService } from '../../services/monster.service';
 import { SpellService } from '../../services/spell.service';
 import { WeaponTypeService } from '../../services/weaponType.service';
+import { Project } from '../../models/project';
 
 @Component({
     selector: 'monsterEdit',
@@ -33,10 +34,6 @@ export class MonsterEditComponent {
             });            
         });
     }
-
-
-
-
 
     public view() {
         if (this.monster === undefined)
@@ -74,6 +71,10 @@ export class MonsterEditComponent {
             this.monster.speed.speeds['Hover'] = 0;
 
         }
+    }
+
+    public updateProjectTags(projects: Project[]) {
+        this.monster.projectTags = projects.map(p => p.id);
     }
 
     public getObjectKeys(dic: { [id: string]: number }) {

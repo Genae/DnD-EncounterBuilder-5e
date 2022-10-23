@@ -6,7 +6,7 @@
     --
     ---------------------------------------->
     <div class="row">
-        <projectSelection class="col-md-6"></projectSelection>
+        <projectSelection [projectTags]="monster.projectTags" (updateList)="updateProjectTags($event)" class="col-md-6"></projectSelection>
     </div>
     <mat-stepper orientation="vertical" [linear]="false" #stepper>
         <!----------------------------------

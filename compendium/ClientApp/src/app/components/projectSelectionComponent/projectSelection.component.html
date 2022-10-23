@@ -1,5 +1,5 @@
-<mat-form-field class="example-chip-list" appearance="fill" style="width: 100%">
-    <mat-label>Projects</mat-label>
+<mat-form-field class="example-chip-list no-underline" style="width: 100%">
+    <mat-label>{{label}}</mat-label>
     <mat-chip-list #chipList aria-label="Project selection">
         <mat-chip *ngFor="let project of projects"
                   (removed)="removeProject(project)">

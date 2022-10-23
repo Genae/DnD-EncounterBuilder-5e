@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
@@ -18,16 +18,29 @@ export class ProjectSelectionComponent {
     separatorKeysCodes: number[] = [ENTER, COMMA];
     projectCtrl = new FormControl('');
     filteredProjects: Observable<Project[]>;
-    projects: Project[] = [];
     allProjects: Project[];
+    label: string;
+    projects: Project[] = [];
+
+    @Input() projectTags: string[]
+    @Output() updateList = new EventEmitter<Project[]>();
 
     @ViewChild('projectInput') projectInput: ElementRef<HTMLInputElement>;
 
     constructor(private projectService: ProjectService) {
         this.projectService.getProjects().pipe(first()).subscribe(res => {
             this.allProjects = res;
+            this.convertTagsToProject();
             this.filteredProjects = this.projectCtrl.valueChanges.pipe(startWith(null), map(proj => this._filter(proj)));
         })
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        this.convertTagsToProject();
+    }
+    convertTagsToProject() {
+        if (this.allProjects)
+            this.projects = this.allProjects.filter(p => this.projectTags.indexOf(p.id) !== -1)
     }
 
     addProject(event: MatChipInputEvent): void {
@@ -37,6 +50,7 @@ export class ProjectSelectionComponent {
         if (value) {
             let project = this.allProjects.find(p => p.name == value)
             this.projects.push(project!);
+            this.updateList.emit(this.projects);
         }
 
         // Clear the input value
@@ -50,6 +64,7 @@ export class ProjectSelectionComponent {
 
         if (index >= 0) {
             this.projects.splice(index, 1);
+            this.updateList.emit(this.projects);
         }
         this.projectCtrl.setValue(null);
     }
@@ -57,11 +72,16 @@ export class ProjectSelectionComponent {
     selectedProject(event: MatAutocompleteSelectedEvent): void {
         let project = this.allProjects.find(p => p.name == event.option.viewValue)
         this.projects.push(project!);
+        this.updateList.emit(this.projects);
         this.projectInput.nativeElement.value = '';
         this.projectCtrl.setValue(null);
     }
 
     private _filter(search: any): Project[] {
+        if (this.projects.length == 0)
+            this.label = "Not in any project"
+        else
+            this.label = "Projects"
         let searchLower = "";
         if (search?.name)
             searchLower = "";
