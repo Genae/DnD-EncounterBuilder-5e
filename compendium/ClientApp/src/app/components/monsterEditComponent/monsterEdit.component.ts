@@ -228,6 +228,13 @@ export class MonsterEditComponent {
             for (let act of this.monster.reactions) {
                 act.action.hasAttack = act.action.attack !== undefined;
             }
+
+        this.route.queryParams.subscribe((params) => {
+            if (params.pId && this.monster.projectTags.indexOf(params.pId) === -1) {
+                this.monster.projectTags.push(params.pId);
+            }
+        });
+
     }
 
     public updateAction(act: Action) {
