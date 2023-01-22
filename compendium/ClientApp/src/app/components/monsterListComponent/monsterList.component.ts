@@ -37,21 +37,32 @@ export class MonsterListComponent implements AfterViewInit {
         if (this.ids) {
             this.monsterService.getMonstersFromIds(this.ids).subscribe(response => {
                 this.monsters = response;
-                this.dataSource = new MatTableDataSource(this.monsters)
-                this.dataSource.paginator = this.paginator;
-                this.dataSource.sort = this.sort;
+                this.createDatasorce()
             });
         }
         else {
             this.monsterService.getMonsters().subscribe(response => {
                 if (this.ids === undefined){
-                    this.monsters = response
-                    this.dataSource = new MatTableDataSource(this.monsters)
-                    this.dataSource.paginator = this.paginator;
-                    this.dataSource.sort = this.sort;                    
+                    this.monsters = response       
+                    this.createDatasorce()
                 }
             });
         }
+    }
+    
+    createDatasorce() {
+        this.dataSource = new MatTableDataSource(this.monsters)
+        this.dataSource.sortingDataAccessor = (item, property) => {
+            switch(property) {
+                case 'cr': return item.challengeRating.description;
+                case 'type': return item.race.monsterType;
+                case 'hp': return item.hitDie.expectedRoll;
+                default: return (item as any)[property];
+            }
+        };
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        
     }
 
     applyFilter(event: Event) {
