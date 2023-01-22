@@ -35,10 +35,13 @@ namespace Compendium.Provider
 
         private void ImportXML()
         {
+            var oneDrive = Directory.Exists(@"C:\Users\stefa\OneDrive\Xerios")
+                ? @"C:\Users\stefa\OneDrive\Xerios"
+                : @"D:\Dateien\OneDrive\Xerios";
             var srd = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data", "SRD.xml");
-            if (File.Exists(@"D:\Dateien\OneDrive\Xerios\AllData.xml"))
+            if (File.Exists(oneDrive + @"\AllData.xml"))
             {
-                Compendium = new Importer().ImportCompendium(@"D:\Dateien\OneDrive\Xerios\AllData.xml");
+                Compendium = new Importer().ImportCompendium(oneDrive + @"\AllData.xml");
             }
             else if (File.Exists(srd))
             {
@@ -58,6 +61,7 @@ namespace Compendium.Provider
                 var spell = spellParser.Parse(compendiumSpell);
                 spellProvider.Store(spell);
             }
+            allSpells = spellProvider.GetAll();
 
             foreach (var compendiumMonster in Compendium.Monsters)
             {
