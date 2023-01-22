@@ -6,7 +6,7 @@ namespace Compendium.Database
 {
     public class JsonDatabaseConnection : IDatabaseConnection
     {
-        public static readonly string Root = @"D:\Database";
+        public static readonly string Root = @"C:\Database";
         private string Subfolder = "";
         private string DatabaseRoot => Path.Combine(Root, Subfolder);
         private Dictionary<string, List<KeyedDocument>> _database;

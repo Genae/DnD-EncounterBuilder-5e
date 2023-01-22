@@ -1,7 +1,0 @@
-<button class="btn btn-default" (click)="edit()">Edit</button>
-<div *ngIf="monster">
-    <statBlock [setMonster]="monster"></statBlock>
-    <div style="margin-left: 10px">
-        <spellDetail [spell]="tspell" *ngFor="let tspell of monsterSpells"></spellDetail>
-    </div>
-</div>
