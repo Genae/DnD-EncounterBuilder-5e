@@ -1,25 +1,29 @@
-import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 
 import { Monster } from "../../models/monster";
 import { Router } from '@angular/router';
 import { Pipe, PipeTransform } from '@angular/core';
 import { MonsterService } from '../../services/monster.service';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
 
 @Component({
     selector: 'monsterList',
     templateUrl: 'monsterList.component.html'
 })
 
-export class MonsterListComponent implements AfterViewInit, OnDestroy {
+export class MonsterListComponent implements AfterViewInit {
 
+    displayedColumns: string[] = ['name', 'type', 'cr', 'hp'];
+    dataSource: MatTableDataSource<Monster>;    
     monsters: Monster[] = [];
-    search: any;
 
     @Input() ids: string[];
+    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatSort) sort: MatSort;
 
-    constructor(private monsterService: MonsterService, private router: Router) {
-        this.search = {};
-    }
+    constructor(private monsterService: MonsterService, private router: Router) { }
 
     ngAfterViewInit() {
         this.loadMonsters();
@@ -33,20 +37,32 @@ export class MonsterListComponent implements AfterViewInit, OnDestroy {
         if (this.ids) {
             this.monsterService.getMonstersFromIds(this.ids).subscribe(response => {
                 this.monsters = response;
+                this.dataSource = new MatTableDataSource(this.monsters)
+                this.dataSource.paginator = this.paginator;
+                this.dataSource.sort = this.sort;
             });
         }
         else {
             this.monsterService.getMonsters().subscribe(response => {
-                if (this.ids === undefined)
+                if (this.ids === undefined){
                     this.monsters = response
+                    this.dataSource = new MatTableDataSource(this.monsters)
+                    this.dataSource.paginator = this.paginator;
+                    this.dataSource.sort = this.sort;                    
+                }
             });
         }
     }
 
-    ngOnDestroy(): void {
-        // Do not forget to unsubscribe the event
-    }
+    applyFilter(event: Event) {
+        const filterValue = (event.target as HTMLInputElement).value;
+        this.dataSource.filter = filterValue.trim().toLowerCase();
 
+        if (this.dataSource.paginator) {
+            this.dataSource.paginator.firstPage();
+        }
+    }
+    
     public redirect(id: string) {
         this.router.navigateByUrl('/monsterDetails/' + id);
     }

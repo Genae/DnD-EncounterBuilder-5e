@@ -18,6 +18,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {MatSortModule} from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 
@@ -40,7 +43,10 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
         MatCardModule,
         MatExpansionModule,
         MatChipsModule,
-        MatAutocompleteModule
+        MatAutocompleteModule,
+        MatSortModule,
+        MatTableModule,
+        MatPaginatorModule
     ]
 })
 export class MaterialModule { }

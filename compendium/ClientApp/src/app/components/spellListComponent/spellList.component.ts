@@ -1,10 +1,12 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, ViewChild } from '@angular/core';
 
 import { Spell } from "../../models/spell";
 import { Router } from '@angular/router';
 import { Pipe, PipeTransform } from '@angular/core';
-import { Subject } from 'rxjs';
 import { SpellService } from '../../services/spell.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
     selector: 'spellList',
@@ -12,14 +14,16 @@ import { SpellService } from '../../services/spell.service';
 })
 
 export class SpellListComponent implements OnDestroy {
+    displayedColumns: string[] = ['name', 'school', 'level', 'classes'];
+    dataSource: MatTableDataSource<Spell>;
 
+    @Input() ids: string[];
+    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatSort) sort: MatSort;
     spells: Spell[] = [];
-    search: any;
-    @Input() ids: string[]
 
     constructor(private spellService: SpellService, private router: Router) {
         this.loadSpells();
-        this.search = {};
     }
 
     ngOnDestroy(): void {
@@ -41,13 +45,28 @@ export class SpellListComponent implements OnDestroy {
         if (this.ids) {
             this.spellService.getSpellsFromIds(this.ids).subscribe(response => {
                 this.spells = response;
+                this.dataSource = new MatTableDataSource(this.spells)
+                this.dataSource.paginator = this.paginator;
+                this.dataSource.sort = this.sort;
             });
         }
         else {
             this.spellService.getSpells().subscribe(response => {
-                if (this.ids === undefined)
+                if (this.ids === undefined){
                     this.spells = response;
+                    this.dataSource = new MatTableDataSource(this.spells)
+                    this.dataSource.paginator = this.paginator;
+                    this.dataSource.sort = this.sort;                    
+                }
             });
+        }
+    }
+    applyFilter(event: Event) {
+        const filterValue = (event.target as HTMLInputElement).value;
+        this.dataSource.filter = filterValue.trim().toLowerCase();
+
+        if (this.dataSource.paginator) {
+            this.dataSource.paginator.firstPage();
         }
     }
 }
