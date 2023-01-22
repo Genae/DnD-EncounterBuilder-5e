@@ -8,6 +8,3 @@ TODOs
 - Hit Die count?
 - Abilities!
 - atkbonus
-- projecttags
-
-- Search monsterlist
