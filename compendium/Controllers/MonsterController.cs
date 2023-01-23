@@ -2,6 +2,7 @@
 using Compendium.Models.CoreData.Enums;
 using Compendium.Provider;
 using Microsoft.AspNetCore.Mvc;
+using Action = Compendium.Models.CoreData.Action;
 
 namespace Compendium.Controllers
 {
@@ -29,6 +30,25 @@ namespace Compendium.Controllers
                     Where(t => t != null).
                     Distinct().
                     ToArray());
+        }
+        
+        [HttpGet]
+        [Route("traits")]
+        public Dictionary<string, Trait[]> GetTraitsForType()
+        {
+            string GroupKey(Monster m)
+            {
+                if (!string.IsNullOrWhiteSpace(m.Race.Tags))
+                    return $"{m.Race.MonsterType} ({m.Race.Tags})";
+                return m.Race.MonsterType.ToString();
+            }
+
+            return provider.GetAll().GroupBy(GroupKey).ToDictionary(g => g.Key, g => g.ToList()
+                .SelectMany(m => m.Traits)
+                .GroupBy(t => t.Name)
+                .ToDictionary(i => i.Key, i => i.ToList().First().Text)
+                .Select(t => new Trait() { Name = t.Key, Text = t.Value })
+                .ToArray());
         }
     }
 

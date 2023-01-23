@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Monster } from "../models/monster";
+import {Monster, Trait} from "../models/monster";
 
 
 @Injectable()
@@ -27,5 +27,9 @@ export class MonsterService {
 
     getTags(): Observable<{ [id: string]: string; }> {
         return this.http.get<{ [id: string]: string; }>(this.baseUrl + 'api/monster/tags');
+    }
+
+    getTraits() {
+        return this.http.get<{ [id: string]: Trait[]; }>(this.baseUrl + 'api/monster/traits');
     }
 }

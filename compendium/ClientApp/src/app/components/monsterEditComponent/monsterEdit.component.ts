@@ -1,6 +1,28 @@
 import { Component, Input } from '@angular/core';
 
-import { Monster, PreparedSpell, Size, MonsterType, Ability, ChallengeRating, ArmorGroup, ArmorPiece, DamageType, ArmorInfo, Condition, Morality, Order, Multiattack, Action, Attack, AttackType, Senses, HitEffect, SavingThrow } from "../../models/monster";
+import {
+    Monster,
+    PreparedSpell,
+    Size,
+    MonsterType,
+    Ability,
+    ChallengeRating,
+    ArmorGroup,
+    ArmorPiece,
+    DamageType,
+    ArmorInfo,
+    Condition,
+    Morality,
+    Order,
+    Multiattack,
+    Action,
+    Attack,
+    AttackType,
+    Senses,
+    HitEffect,
+    SavingThrow,
+    Trait
+} from "../../models/monster";
 import { Spell } from "../../models/spell";
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormControl } from '@angular/forms';
@@ -21,18 +43,21 @@ export class MonsterEditComponent {
     vul = new FormControl('');
 
     constructor(private monsterService: MonsterService, private spellService: SpellService, private weaponTypeService: WeaponTypeService, private textGen: TextgenService, private route: ActivatedRoute, private router: Router) {
-               
-        this.monsterService.getTags().subscribe(res => {
-            this.tags = res
-            this.weaponTypeService.getWeapons().subscribe(wep => {
-                this.weapons = wep;
-                this.weapongroups = Object.values(WeaponCategory);
-                this.route.params.subscribe(params => {
-                    if (params['id'])
-                        this.monsterService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
+        this.monsterService.getTraits().subscribe(res => {
+            this.traits = res;
+            this.traitGroups = Object.keys(this.traits);
+            this.monsterService.getTags().subscribe(res => {
+                this.tags = res
+                this.weaponTypeService.getWeapons().subscribe(wep => {
+                    this.weapons = wep;
+                    this.weapongroups = Object.values(WeaponCategory);
+                    this.route.params.subscribe(params => {
+                        if (params['id'])
+                            this.monsterService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
+                    });
                 });
-            });            
-        });
+            });
+        });        
     }
 
     public view() {
@@ -53,6 +78,7 @@ export class MonsterEditComponent {
 
     monsterSpells: Spell[];
     tags: { [id: string]: string; }
+    traits:  { [id: string]: Trait[]; }
 
     public getTags() {
         let mtv = this.monsterTypeValues.find(mtv => this.monster.race.monsterType == mtv)
@@ -146,6 +172,24 @@ export class MonsterEditComponent {
         return this.weapons.filter(w => !used.includes(w.name) && w.weaponCategory === cat);
     }
 
+
+    addSelectedTraitToMonster: Trait;
+    traitGroups: string[];
+    removeTrait(trait: Trait) {
+        this.monster.traits.splice(this.monster.traits.indexOf(trait), 1)
+    }
+
+    addTraitToMonster() {
+        if (this.addSelectedTraitToMonster == undefined)
+            return;
+        this.monster.traits.push(this.addSelectedTraitToMonster);
+        this.addSelectedTraitToMonster = new Trait();
+    }
+
+    getUnusedTrait(group: string) : Trait[] {
+        return this.traits[group];
+    }
+    
     public changeSave(ability: string) {
         if (this.save[ability])
             this.monster.savingThrows[ability] = this.monster.abilities[ability].modifier + this.proficency
