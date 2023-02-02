@@ -23,6 +23,7 @@ import { MonsterService } from './services/monster.service';
 import { SpellService } from './services/spell.service';
 import { WeaponTypeService } from './services/weaponType.service';
 import { ProjectSelectionComponent } from './components/projectSelectionComponent/projectSelection.component';
+import {NgxMatSelectSearchModule} from "ngx-mat-select-search";
 
 @NgModule({
     declarations: [
@@ -43,22 +44,23 @@ import { ProjectSelectionComponent } from './components/projectSelectionComponen
     ],
     imports: [
         MaterialModule,
-        BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+        BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
         HttpClientModule,
         FormsModule,
         BrowserAnimationsModule,
         ReactiveFormsModule,
         RouterModule.forRoot([
-            { path: '', component: HomeComponent, pathMatch: 'full' },
-            { path: 'projectList', component: ProjectListComponent },
-            { path: 'projectDetail/:id', component: ProjectDetailComponent },
-            { path: 'projectDetail/:id/edit', component: ProjectEditComponent },
-            { path: 'monsterList', component: MonsterListComponent },
-            { path: 'monsterDetail/:id', component: MonsterDetailComponent },
-            { path: 'monsterDetail/:id/edit', component: MonsterEditComponent },
-            { path: 'spellList', component: SpellListComponent },
-            { path: 'spellDetail/:id', component: SpellDetailComponent },
-        ])
+            {path: '', component: HomeComponent, pathMatch: 'full'},
+            {path: 'projectList', component: ProjectListComponent},
+            {path: 'projectDetail/:id', component: ProjectDetailComponent},
+            {path: 'projectDetail/:id/edit', component: ProjectEditComponent},
+            {path: 'monsterList', component: MonsterListComponent},
+            {path: 'monsterDetail/:id', component: MonsterDetailComponent},
+            {path: 'monsterDetail/:id/edit', component: MonsterEditComponent},
+            {path: 'spellList', component: SpellListComponent},
+            {path: 'spellDetail/:id', component: SpellDetailComponent},
+        ]),
+        NgxMatSelectSearchModule
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     providers: [MonsterService, ProjectService, TextgenService, SpellService, WeaponTypeService],

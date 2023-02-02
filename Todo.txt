@@ -6,5 +6,4 @@ TODOs
 - Skills double
 - CR block
 - Hit Die count?
-- Abilities!
 - atkbonus
