@@ -1,8 +1,8 @@
 import { Component, Input, OnDestroy, ViewChild } from '@angular/core';
 
 import { Router } from '@angular/router';
-import { Project } from '../../models/project';
-import { ProjectService } from '../../services/project.service';
+import { Project } from '../../../models/project';
+import { ProjectService } from '../../../services/project.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';

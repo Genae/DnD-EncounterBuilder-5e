@@ -6,16 +6,16 @@ import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './components/homeComponent/home.component';
-import { MonsterListComponent, FilterPipe } from './components/monsterListComponent/monsterList.component';
-import { MonsterDetailComponent } from './components/monsterDetailComponent/monsterDetail.component';
-import { SpellListComponent, FilterSpellsPipe } from './components/spellListComponent/spellList.component';
-import { SpellDetailComponent } from './components/spellDetailComponent/spellDetail.component';
+import { HomeComponent } from './pages/home/home.component';
+import { MonsterListComponent, FilterPipe } from './pages/monster/monsterListComponent/monsterList.component';
+import { MonsterDetailComponent } from './pages/monster/monsterDetailComponent/monsterDetail.component';
+import { SpellListComponent, FilterSpellsPipe } from './pages/spell/spellListComponent/spellList.component';
+import { SpellDetailComponent } from './pages/spell/spellDetailComponent/spellDetail.component';
 import { ProjectService } from './services/project.service';
-import { ProjectListComponent } from './components/projectListComponent/projectList.component';
-import { ProjectEditComponent } from './components/projectEditComponent/projectEdit.component';
-import { ProjectDetailComponent } from './components/projectDetailComponent/projectDetail.component';
-import { MonsterEditComponent } from './components/monsterEditComponent/monsterEdit.component';
+import { ProjectListComponent } from './pages/project/projectListComponent/projectList.component';
+import { ProjectEditComponent } from './pages/project/projectEditComponent/projectEdit.component';
+import { ProjectDetailComponent } from './pages/project/projectDetailComponent/projectDetail.component';
+import { MonsterEditComponent } from './pages/monster/monsterEditComponent/monsterEdit.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 import { TextgenService } from './services/textgen.service';
@@ -24,6 +24,7 @@ import { SpellService } from './services/spell.service';
 import { WeaponTypeService } from './services/weaponType.service';
 import { ProjectSelectionComponent } from './components/projectSelectionComponent/projectSelection.component';
 import {NgxMatSelectSearchModule} from "ngx-mat-select-search";
+import { AbilityScoreComponent } from './pages/monster/monsterEditComponent/ability-score/ability-score.component';
 
 @NgModule({
     declarations: [
@@ -40,7 +41,8 @@ import {NgxMatSelectSearchModule} from "ngx-mat-select-search";
         SpellListComponent,
         FilterPipe,
         FilterSpellsPipe,
-        ProjectSelectionComponent
+        ProjectSelectionComponent,
+        AbilityScoreComponent
     ],
     imports: [
         MaterialModule,

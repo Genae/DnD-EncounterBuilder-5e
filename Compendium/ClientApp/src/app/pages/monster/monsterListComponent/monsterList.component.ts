@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 
-import { Monster } from "../../models/monster";
+import { Monster } from "../../../models/monster";
 import { Router } from '@angular/router';
 import { Pipe, PipeTransform } from '@angular/core';
-import { MonsterService } from '../../services/monster.service';
+import { MonsterService } from '../../../services/monster.service';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';

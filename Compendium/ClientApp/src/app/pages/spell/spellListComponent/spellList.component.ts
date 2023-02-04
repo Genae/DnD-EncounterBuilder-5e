@@ -1,9 +1,9 @@
 import { Component, Input, OnDestroy, ViewChild } from '@angular/core';
 
-import { Spell } from "../../models/spell";
+import { Spell } from "../../../models/spell";
 import { Router } from '@angular/router';
 import { Pipe, PipeTransform } from '@angular/core';
-import { SpellService } from '../../services/spell.service';
+import { SpellService } from '../../../services/spell.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';

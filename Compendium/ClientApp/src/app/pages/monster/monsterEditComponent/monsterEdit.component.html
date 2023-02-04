@@ -125,40 +125,8 @@
         --
         ---------------------------------------->
         <mat-step>
-            <form>
-                <ng-template matStepLabel>Ability Scores</ng-template>
-                <div class="form-group row" *ngFor="let ability of abilityValues">
-                    <mat-form-field appearance="outline" class="col-md-3">
-                        <mat-label>{{ability}}</mat-label>
-                        <span matSuffix>({{monster.abilities[ability].modifier >= 0 ? '+' : ''}}{{monster.abilities[ability].modifier}})<mat-slider [(ngModel)]="monster.abilities[ability].value" name="abilities_{{ability}}" id="abilities_{{ability}}" min="1" max="30" step="1" (ngModelChange)="abilityChange(ability)"></mat-slider></span>
-                        <input matInput type="number" [(ngModel)]="monster.abilities[ability].value" (ngModelChange)="abilityChange(ability)" [ngModelOptions]="{standalone: true}">
-                    </mat-form-field>
-                    <mat-slide-toggle class="col-md-1" style="margin-top: 20px" [(ngModel)]="save[ability]" [ngModelOptions]="{standalone: true}" (ngModelChange)="changeSave(ability)"></mat-slide-toggle>
-                    <mat-form-field appearance="outline" class="col-md-2" *ngIf="save[ability]" [floatLabel]="'always'">
-                        <mat-label>Saving Throw</mat-label>
-                        <input matInput placeholder="{{monster.abilities[ability].modifier + proficency}}" [(ngModel)]="monster.savingThrows[ability]" [ngModelOptions]="{standalone: true}">
-                    </mat-form-field>
-                </div>
-                <mat-list role="list">
-                    <div mat-subheader>Skills</div>
-                    <mat-list-item *ngFor="let skill of getSkills()" role="listitem" style="height:70px">
-                        <mat-form-field appearance="outline" class="col-md-2" [floatLabel]="'always'">
-                            <mat-label>{{skill}}</mat-label>
-                            <span matSuffix>
-                                <button mat-icon-button (click)="removeSkill(skill)"><mat-icon>delete</mat-icon></button>
-                            </span>
-                            <input matInput placeholder="{{getSkillDefaultValue(skill)}}" [(ngModel)]="monster.skillmodifiers[skill]" [ngModelOptions]="{standalone: true}">
-                        </mat-form-field>
-                    </mat-list-item>
-                    <mat-list-item role="listitem">
-                        <div class="col-md-2">
-                            <mat-select placeholder="add skill" [(ngModel)]="addSkillSelection" (ngModelChange)="addSkill()" [ngModelOptions]="{standalone: true}">
-                                <mat-option *ngFor="let sv of getSkillValues()" [value]="sv">{{sv}}</mat-option>
-                            </mat-select>
-                        </div>
-                    </mat-list-item>
-                </mat-list>
-            </form>
+            <ng-template matStepLabel>Ability Scores</ng-template>
+            <app-ability-score [abilities]="monster.abilities" [savingThrows]="monster.savingThrows" [skillModifiers]="monster.skillmodifiers" [proficiency]="proficency"></app-ability-score>
         </mat-step>
         <!-----------------------------------
         --

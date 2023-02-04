@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 
-import { Monster, PreparedSpell } from "../../models/monster";
-import { Spell } from "../../models/spell";
+import { Monster, PreparedSpell } from "../../../models/monster";
+import { Spell } from "../../../models/spell";
 import { Router, ActivatedRoute } from '@angular/router';
-import { MonsterService } from '../../services/monster.service';
-import { SpellService } from '../../services/spell.service';
+import { MonsterService } from '../../../services/monster.service';
+import { SpellService } from '../../../services/spell.service';
 
 @Component({
     selector: 'monsterDetail',

@@ -22,16 +22,15 @@ import {
     HitEffect,
     SavingThrow,
     Trait
-} from "../../models/monster";
-import { Spell } from "../../models/spell";
+} from "../../../models/monster";
+import { Spell } from "../../../models/spell";
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { FormControl } from '@angular/forms';
-import { TextgenService } from '../../services/textgen.service';
-import { WeaponCategory, WeaponType } from '../../models/weapon';
-import { MonsterService } from '../../services/monster.service';
-import { SpellService } from '../../services/spell.service';
-import { WeaponTypeService } from '../../services/weaponType.service';
-import { Project } from '../../models/project';
+import { TextgenService } from '../../../services/textgen.service';
+import { WeaponCategory, WeaponType } from '../../../models/weapon';
+import { MonsterService } from '../../../services/monster.service';
+import { SpellService } from '../../../services/spell.service';
+import { WeaponTypeService } from '../../../services/weaponType.service';
+import { Project } from '../../../models/project';
 
 @Component({
     selector: 'monsterEdit',
@@ -39,8 +38,6 @@ import { Project } from '../../models/project';
 })
 
 export class MonsterEditComponent {
-
-    vul = new FormControl('');
 
     constructor(private monsterService: MonsterService, private spellService: SpellService, private weaponTypeService: WeaponTypeService, private textGen: TextgenService, private route: ActivatedRoute, private router: Router) {
         this.monsterService.getTraits().subscribe(res => {
@@ -280,6 +277,7 @@ export class MonsterEditComponent {
         });
 
     }
+    public abilityValues = Object.values(Ability);
 
     public updateAction(act: Action) {
         if (act.hasAttack) {
@@ -309,31 +307,6 @@ export class MonsterEditComponent {
 
     public getSavingThrow(he: HitEffect): SavingThrow {
         return he.dc as SavingThrow;
-    }
-
-    public getSkills() {
-        return Object.keys(this.monster.skillmodifiers)
-    }
-
-    public addSkillSelection: any;
-
-    public addSkill() {
-        this.monster.skillmodifiers[this.addSkillSelection] = this.getSkillDefaultValue(this.addSkillSelection);
-        this.addSkillSelection = "";
-    }
-
-    public removeSkill(skill:string) {
-        delete this.monster.skillmodifiers[skill];
-    }
-
-    public getSkillValues() {
-        var active = Object.keys(this.monster.skillmodifiers);
-        return Object.keys(this.skillList).filter(s => active.indexOf(s) === -1)
-    }
-
-    public getSkillDefaultValue(skill:string) {
-        let ability = this.skillList[skill];
-        return this.monster.abilities[ability].modifier + this.proficency
     }
 
     public abilityChange(ability: string) {
@@ -367,34 +340,12 @@ export class MonsterEditComponent {
     public dmgTypeValues = Object.values(DamageType);
     public conditionValues = Object.values(Condition);
     public monsterTypeValues = Object.values(MonsterType);
-    public abilityValues = Object.values(Ability);
     public atkTypeValues = Object.values(AttackType);
 
     public vulDesc(vul: DamageType[] | string[]): string {
         if (vul === undefined)
             return "";
         return vul.map(v => {v + ""}).join(", ")
-    }
-
-    public skillList: { [id: string]: string; } = {
-        "Acrobatics": "Dexterity",
-        "Animal_Handling": "Wisdom",
-        "Arcana": "Intelligence",
-        "Athletics": "Strength",
-        "Deception": "Charisma",
-        "History": "Intelligence",
-        "Insight": "Wisdom",
-        "Intimidation": "Charisma",
-        "Investigation": "Intelligence",
-        "Medicine": "Wisdom",
-        "Nature": "Intelligence",
-        "Perception": "Wisdom",
-        "Performance": "Charisma",
-        "Persuasion": "Charisma",
-        "Religion": "Intelligence",
-        "Sleight_Of_Hand": "Dexterity",
-        "Stealth": "Dexterity",
-        "Survival": "Wisdom"
     }
 
 

@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 
-import { Spell } from "../../models/spell";
+import { Spell } from "../../../models/spell";
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { SpellService } from '../../services/spell.service';
+import { SpellService } from '../../../services/spell.service';
 
 @Component({
     selector: 'spellDetail',
