@@ -2,32 +2,35 @@
     <div class="form-group row" *ngFor="let ability of abilityValues">
         <mat-form-field appearance="outline" class="col-md-3">
             <mat-label>{{ability}}</mat-label>
-            <span matSuffix>({{abilities[ability].modifier >= 0 ? '+' : ''}}{{abilities[ability].modifier}})<mat-slider [formControlName]="ability + 'slider'" min="1" max="30" step="1" (input)="slide($event, ability)" ></mat-slider></span>
+            <span matSuffix>
+                ({{abilities[ability].modifier >= 0 ? '+' : ''}}{{abilities[ability].modifier}})
+                <mat-slider [formControlName]="ability + 'slider'" min="1" max="30" step="1" (input)="slide($event, ability)" ></mat-slider>
+            </span>
             <input matInput type="number" [formControlName]="ability">
         </mat-form-field>
         <mat-slider class="col-md-1" style="margin-top: 20px" min="0" max="2" step="1" [formControlName]="ability + 'saveMultiplier'" (input)="slideSave($event, ability)"></mat-slider>
         <mat-form-field appearance="outline" class="col-md-2" *ngIf="savingThrows[ability] > 0" [floatLabel]="'always'">
             <mat-label>Saving Throw</mat-label>
-            <input matInput placeholder="{{abilities[ability].modifier + _proficiency * saveMultipliers[ability]}}" [formControlName]="ability + 'save'">
+            <input matInput type="number"  placeholder="{{abilities[ability].modifier + _proficiency * saveMultipliers[ability]}}" [formControlName]="ability + 'save'">
         </mat-form-field>
     </div>
-    <mat-list role="list">
         <div mat-subheader>Skills</div>
-        <mat-list-item *ngFor="let skill of getSkills()" role="listitem" style="height:70px">
-            <mat-form-field appearance="outline" class="col-md-2" [floatLabel]="'always'">
+        <div class="form-group row" *ngFor="let skill of getSkills()" role="listitem" style="height:70px">
+            <mat-form-field appearance="outline" class="col-md-3" [floatLabel]="'always'">
                 <mat-label>{{skill}}</mat-label>
                 <span matSuffix>
-                                <button mat-icon-button (click)="removeSkill(skill)"><mat-icon>delete</mat-icon></button>
-                            </span>
-                <input matInput placeholder="{{getSkillDefaultValue(skill)}}" [(ngModel)]="skillModifiers[skill]" [ngModelOptions]="{standalone: true}">
+                    <button mat-icon-button (click)="removeSkill(skill)"><mat-icon>delete</mat-icon></button>
+                    <mat-slider class="col-md-1" min="0" max="3" step="1" [formControlName]="skill + 'Multiplier'" (input)="slideSkill($event, skill)"></mat-slider>
+                </span>
+                <input matInput [formControlName]="skill">
             </mat-form-field>
-        </mat-list-item>
-        <mat-list-item role="listitem">
-            <div class="col-md-2">
-                <mat-select placeholder="add skill" [(ngModel)]="addSkillSelection" (ngModelChange)="addSkill()" [ngModelOptions]="{standalone: true}">
+            
+        </div>
+        <div class="form-group row" role="listitem">
+            <div class="col-md-3">
+                <mat-select placeholder="add skill" formControlName="addSkill">
                     <mat-option *ngFor="let sv of getSkillValues()" [value]="sv">{{sv}}</mat-option>
                 </mat-select>
             </div>
-        </mat-list-item>
-    </mat-list>
+        </div>
 </form>

@@ -29,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\src\app\components\project" />
     <Folder Include="ClientApp\src\app\pages\spell" />
   </ItemGroup>
 

@@ -22,6 +22,9 @@ export class AbilityScoreComponent implements OnInit {
       for(let ability of this.abilityValues) {
         this.updateSave(ability)
       }
+      for(let skill in this.skillModifiers){
+        this.updateSkill(skill)
+      }
     }
     else
       this._proficiency = p;
@@ -29,6 +32,7 @@ export class AbilityScoreComponent implements OnInit {
 
   //static values
   public abilityValues = Object.values(Ability);
+  public skillList = SkillList.list;
   
   //form
   public abilitiesFormGroup: FormGroup;
@@ -37,6 +41,9 @@ export class AbilityScoreComponent implements OnInit {
   //local
   saveMultipliers: { [id: string]: number; } = {};
   syncedSave: { [id: string]: boolean; } = {};
+  skillMultipliers: { [id: string]: number; } = {};
+  syncedSkills: { [id: string]: boolean; } = {};
+  
   
   constructor() {     
   } 
@@ -46,15 +53,15 @@ export class AbilityScoreComponent implements OnInit {
     for(let ability of this.abilityValues) {
       group[ability] = new FormControl(this.abilities[ability].value)
       group[ability + 'slider'] = new FormControl(this.abilities[ability].value)
-      this.calculateSaveMultiplier(ability);
-      group[ability + 'saveMultiplier'] = new FormControl(this.saveMultipliers[ability])
-      group[ability + 'save'] = new FormControl(this.savingThrows[ability])
-      
       group[ability].valueChanges.subscribe((ev: number) => {
         if(group[ability + 'slider'].value != ev)
           group[ability + 'slider'].setValue(ev)
         this.updateModifier(ability, ev)
       })
+
+      this.calculateSaveMultiplier(ability);
+      group[ability + 'saveMultiplier'] = new FormControl(this.saveMultipliers[ability])
+      group[ability + 'save'] = new FormControl(this.savingThrows[ability])
       group[ability + 'save'].valueChanges.subscribe((ev: number) => {
         this.savingThrows[ability] = ev;
         this.calculateSaveMultiplier(ability);
@@ -62,15 +69,45 @@ export class AbilityScoreComponent implements OnInit {
           group[ability + 'saveMultiplier'].setValue(this.saveMultipliers[ability])
       })
     }
+    for(let skill in this.skillModifiers) {
+      this.calculateSkillMultiplier(skill);
+      this.addSkillGroup(skill);
+    }
+    group['addSkill'] = new FormControl();
+    group['addSkill'].valueChanges.subscribe((val:string) => {
+      if(!val) return;
+      this.addSkill(val);
+      group['addSkill'].setValue(undefined);
+    })
     this.abilitiesFormGroup = new FormGroup(group);
   }
   
+  addSkillGroup(skill: string){
+    if(this._group[skill])
+      return;
+    this._group[skill] = new FormControl(this.skillModifiers[skill])
+    this._group[skill + 'Multiplier'] = new FormControl(this.skillMultipliers[skill])
+  }
+  
+  //Modifiers
   updateModifier(ability: string, value: number){
     this.abilities[ability].value = value
     this.abilities[ability].modifier = parseInt((this.abilities[ability].value / 2) + "") - 5
     this.updateSave(ability);
-  }
 
+    for(let skill in this.skillModifiers){
+      this.updateSkill(skill)
+    }
+  }
+  
+  slide($event: MatSliderChange, ability:string) {
+    let form = this.abilitiesFormGroup.get(ability);
+    if(form?.value != $event.value)
+      form?.setValue($event.value)
+  };
+
+  
+  //Saves
   updateSave(ability: string) {
     if(this.saveMultipliers[ability] === 0){
       delete this.savingThrows[ability];
@@ -81,29 +118,31 @@ export class AbilityScoreComponent implements OnInit {
         this._group[ability + 'save'].setValue(this.savingThrows[ability])
     }
   }
-
-  slide($event: MatSliderChange, ability:string) {
-    let form = this.abilitiesFormGroup.get(ability);
-    if(form?.value != $event.value)
-      form?.setValue($event.value)
-  };
-  
+ 
   slideSave($event: MatSliderChange, ability:string) {
     let multiplier = 0;
-    if($event.value) multiplier = $event.value;
+    if($event.value) 
+      multiplier = $event.value;
     this.saveMultipliers[ability] = multiplier;
     this.updateSave(ability)
   };
+  
+  private calculateSaveMultiplier(ability: string) {
+    let calc = (this.savingThrows[ability] - this.abilities[ability].modifier) / this._proficiency
+    this.saveMultipliers[ability] = parseInt(calc + "");
+    this.syncedSave[ability] = calc == this.saveMultipliers[ability];
+  }
 
+  
+  //Skills
   public getSkills() {
     return Object.keys(this.skillModifiers)
   }
 
-  public addSkillSelection: any;
-
-  public addSkill() {
-    this.skillModifiers[this.addSkillSelection] = this.getSkillDefaultValue(this.addSkillSelection);
-    this.addSkillSelection = "";
+  public addSkill(skill: string) {
+    this.skillMultipliers[skill] = 1;
+    this.addSkillGroup(skill);
+    this.updateSkill(skill);
   }
 
   public removeSkill(skill:string) {
@@ -112,17 +151,28 @@ export class AbilityScoreComponent implements OnInit {
 
   public getSkillValues() {
     var active = Object.keys(this.skillModifiers);
-    return Object.keys(SkillList.list).filter(s => active.indexOf(s) === -1)
+    return Object.keys(this.skillList).filter(s => active.indexOf(s) === -1)
   }
 
-  public getSkillDefaultValue(skill:string) {
-    let ability = SkillList.list[skill];
-    return this.abilities[ability].modifier + this._proficiency
+  updateSkill(skill: string) {
+    let ability = this.skillList[skill];
+    this.skillModifiers[skill] = this.abilities[ability].modifier + this._proficiency * this.skillMultipliers[skill];
+    if(this._group[skill].value != this.skillModifiers[skill])
+      this._group[skill].setValue(this.skillModifiers[skill])
+  }
+  
+  private calculateSkillMultiplier(skill: string) {
+    let ability = this.skillList[skill];
+    let calc = (this.skillModifiers[skill] - this.abilities[ability].modifier) / this._proficiency
+    this.skillMultipliers[skill] = parseInt(calc + "");
+    this.syncedSkills[skill] = calc == this.skillMultipliers[skill];
   }
 
-  private calculateSaveMultiplier(ability: string) {
-    let calc = (this.savingThrows[ability] - this.abilities[ability].modifier) / this._proficiency
-    this.saveMultipliers[ability] = parseInt(calc + "");
-    this.syncedSave[ability] = this.syncedSave[ability] && calc == this.saveMultipliers[ability];
+  slideSkill($event: MatSliderChange, skill: string) {
+    let multiplier = 0;
+    if($event.value)
+      multiplier = $event.value;
+    this.skillMultipliers[skill] = multiplier;
+    this.updateSkill(skill)
   }
 }
