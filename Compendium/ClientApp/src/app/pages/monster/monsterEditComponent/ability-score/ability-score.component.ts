@@ -73,6 +73,7 @@ export class AbilityScoreComponent implements OnInit {
       this.calculateSkillMultiplier(skill);
       this.addSkillGroup(skill);
     }
+    group['skillFilter'] = new FormControl();
     group['addSkill'] = new FormControl();
     group['addSkill'].valueChanges.subscribe((val:string) => {
       if(!val) return;
@@ -150,8 +151,9 @@ export class AbilityScoreComponent implements OnInit {
   }
 
   public getSkillValues() {
-    var active = Object.keys(this.skillModifiers);
-    return Object.keys(this.skillList).filter(s => active.indexOf(s) === -1)
+    let active = Object.keys(this.skillModifiers);
+    let filter = this._group['skillFilter'].value;
+    return Object.keys(this.skillList).filter(s => active.indexOf(s) === -1 && (!filter || s.indexOf(filter) !== -1))
   }
 
   updateSkill(skill: string) {
