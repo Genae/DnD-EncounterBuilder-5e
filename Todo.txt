@@ -1,9 +1,7 @@
 TODOs
 - Alignment
-- Dropdowns searchable
 - Senses
 - Languages (understands Draconic but can't speak)
-- Skills double
 - CR block
 - Hit Die count?
 - atkbonus
