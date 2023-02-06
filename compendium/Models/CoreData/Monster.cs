@@ -22,7 +22,7 @@ namespace Compendium.Models.CoreData
         public DamageType[]? Immune { get; set; }
         public Condition[]? ConditionImmune { get; set; }
         public Senses Senses { get; set; }
-        public string Languages { get; set; }
+        public string? Languages { get; set; }
         public Dictionary<string, AbilityScore> Abilities { get; set; }
         public DieRoll? HitDie { get; set; }
         public ChallengeRating ChallengeRating { get; set; }

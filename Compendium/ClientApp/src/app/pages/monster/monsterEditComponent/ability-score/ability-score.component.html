@@ -14,26 +14,26 @@
             <input matInput type="number"  placeholder="{{abilities[ability].modifier + _proficiency * saveMultipliers[ability]}}" [formControlName]="ability + 'save'">
         </mat-form-field>
     </div>
-        <div mat-subheader>Skills</div>
-        <div class="form-group row" *ngFor="let skill of getSkills()" role="listitem">
-            <mat-form-field appearance="outline" class="col-md-3" [floatLabel]="'always'">
-                <mat-label>{{skill}}</mat-label>
-                <span matSuffix>
-                    <button mat-icon-button (click)="removeSkill(skill)"><mat-icon>delete</mat-icon></button>
-                    <mat-slider class="col-md-1" min="0" max="3" step="1" [formControlName]="skill + 'Multiplier'" (input)="slideSkill($event, skill)"></mat-slider>
-                </span>
-                <input matInput [formControlName]="skill">
-            </mat-form-field>
-            
+    <div mat-subheader>Skills</div>
+    <div class="form-group row" *ngFor="let skill of getSkills()" role="listitem">
+        <mat-form-field appearance="outline" class="col-md-3" [floatLabel]="'always'">
+            <mat-label>{{skill}}</mat-label>
+            <span matSuffix>
+                <button mat-icon-button (click)="removeSkill(skill)"><mat-icon>delete</mat-icon></button>
+                <mat-slider class="col-md-1" min="0" max="3" step="1" [formControlName]="skill + 'Multiplier'" (input)="slideSkill($event, skill)"></mat-slider>
+            </span>
+            <input matInput type="number" [formControlName]="skill">
+        </mat-form-field>
+        
+    </div>
+    <div class="form-group row" role="listitem">
+        <div class="col-md-3">
+            <mat-select placeholder="add skill" formControlName="addSkill">
+                <mat-option>
+                    <ngx-mat-select-search formControlName="skillFilter"></ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let sv of getSkillValues()" [value]="sv">{{sv}}</mat-option>
+            </mat-select>
         </div>
-        <div class="form-group row" role="listitem">
-            <div class="col-md-3">
-                <mat-select placeholder="add skill" formControlName="addSkill">
-                    <mat-option>
-                        <ngx-mat-select-search formControlName="skillFilter"></ngx-mat-select-search>
-                    </mat-option>
-                    <mat-option *ngFor="let sv of getSkillValues()" [value]="sv">{{sv}}</mat-option>
-                </mat-select>
-            </div>
-        </div>
+    </div>
 </form>

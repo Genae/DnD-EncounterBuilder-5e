@@ -12,23 +12,12 @@ import {SkillList} from "../../../../models/lists/skillList";
 export class AbilityScoreComponent implements OnInit {
   
   //Inputs
-  @Input() abilities: { [id: string]: AbilityScore; }
-  @Input() savingThrows: { [id: string]: number; }
-  @Input() skillModifiers: { [id: string]: number; }
-  _proficiency: number;
-  @Input() set proficiency(p: number){
-    if(this._proficiency) {
-      this._proficiency = p;
-      for(let ability of this.abilityValues) {
-        this.updateSave(ability)
-      }
-      for(let skill in this.skillModifiers){
-        this.updateSkill(skill)
-      }
-    }
-    else
-      this._proficiency = p;
+  @Input() set monster(m: Monster){
+    this.abilities = m.abilities;
+    this.savingThrows = m.savingThrows;
+    this.skillModifiers = m.skillmodifiers;
   }
+  @Input() formGroups: { [id: string]: any; }
 
   //static values
   public abilityValues = Object.values(Ability);
@@ -39,17 +28,24 @@ export class AbilityScoreComponent implements OnInit {
   private _group: any = {};
   
   //local
+  abilities: { [id: string]: AbilityScore; }
+  savingThrows: { [id: string]: number; }
+  skillModifiers: { [id: string]: number; }
   saveMultipliers: { [id: string]: number; } = {};
   syncedSave: { [id: string]: boolean; } = {};
   skillMultipliers: { [id: string]: number; } = {};
   syncedSkills: { [id: string]: boolean; } = {};
+  _proficiency: number;
   
   
   constructor() {     
   } 
 
   ngOnInit(): void {
+    this._group = this.formGroups['abilities'];
     let group = this._group;
+    this._proficiency = this.formGroups['basic']['proficiency'].value;
+    
     for(let ability of this.abilityValues) {
       group[ability] = new FormControl(this.abilities[ability].value)
       group[ability + 'slider'] = new FormControl(this.abilities[ability].value)
@@ -81,13 +77,37 @@ export class AbilityScoreComponent implements OnInit {
       group['addSkill'].setValue(undefined);
     })
     this.abilitiesFormGroup = new FormGroup(group);
+    
+    this.formGroups['basic']['proficiency'].valueChanges.subscribe((prof: number) => {
+      this.setProficiency(prof);
+    })
+  }
+
+  setProficiency(p: number){
+    if(this._proficiency) {
+      this._proficiency = p;
+      for(let ability of this.abilityValues) {
+        this.updateSave(ability)
+      }
+      for(let skill in this.skillModifiers){
+        this.updateSkill(skill)
+      }
+    }
+    else
+      this._proficiency = p;
   }
   
   addSkillGroup(skill: string){
     if(this._group[skill])
       return;
-    this._group[skill] = new FormControl(this.skillModifiers[skill])
     this._group[skill + 'Multiplier'] = new FormControl(this.skillMultipliers[skill])
+    this._group[skill] = new FormControl(this.skillModifiers[skill])
+    this._group[skill].valueChanges.subscribe((ev: number) => {
+      this.skillModifiers[skill] = ev;
+      this.calculateSkillMultiplier(skill);
+      if(this._group[skill + 'Multiplier'].value != this.skillMultipliers[skill])
+        this._group[skill + 'Multiplier'].setValue(this.skillMultipliers[skill])
+    })
   }
   
   //Modifiers

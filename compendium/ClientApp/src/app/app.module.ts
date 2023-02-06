@@ -25,6 +25,7 @@ import { WeaponTypeService } from './services/weaponType.service';
 import { ProjectSelectionComponent } from './components/projectSelectionComponent/projectSelection.component';
 import {NgxMatSelectSearchModule} from "ngx-mat-select-search";
 import { AbilityScoreComponent } from './pages/monster/monsterEditComponent/ability-score/ability-score.component';
+import { MonsterDefenseComponent } from './pages/monster/monsterEditComponent/monster-defense/monster-defense.component';
 
 @NgModule({
     declarations: [
@@ -42,7 +43,8 @@ import { AbilityScoreComponent } from './pages/monster/monsterEditComponent/abil
         FilterPipe,
         FilterSpellsPipe,
         ProjectSelectionComponent,
-        AbilityScoreComponent
+        AbilityScoreComponent,
+        MonsterDefenseComponent
     ],
     imports: [
         MaterialModule,
