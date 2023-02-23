@@ -25,7 +25,7 @@ export class AbilityScoreComponent implements OnInit {
   
   //form
   public abilitiesFormGroup: FormGroup;
-  private _group: any = {};
+  private _group: { [id: string]: FormControl; } = {};
   
   //local
   abilities: { [id: string]: AbilityScore; }

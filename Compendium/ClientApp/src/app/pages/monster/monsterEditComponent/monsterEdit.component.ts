@@ -66,6 +66,7 @@ export class MonsterEditComponent implements OnInit {
 
     ngOnInit(): void {
         this.formGroups['basic']['proficiency'] = new FormControl(this.proficency);
+        this.formGroups['basic']['cr'] = new FormControl();
     }
 
     public view() {
@@ -318,6 +319,7 @@ export class MonsterEditComponent implements OnInit {
         {
             this.proficency = line.prof
             this.formGroups['basic']['proficiency'].setValue(this.proficency)
+            this.formGroups['basic']['cr'].setValue(cr)
         }
     }
 

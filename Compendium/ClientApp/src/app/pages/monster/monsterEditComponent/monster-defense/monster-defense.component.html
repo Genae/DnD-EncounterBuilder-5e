@@ -1,50 +1,58 @@
-<form>
+<form [formGroup]="defenseFormGroup">
     <div>
         <mat-form-field appearance="outline" class="col-md-3">
             <mat-label>Armor Info</mat-label>
-            <mat-select [(ngModel)]="monster.armorInfo.piece" (ngModelChange)="acPieceChange()" [ngModelOptions]="{standalone: true}">
+            <mat-select formControlName="armorPiece">
                 <mat-optgroup *ngFor="let group of armorGroups" label="{{group.name}}">
                     <mat-option *ngFor="let piece of getArmorPieces(group.value)" [value]="piece.value">{{piece.name}}</mat-option>
                 </mat-optgroup>
             </mat-select>
         </mat-form-field>
-        <mat-slide-toggle class="col-md-2" style="margin: 20px" [(ngModel)]="monster.armorInfo.hasShield" [ngModelOptions]="{standalone: true}" (ngModelChange)="hasShieldChange()">Has Shield</mat-slide-toggle>
+        <mat-slide-toggle class="col-md-2" style="margin: 20px" formControlName="hasShield">Has Shield</mat-slide-toggle>
     </div>
     <div>
         <mat-form-field appearance="outline" class="col-md-1">
             <mat-label>AC</mat-label>
-            <input matInput [(ngModel)]="monster.armorclass" [ngModelOptions]="{standalone: true}">
+            <input [disabled]="true" matInput formControlName="armorClass">
         </mat-form-field>
         <mat-form-field appearance="outline" class="col-md-2">
             <mat-label>Description</mat-label>
-            <input matInput [(ngModel)]="monster.armor" [ngModelOptions]="{standalone: true}">
+            <input matInput formControlName="armor">
         </mat-form-field>
     </div>
     <div>
+        <mat-form-field appearance="outline" class="col-md-3">
+            <mat-label>Hit Die Count</mat-label>
+            <span matSuffix>
+                ({{(_hitDieMultiplier*100).toFixed(0)}}%)
+                <mat-slider formControlName="hitDieMultiplier" min="0" max="2" step="0.01" (input)="slide($event)"  ></mat-slider>
+            </span>
+            <input matInput type="number" formControlName="hitDieCount">
+        </mat-form-field>
         <mat-form-field appearance="outline" class="col-md-1">
             <mat-label>Hit Die Count</mat-label>
-            <input matInput type="number" [(ngModel)]="monster.hitDie.dieCount" (ngModelChange)="recalcHP()" [ngModelOptions]="{standalone: true}">
+            <input matInput type="number" [(ngModel)]="_monster.hitDie.dieCount" (ngModelChange)="recalcHP()" [ngModelOptions]="{standalone: true}">
         </mat-form-field>
         <mat-form-field appearance="outline" class="col-md-1">
             <mat-label>Hit Die</mat-label>
-            <mat-select [(ngModel)]="monster.hitDie.die" [ngModelOptions]="{standalone: true}" (ngModelChange)="recalcHP()" required>
+            <mat-select [(ngModel)]="_monster.hitDie.die" [ngModelOptions]="{standalone: true}" (ngModelChange)="recalcHP()" required>
                 <mat-option *ngFor="let d of hitDieSize" [value]="d.die">{{d.dieStr}}</mat-option>
             </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline" class="col-md-1">
             <mat-label>HP</mat-label>
-            <input matInput [(ngModel)]="monster.maximumHitpoints" disabled [ngModelOptions]="{standalone: true}">
+            <input matInput [(ngModel)]="_monster.maximumHitpoints" disabled [ngModelOptions]="{standalone: true}">
         </mat-form-field>
         <mat-form-field appearance="outline" class="col-md-2">
             <mat-label>Description</mat-label>
-            <input matInput [(ngModel)]="monster.hitDie.description" [ngModelOptions]="{standalone: true}" disabled>
+            <input matInput [(ngModel)]="_monster.hitDie.description" [ngModelOptions]="{standalone: true}" disabled>
         </mat-form-field>
     </div>
 
     <div>
         <mat-form-field appearance="outline" class="col-md-3">
             <mat-label>Vulnerabilities</mat-label>
-            <mat-select [(ngModel)]="monster.vulnerable" [ngModelOptions]="{standalone: true}" multiple>
+            <mat-select [(ngModel)]="_monster.vulnerable" [ngModelOptions]="{standalone: true}" multiple>
                 <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
             </mat-select>
         </mat-form-field>
@@ -53,7 +61,7 @@
     <div>
         <mat-form-field appearance="outline" class="col-md-3">
             <mat-label>Resistances</mat-label>
-            <mat-select [(ngModel)]="monster.resist" [ngModelOptions]="{standalone: true}" multiple>
+            <mat-select [(ngModel)]="_monster.resist" [ngModelOptions]="{standalone: true}" multiple>
                 <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
             </mat-select>
         </mat-form-field>
@@ -62,7 +70,7 @@
     <div>
         <mat-form-field appearance="outline" class="col-md-3">
             <mat-label>Immunities</mat-label>
-            <mat-select [(ngModel)]="monster.immune" [ngModelOptions]="{standalone: true}" multiple>
+            <mat-select [(ngModel)]="_monster.immune" [ngModelOptions]="{standalone: true}" multiple>
                 <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
             </mat-select>
         </mat-form-field>
@@ -71,7 +79,7 @@
     <div>
         <mat-form-field appearance="outline" class="col-md-3">
             <mat-label>Condition Immunities</mat-label>
-            <mat-select [(ngModel)]="monster.conditionImmune" [ngModelOptions]="{standalone: true}" multiple>
+            <mat-select [(ngModel)]="_monster.conditionImmune" [ngModelOptions]="{standalone: true}" multiple>
                 <mat-option *ngFor="let con of conditionValues" [value]="con">{{con}}</mat-option>
             </mat-select>
         </mat-form-field>
