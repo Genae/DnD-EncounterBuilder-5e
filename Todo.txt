@@ -3,5 +3,4 @@ TODOs
 - Senses
 - Languages (understands Draconic but can't speak)
 - CR block
-- Hit Die count?
 - atkbonus

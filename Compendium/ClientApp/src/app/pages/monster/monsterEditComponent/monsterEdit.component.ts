@@ -67,6 +67,7 @@ export class MonsterEditComponent implements OnInit {
     ngOnInit(): void {
         this.formGroups['basic']['proficiency'] = new FormControl(this.proficency);
         this.formGroups['basic']['cr'] = new FormControl();
+        this.formGroups['basic']['size'] = new FormControl();
     }
 
     public view() {

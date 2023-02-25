@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ArmorGroup, ArmorPiece, Condition, DamageType, Monster} from "../../../../models/monster";
+import {ArmorGroup, ArmorPiece, Condition, DamageType, DieRoll, Monster} from "../../../../models/monster";
 import {Armors, ArmorsList} from "../../../../models/lists/armorsList";
 import {ArmorGroups, ArmorGroupsList} from "../../../../models/lists/armorGroupsList";
 import {HitDieSize, HitDieSizeList} from "../../../../models/lists/hitDieSizeList";
@@ -17,6 +17,8 @@ export class MonsterDefenseComponent implements OnInit {
   //Inputs
   @Input() set monster(m: Monster) {
     this._monster = m;
+    this._dexMod = m.abilities['Dexterity'].modifier;
+    this._conMod = m.abilities['Constitution'].modifier;
   }
   @Input() formGroups: { [id: string]: { [id: string]: FormControl; } }
   
@@ -34,6 +36,8 @@ export class MonsterDefenseComponent implements OnInit {
   
   //local
   _cr: number;
+  _conMod: number;
+  _dexMod: number;
   _monster: Monster;
   _hitDieMultiplier: number = 1;
   
@@ -74,12 +78,17 @@ export class MonsterDefenseComponent implements OnInit {
     this.formGroups['basic']['cr'].valueChanges.subscribe((cr: number) => {
       this.setCr(cr);
     })
+    this.formGroups['basic']['size'].valueChanges.subscribe(size=> {
+      this.sizeChanged();
+    })
     this.formGroups['abilities']['Dexterity'].valueChanges.subscribe((prof: number) => {
+      this._dexMod = parseInt((prof / 2) + "") - 5
       this.recalcAc();
     })
     this.formGroups['abilities']['Constitution'].valueChanges.subscribe((prof: number) => {
+      this._conMod = parseInt((prof / 2) + "") - 5
       this.recalcHP();
-      this.updateHitDie();
+      this.calculateHitDieMultiplier();
     })
     this.calculateHitDieMultiplier();
     this.recalcHP();
@@ -106,13 +115,13 @@ export class MonsterDefenseComponent implements OnInit {
       switch (this._monster.armorInfo.group) {
         case ArmorGroup.NaturalArmor:
           this._group['armor'].setValue((piece.ac > 0 ? "natural armor" : "")+ shieldText );
-          this._group['armorClass'].setValue(10 + this._monster.abilities["Dexterity"].modifier + piece.ac + shield);
+          this._group['armorClass'].setValue(10 + this._dexMod + piece.ac + shield);
           break;
         case ArmorGroup.LightArmor:
-          this._group['armorClass'].setValue(this._monster.abilities["Dexterity"].modifier + piece.ac + shield);
+          this._group['armorClass'].setValue(this._dexMod + piece.ac + shield);
           break;
         case ArmorGroup.MediumArmor:
-          this._group['armorClass'].setValue(Math.min(2, this._monster.abilities["Dexterity"].modifier) + piece.ac + shield);
+          this._group['armorClass'].setValue(Math.min(2, this._dexMod) + piece.ac + shield);
           break;
         case ArmorGroup.HeavyArmor:
           this._group['armorClass'].setValue(piece.ac + shield);
@@ -138,8 +147,8 @@ export class MonsterDefenseComponent implements OnInit {
 
   public recalcHP() {
     let hd = this._monster.hitDie;
-    hd.offset = hd.dieCount * this._monster.abilities["Constitution"].modifier;
-    hd.expectedRoll = parseInt(((hd.dieCount * (hd.die + 1)) / 2 + hd.offset) + "");
+    hd.offset = hd.dieCount * this._conMod;
+    hd.expectedRoll = DieRoll.getExpectedRoll(hd);
     hd.description = "(" + hd.dieCount + "d" + hd.die + " + " + hd.offset + ")"
     this._monster.maximumHitpoints = hd.expectedRoll;
     this.calcDefCR();
@@ -165,11 +174,17 @@ export class MonsterDefenseComponent implements OnInit {
       this._cr = cr;
   }
   
-  private getExpectedHitpoints() {
+  private getExpectedHitPoints() {
     let line = this.statsByCr.find(l => l.cr === this._cr)!;
     return (line.hp[0] + line.hp[1])/2
   }
-
+  
+  private getExpectedDieCount() {
+    let hd = this._monster.hitDie;
+    let expectedDieCount = this.getExpectedHitPoints()/(DieRoll.getExpectedDieRoll(hd.die) + this._conMod);
+    return Math.round(expectedDieCount);
+  }
+  
   slide($event: MatSliderChange) {
     this._hitDieMultiplier = $event.value!;
     this.updateHitDie(); 
@@ -177,17 +192,21 @@ export class MonsterDefenseComponent implements OnInit {
   
   private updateHitDie() {
     let form = this._group['hitDieCount']
-    let hd = this._monster.hitDie;
-    let expectedDieCount = (this.getExpectedHitpoints() - hd.offset)/hd.die;
-    let dieCount = Math.round(expectedDieCount * this._hitDieMultiplier);
+    let dieCount = Math.round(this.getExpectedDieCount() * this._hitDieMultiplier);
     if(form.value != dieCount)
       form.setValue(dieCount);
+    this.recalcHP();
   }
 
   private calculateHitDieMultiplier() {
     let hd = this._monster.hitDie;
-    let expectedDieCount = (this.getExpectedHitpoints() - hd.offset)/hd.die;
-    this._hitDieMultiplier = hd.dieCount/expectedDieCount;
+    let expectedDieCount = this.getExpectedDieCount();
+    if(hd.dieCount == expectedDieCount)
+      return;
+    if(expectedDieCount >= 1)
+      this._hitDieMultiplier = hd.dieCount/expectedDieCount;
+    else 
+      this._hitDieMultiplier = 0;
     let form = this._group['hitDieMultiplier']
     if(form.value != this._hitDieMultiplier)
       form.setValue(this._hitDieMultiplier);

@@ -203,6 +203,13 @@ export class DieRoll {
     offset: number;
     expectedRoll: number;
     description: string;
+    
+    static getExpectedRoll(hd: DieRoll):number {
+        return parseInt(((hd.dieCount * (hd.die + 1)) / 2 + hd.offset) + "")
+    }
+    static getExpectedDieRoll(hd: number):number {
+        return parseInt((hd + 1) / 2 + "")
+    }
 }
 
 export class ChallengeRating {
