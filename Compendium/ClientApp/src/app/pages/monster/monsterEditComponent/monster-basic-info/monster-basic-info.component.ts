@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ChallengeRating, Monster, MonsterType, Morality, Order, Size} from "../../../../models/monster";
+import {ChallengeRating, Monster, MonsterType, Morality, Order, Senses, Size} from "../../../../models/monster";
 import {FormControl, FormGroup} from "@angular/forms";
 import {MonsterService} from "../../../../services/monster.service";
 import {StatsByCr, StatsByCrList} from "../../../../models/lists/statsByCrList";
@@ -87,6 +87,12 @@ export class MonsterBasicInfoComponent implements OnInit {
     let fixCr = this.crValues.find(v => v.description === this._monster.challengeRating.description);
     if (fixCr !== undefined) {
       this._monster.challengeRating = fixCr;
+    }
+
+    //fix senses
+    if (!this._monster.senses) {
+      this._monster.senses = new Senses();
+      this._monster.senses.description = "";
     }
     
   }

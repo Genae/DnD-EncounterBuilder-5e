@@ -83,6 +83,10 @@ export class AbilityScoreComponent implements OnInit {
     })
   }
 
+  monsterUpdated() {
+
+  }
+  
   setProficiency(p: number){
     if(this._proficiency) {
       this._proficiency = p;

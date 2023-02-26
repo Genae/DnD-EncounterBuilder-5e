@@ -1,0 +1,138 @@
+<form *ngIf="_loaded && _monster">
+    <mat-accordion class="example-headers-align" multi>
+        <!--++  Multiattack  ++-->
+        <mat-expansion-panel>
+            <mat-expansion-panel-header style="height:auto; min-height:48px">
+                <mat-panel-title style=" margin: 10px 0 5px 0;"><mat-slide-toggle style="margin-right:10px" [(ngModel)]="hasMultiattack" [ngModelOptions]="{standalone: true}" (ngModelChange)="hasMultiattackChange()"></mat-slide-toggle><span><strong>{{_monster.multiattackAction?.name ?? "Multiattack"}}. </strong>{{_monster.multiattackAction?.text ?? ""}}</span></mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-divider style="margin:5px 0 10px 0"></mat-divider>
+            <mat-list role="list" *ngIf="hasMultiattack">
+                <mat-list-item *ngFor="let action of getObjectKeys(_monster.multiattackAction!.actions)" role="listitem" style="height:70px">
+                    <mat-form-field appearance="outline" class="col-md-2" [floatLabel]="'always'">
+                        <mat-label>{{action}}</mat-label>
+                        <span matSuffix>
+                                        <button mat-icon-button (click)="removeActionFromMulti(action)"><mat-icon>delete</mat-icon></button>
+                                    </span>
+                        <input type="number" matInput [(ngModel)]="_monster.multiattackAction!.actions[action]" (ngModelChange)="updateMulti()" [ngModelOptions]="{standalone: true}">
+                    </mat-form-field>
+                </mat-list-item>
+                <mat-list-item role="listitem">
+                    <div class="col-md-2">
+                        <mat-select placeholder="add action" [(ngModel)]="addActionToMultiSelection" (ngModelChange)="addActionToMulti()" [ngModelOptions]="{standalone: true}">
+                            <mat-option *ngFor="let ac of getUnusedMultiActions()" [value]="ac">{{ac}}</mat-option>
+                        </mat-select>
+                    </div>
+                </mat-list-item>
+            </mat-list>
+        </mat-expansion-panel>
+        <!--++  Actions  ++-->
+        <mat-expansion-panel *ngFor="let action of _monster.actions" style="margin-top:20px">
+            <mat-expansion-panel-header style="height:auto; min-height:48px">
+                <mat-panel-title style=" margin: 10px 0 5px 0;"><span><strong>{{action.name}}.</strong> {{action.text}}</span></mat-panel-title>
+                <mat-panel-description>
+                    <button mat-icon-button style="margin-left:auto">
+                        <mat-icon style="color:red" (click)="removeAction(action)">delete</mat-icon>
+                    </button>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-divider style="margin:5px 0 10px 0"></mat-divider>
+            <div>
+                <mat-form-field appearance="outline" class="col-md-2" [floatLabel]="'always'">
+                    <mat-label>Name</mat-label>
+                    <input matInput [(ngModel)]="action.name" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="col-md-10" [floatLabel]="'always'">
+                    <mat-label>Text</mat-label>
+                    <input matInput [(ngModel)]="action.text" [ngModelOptions]="{standalone: true}">
+                </mat-form-field>
+            </div>
+            <!--Attack-->
+            <div>
+                <mat-form-field appearance="outline" class="col-md-3">
+                    <mat-label>Attack</mat-label>
+                    <span matPrefix><mat-slide-toggle class="col-md-2" style="margin: 5px" [(ngModel)]="action.hasAttack" [ngModelOptions]="{standalone: true}" (ngModelChange)="updateAction(action)"></mat-slide-toggle></span>
+                    <mat-select [disabled]="!action.hasAttack" [(ngModel)]="action.attack === undefined ? {} : action.attack.type" [ngModelOptions]="{standalone: true}" (ngModelChange)="updateAction(action)">
+                        <mat-option *ngFor="let con of atkTypeValues" [value]="con">{{con.replace("_", " ").replace("_", " ").replace("_", " ").replace("_", " ")}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="col-md-1" [floatLabel]="'always'" *ngIf="action.hasAttack">
+                    <mat-label>Atk. Bonus</mat-label>
+                    <span matSuffix>to hit,</span>
+                    <input type="number" matInput [(ngModel)]="action.attack === undefined ? {} : action.attack.attackBonus" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="col-md-1" [floatLabel]="'always'" *ngIf="action.hasAttack && isAtkMelee(action)">
+                    <mat-label>Reach</mat-label>
+                    <span matSuffix>ft.</span>
+                    <input type="number" step="5" matInput [(ngModel)]="action.attack === undefined ? {} : action.attack.reach" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="col-md-1" [floatLabel]="'always'" *ngIf="action.hasAttack && isAtkRanged(action)">
+                    <mat-label>Short Range</mat-label>
+                    <span matSuffix>ft.</span>
+                    <input type="number" step="5" matInput [(ngModel)]="action.attack === undefined ? {} : action.attack.shortRange" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="col-md-1" [floatLabel]="'always'" *ngIf="action.hasAttack && isAtkRanged(action)">
+                    <mat-label>Long Range</mat-label>
+                    <span matSuffix>ft.</span>
+                    <input type="number" step="5" matInput [(ngModel)]="action.attack === undefined ? {} : action.attack.longRange" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="col-md-1" [floatLabel]="'always'" *ngIf="action.hasAttack">
+                    <mat-label>Target</mat-label>
+                    <span matSuffix></span>
+                    <input matInput [(ngModel)]="action.attack === undefined ? {} : action.attack.target" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
+                </mat-form-field>
+            </div>
+            <!--HitEffect-->
+            <div>
+                <mat-list role="list">
+                    <mat-list-item *ngFor="let hitEffect of action.hitEffects" role="listitem" style="height: 70px">
+                        <div *ngIf="hitEffect.damageType" style="width:100%">
+                            <mat-form-field appearance="outline" class="col-md-2">
+                                <mat-label>Damage Type</mat-label>
+                                <mat-select [(ngModel)]="hitEffect.damageType" [ngModelOptions]="{standalone: true}">
+                                    <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="col-md-1">
+                                <mat-label>Dmg Die Count</mat-label>
+                                <input matInput type="number" [(ngModel)]="hitEffect.damageDie.dieCount" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="col-md-1" *ngIf="hitEffect.damageDie.dieCount > 0">
+                                <mat-label>Dmg Die</mat-label>
+                                <mat-select [(ngModel)]="hitEffect.damageDie.die" [ngModelOptions]="{standalone: true}" (ngModelChange)="updateAction(action)" required>
+                                    <mat-option *ngFor="let d of hitDieSize" [value]="d.die">{{d.dieStr}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="col-md-1">
+                                <mat-label>Offset</mat-label>
+                                <input matInput type="number" [(ngModel)]="hitEffect.damageDie.offset" [ngModelOptions]="{standalone: true}" (ngModelChange)="updateAction(action)">
+                            </mat-form-field>
+                        </div>
+                        <div *ngIf="hitEffect.dc" style="width:100%">
+                            <mat-form-field appearance="outline" class="col-md-2">
+                                <mat-label>Saving Throw</mat-label>
+                                <mat-select [(ngModel)]="getSavingThrow(hitEffect).ability" [ngModelOptions]="{standalone: true}">
+                                    <mat-option *ngFor="let a of abilityValues" [value]="a">{{a}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="col-md-1">
+                                <mat-label>DC</mat-label>
+                                <input matInput type="number" [(ngModel)]="getSavingThrow(hitEffect).value" (ngModelChange)="updateAction(action)" [ngModelOptions]="{standalone: true}">
+                            </mat-form-field>
+                        </div>
+                    </mat-list-item>
+                    <mat-list-item role="listitem">
+                        <button>Add</button>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+    <!--Add Action-->
+    <div>
+        <mat-select placeholder="add weapon" [(ngModel)]="addSelectedActionToMonster" (ngModelChange)="addActionToMonster()" [ngModelOptions]="{standalone: true}">
+            <mat-optgroup *ngFor="let group of weapongroups" label="{{group}}">
+                <mat-option *ngFor="let weapon of getUnusedWeapons(group)" [value]="weapon">{{weapon.name}}</mat-option>
+            </mat-optgroup>
+        </mat-select>
+    </div>
+</form>
