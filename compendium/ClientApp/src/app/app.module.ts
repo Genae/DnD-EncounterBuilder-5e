@@ -26,6 +26,7 @@ import { ProjectSelectionComponent } from './components/projectSelectionComponen
 import {NgxMatSelectSearchModule} from "ngx-mat-select-search";
 import { AbilityScoreComponent } from './pages/monster/monsterEditComponent/ability-score/ability-score.component';
 import { MonsterDefenseComponent } from './pages/monster/monsterEditComponent/monster-defense/monster-defense.component';
+import { MonsterBasicInfoComponent } from './pages/monster/monsterEditComponent/monster-basic-info/monster-basic-info.component';
 
 @NgModule({
     declarations: [
@@ -44,7 +45,8 @@ import { MonsterDefenseComponent } from './pages/monster/monsterEditComponent/mo
         FilterSpellsPipe,
         ProjectSelectionComponent,
         AbilityScoreComponent,
-        MonsterDefenseComponent
+        MonsterDefenseComponent,
+        MonsterBasicInfoComponent
     ],
     imports: [
         MaterialModule,

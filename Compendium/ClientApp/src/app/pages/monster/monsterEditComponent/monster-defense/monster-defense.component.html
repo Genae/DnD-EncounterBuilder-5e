@@ -30,22 +30,18 @@
             <input matInput type="number" formControlName="hitDieCount">
         </mat-form-field>
         <mat-form-field appearance="outline" class="col-md-1">
-            <mat-label>Hit Die Count</mat-label>
-            <input matInput type="number" [(ngModel)]="_monster.hitDie.dieCount" (ngModelChange)="recalcHP()" [ngModelOptions]="{standalone: true}">
-        </mat-form-field>
-        <mat-form-field appearance="outline" class="col-md-1">
             <mat-label>Hit Die</mat-label>
-            <mat-select [(ngModel)]="_monster.hitDie.die" [ngModelOptions]="{standalone: true}" (ngModelChange)="recalcHP()" required>
+            <mat-select formControlName="hitDie">
                 <mat-option *ngFor="let d of hitDieSize" [value]="d.die">{{d.dieStr}}</mat-option>
             </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline" class="col-md-1">
             <mat-label>HP</mat-label>
-            <input matInput [(ngModel)]="_monster.maximumHitpoints" disabled [ngModelOptions]="{standalone: true}">
+            <input matInput formControlName="hitPoints">
         </mat-form-field>
         <mat-form-field appearance="outline" class="col-md-2">
             <mat-label>Description</mat-label>
-            <input matInput [(ngModel)]="_monster.hitDie.description" [ngModelOptions]="{standalone: true}" disabled>
+            <input matInput formControlName="hitPointsDescription">
         </mat-form-field>
     </div>
 

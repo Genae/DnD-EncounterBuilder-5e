@@ -29,9 +29,8 @@ import { SpellService } from '../../../services/spell.service';
 import { WeaponTypeService } from '../../../services/weaponType.service';
 import { Project } from '../../../models/project';
 import {FormControl} from "@angular/forms";
-import {StatsByCr, StatsByCrList} from "../../../models/lists/statsByCrList";
 import {HitDieSize, HitDieSizeList} from "../../../models/lists/hitDieSizeList";
-import {CRList} from "../../../models/lists/CRList";
+import {MonsterBasicInfoComponent} from "./monster-basic-info/monster-basic-info.component";
 
 @Component({
     selector: 'monsterEdit',
@@ -44,30 +43,24 @@ export class MonsterEditComponent implements OnInit {
         this.monsterService.getTraits().subscribe(res => {
             this.traits = res;
             this.traitGroups = Object.keys(this.traits);
-            this.monsterService.getTags().subscribe(res => {
-                this.tags = res
-                this.weaponTypeService.getWeapons().subscribe(wep => {
-                    this.weapons = wep;
-                    this.weapongroups = Object.values(WeaponCategory);
-                    this.route.params.subscribe(params => {
-                        if (params['id'])
-                            this.monsterService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
-                    });
+            this.weaponTypeService.getWeapons().subscribe(wep => {
+                this.weapons = wep;
+                this.weapongroups = Object.values(WeaponCategory);
+                this.route.params.subscribe(params => {
+                    if (params['id'])
+                        this.monsterService.getMonsterById(params['id']).subscribe(response => this.monsterUpdated(response as Monster));
                 });
             });
         });        
     }
 
     public formGroups: { [id: string]: { [id: string]: FormControl; }; } = {
-        'basic': {},
+        'basic': MonsterBasicInfoComponent.initForm({}),
         'abilities': {},
         'defence': {}
     }
 
     ngOnInit(): void {
-        this.formGroups['basic']['proficiency'] = new FormControl(this.proficency);
-        this.formGroups['basic']['cr'] = new FormControl();
-        this.formGroups['basic']['size'] = new FormControl();
     }
 
     public view() {
@@ -77,37 +70,14 @@ export class MonsterEditComponent implements OnInit {
     }
 
     monster: Monster;
-    hover: boolean;
     save: { [id: string]: boolean; } = {}
-    proficency: number;
-    alignment: { [id: string]: boolean; } = {};
-    alignmentList: string[] = [];
     hasMultiattack: boolean;
     weapons: WeaponType[];
     weapongroups: WeaponCategory[];
 
     monsterSpells: Spell[];
-    tags: { [id: string]: string; }
     traits:  { [id: string]: Trait[]; }
 
-    public getTags() {
-        let mtv = this.monsterTypeValues.find(mtv => this.monster.race.monsterType == mtv)
-        if(mtv !== undefined)
-            return this.tags[mtv];
-        return "";
-    }
-
-    public hoverToggle() {
-        if (this.hover) {
-            this.monster.speed.speeds['Hover'] = this.monster.speed.speeds['Fly'];
-            this.monster.speed.speeds['Fly'] = 0;
-        }
-        else {
-            this.monster.speed.speeds['Fly'] = this.monster.speed.speeds['Hover'];
-            this.monster.speed.speeds['Hover'] = 0;
-
-        }
-    }
 
     public updateProjectTags(projects: Project[]) {
         this.monster.projectTags = projects.map(p => p.id);
@@ -213,11 +183,6 @@ export class MonsterEditComponent implements OnInit {
         if (!this.monster.armorInfo)
             this.monster.armorInfo = new ArmorInfo();
 
-        //fix dropdown values
-        let fixCr = this.crValues.find(v => v.description === this.monster.challengeRating.description);
-        if (fixCr !== undefined) {
-            this.monster.challengeRating = fixCr;
-        }
 
         if (this.monster.spellcasting !== undefined && this.monster.spellcasting.spells.length > 0) {
             var flattened = this.monster.spellcasting.spells.flat().filter((a: PreparedSpell) => a !== null);
@@ -232,26 +197,11 @@ export class MonsterEditComponent implements OnInit {
             this.monster.senses.description = "";
         }
 
-        //fix hover
-        this.hover = this.monster.speed.speeds['Hover'] > 0;
-
         //fix save
         this.save = {};
         for (let ability of this.abilityValues) {
             if (this.monster.savingThrows[ability] > 0)
                 this.save[ability] = true;
-        }
-
-        //set CR
-        if (this.monster.challengeRating)
-            this.setCr();
-
-        //alignment grid
-        for (let m of Object.values(Morality)) {
-            for (let o of Object.values(Order)) {
-                this.alignmentList.push(o + ' ' + m)
-                this.alignment[o + ' ' + m] = this.monster.alignment.alignmentChances.find(a => a.alignment.morality === m && a.alignment.order === o) !== undefined;
-            }
         }
 
         //multiattack
@@ -311,42 +261,11 @@ export class MonsterEditComponent implements OnInit {
     public getSavingThrow(he: HitEffect): SavingThrow {
         return he.dc as SavingThrow;
     }
-    
-    statByCr: StatsByCr[] = StatsByCrList.list;
-    public setCr() {
-        var cr = this.crFromValue(this.monster.challengeRating.value);
-        var line = this.statByCr.find(l => l.cr === cr);
-        if(line && this.proficency != line.prof)
-        {
-            this.proficency = line.prof
-            this.formGroups['basic']['proficiency'].setValue(this.proficency)
-            this.formGroups['basic']['cr'].setValue(cr)
-        }
-    }
 
-    public crFromValue(val: number):number{
-        if (val === -3)
-            return 0
-        if (val === -2)
-            return 1/8
-        if (val === -1)
-            return 1/4
-        if (val === 0)
-            return 1 / 2
-        return val;
-    }
 
-    public sizeValues = Object.values(Size);
     public dmgTypeValues = Object.values(DamageType);
-    public monsterTypeValues = Object.values(MonsterType);
     public atkTypeValues = Object.values(AttackType);
-
-
-
-    public crValues: ChallengeRating[] = CRList.list;
+    
     hitDieSize: HitDieSize[] = HitDieSizeList.list;
 
-    sizeChanged(size: number) {
-        this.formGroups['basic']['size'].setValue(size)
-    }
 }

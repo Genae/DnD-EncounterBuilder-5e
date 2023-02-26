@@ -74,6 +74,16 @@ export class MonsterDefenseComponent implements OnInit {
         group['hitDieMultiplier'].setValue(this._hitDieMultiplier);
     })
     group['hitDieMultiplier'] = new FormControl(this._hitDieMultiplier);
+
+    group['hitDie'] = new FormControl(this._monster.hitDie.die);
+    group['hitDie'].valueChanges.subscribe(hitDie => {
+      this._monster.hitDie.die = hitDie;
+      this.recalcHP();
+      this.calculateHitDieMultiplier();
+    })
+
+    group['hitPoints'] = new FormControl({value: this._monster.maximumHitpoints, disabled: true});
+    group['hitPointsDescription'] = new FormControl({value: this._monster.maximumHitpoints, disabled: true});
     
     this.formGroups['basic']['cr'].valueChanges.subscribe((cr: number) => {
       this.setCr(cr);
@@ -150,7 +160,9 @@ export class MonsterDefenseComponent implements OnInit {
     hd.offset = hd.dieCount * this._conMod;
     hd.expectedRoll = DieRoll.getExpectedRoll(hd);
     hd.description = "(" + hd.dieCount + "d" + hd.die + " + " + hd.offset + ")"
+    this._group['hitPointsDescription'].setValue(hd.description);
     this._monster.maximumHitpoints = hd.expectedRoll;
+    this._group['hitPoints'].setValue(this._monster.maximumHitpoints);
     this.calcDefCR();
   }
 
