@@ -8,58 +8,28 @@
     <div class="row">
         <projectSelection [projectTags]="monster.projectTags" (updateList)="updateProjectTags($event)" class="col-md-6"></projectSelection>
     </div>
+    <app-challenge-rating-calculator [monster]="monster" [formGroups]="formGroups"></app-challenge-rating-calculator>
     <mat-stepper orientation="vertical" [linear]="false" #stepper>
-        <!----------------------------------
-        --
-        --  Basic Info
-        --
-        ---------------------------------------->
         <mat-step>
             <ng-template matStepLabel>Basic Info</ng-template>
             <app-monster-basic-info [monster]="monster" [formGroups]="formGroups"></app-monster-basic-info>
         </mat-step>
-        <!-----------------------------------
-        --
-        --  Ability Scores
-        --
-        ---------------------------------------->
         <mat-step>
             <ng-template matStepLabel>Ability Scores</ng-template>
             <app-ability-score [monster]="monster" [formGroups]="formGroups"></app-ability-score>
         </mat-step>
-        <!-----------------------------------
-        --
-        --  Defense
-        --
-        ---------------------------------------->
         <mat-step>
             <ng-template matStepLabel>Defense</ng-template>
             <app-monster-defense [monster]="monster" [formGroups]="formGroups"></app-monster-defense>            
         </mat-step>
-        <!-----------------------------------
-        --
-        --  Traits
-        --
-        ---------------------------------------->
         <mat-step>
             <ng-template matStepLabel>Traits</ng-template>
             <app-monster-trait-info [monster]="monster" [formGroups]="formGroups"></app-monster-trait-info>
         </mat-step>
-        <!-----------------------------------
-        --
-        --  Actions
-        --
-        ---------------------------------------->
         <mat-step>
             <ng-template matStepLabel>Actions</ng-template>
             <app-monster-actions [monster]="monster" [formGroups]="formGroups"></app-monster-actions>
-
         </mat-step>
-        <!-----------------------------------
-        --
-        --  Finalize
-        --
-        ---------------------------------------->
         <mat-step>
             <form>
                 <ng-template matStepLabel>Finalize</ng-template>

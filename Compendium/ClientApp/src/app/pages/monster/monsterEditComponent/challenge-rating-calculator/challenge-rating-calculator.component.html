@@ -1,0 +1,60 @@
+<div #crCalc style="position: absolute; right: 10px; top: 200px; width: 400px">
+    <mat-card>
+        <mat-card-header>
+            <h3>CR Calculator</h3>
+        </mat-card-header>
+        <mat-divider></mat-divider>
+        <mat-card-content>
+            <div class="row">
+                <div style="font-weight: bold; font-size: larger">
+                    <label class="col-md-4">Expected CR:</label>
+                    <label class="col-md-2">{{crToString(expectedCR)}}</label>
+                    <label class="col-md-4">Calculated CR:</label>
+                    <label class="col-md-2">{{crToString(calculatedCR)}}</label>
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="row">
+                <div style="font-weight: bold">
+                    <label class="col-md-4">Defensive CR</label>
+                    <label class="col-md-2">{{crToString(defensiveCR)}}</label>
+                    <label class="col-md-4">Offensive CR</label>
+                    <label class="col-md-2">{{crToString(offensiveCR)}}</label>
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="row">
+                <div>
+                    <label class="col-md-4">Base HP</label>
+                    <label class="col-md-2">{{baseHP}}</label>
+                    <label class="col-md-4">Damage/round</label>
+                    <label class="col-md-2">{{dmgPerRound}}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <label class="col-md-4">Effective HP</label>
+                    <label class="col-md-2">{{effectiveHP}}</label>
+                    <label class="col-md-4">Effective Dmg</label>
+                    <label class="col-md-2">{{effectiveDMG}}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <label class="col-md-4">Traits</label>
+                    <label class="col-md-2">{{defensiveTraits}}</label>
+                    <label class="col-md-4">Traits</label>
+                    <label class="col-md-2">{{offensiveTraits}}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <label class="col-md-4">Effective AC</label>
+                    <label class="col-md-2">{{effectiveAC}}</label>
+                    <label class="col-md-4">Attack/DC</label>
+                    <label class="col-md-2">{{attackDCMultiplier}}</label>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

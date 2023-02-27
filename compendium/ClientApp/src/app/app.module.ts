@@ -29,6 +29,7 @@ import { MonsterDefenseComponent } from './pages/monster/monsterEditComponent/mo
 import { MonsterBasicInfoComponent } from './pages/monster/monsterEditComponent/monster-basic-info/monster-basic-info.component';
 import { MonsterTraitInfoComponent } from './pages/monster/monsterEditComponent/monster-trait-info/monster-trait-info.component';
 import { MonsterActionsComponent } from './pages/monster/monsterEditComponent/monster-actions/monster-actions.component';
+import { ChallengeRatingCalculatorComponent } from "./pages/monster/monsterEditComponent/challenge-rating-calculator/challenge-rating-calculator.component";
 
 @NgModule({
     declarations: [
@@ -50,7 +51,9 @@ import { MonsterActionsComponent } from './pages/monster/monsterEditComponent/mo
         MonsterDefenseComponent,
         MonsterBasicInfoComponent,
         MonsterTraitInfoComponent,
-        MonsterActionsComponent
+        MonsterActionsComponent,
+        ChallengeRatingCalculatorComponent,
+        ChallengeRatingCalculatorComponent
     ],
     imports: [
         MaterialModule,

@@ -23,6 +23,7 @@ import { Project } from '../../../models/project';
 import {FormControl} from "@angular/forms";
 import {HitDieSize, HitDieSizeList} from "../../../models/lists/hitDieSizeList";
 import {MonsterBasicInfoComponent} from "./monster-basic-info/monster-basic-info.component";
+import {MonsterDefenseComponent} from "./monster-defense/monster-defense.component";
 
 @Component({
     selector: 'monsterEdit',
@@ -42,7 +43,7 @@ export class MonsterEditComponent implements OnInit {
     public formGroups: { [id: string]: { [id: string]: FormControl; }; } = {
         'basic': MonsterBasicInfoComponent.initForm({}),
         'abilities': {},
-        'defence': {}
+        'defence': MonsterDefenseComponent.initForm({})
     }
 
     ngOnInit(): void {

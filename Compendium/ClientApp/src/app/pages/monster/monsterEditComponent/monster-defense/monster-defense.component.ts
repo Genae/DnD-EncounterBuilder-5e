@@ -41,49 +41,63 @@ export class MonsterDefenseComponent implements OnInit {
   _monster: Monster;
   _hitDieMultiplier: number = 1;
   
-  constructor() { }
+  constructor() {   }
+
+
+  static initForm(group: { [id: string]: FormControl; }) {
+    group['armorPiece'] = new FormControl();
+    group['hasShield'] = new FormControl();
+    group['armorClass'] = new FormControl({value: 0, disabled: true});
+    group['armor'] = new FormControl();
+    group['hitDieCount'] = new FormControl();
+    group['hitDieMultiplier'] = new FormControl();
+    group['hitDie'] = new FormControl({value: 0, disabled: true});
+    group['hitPoints'] = new FormControl({value: 0, disabled: true});
+    group['hitPointsDescription'] = new FormControl({value: 0, disabled: true});
+    return group;
+  }
 
   ngOnInit(): void {
     this._group = this.formGroups['defence']
     let group = this._group;
     this.setCr(this.formGroups['basic']['cr'].value);
 
-    group['armorPiece'] = new FormControl(this._monster.armorInfo.piece);
+    group['armorPiece'].setValue(this._monster.armorInfo.piece);
     group['armorPiece'].valueChanges.subscribe(piece => {
       this._monster.armorInfo.piece = piece;
       this.recalcAc()
     })
-    group['hasShield'] = new FormControl(this._monster.armorInfo.hasShield);
+    group['hasShield'].setValue(this._monster.armorInfo.hasShield);
     group['hasShield'].valueChanges.subscribe(val => {
       this._monster.armorInfo.hasShield = val;
       this.recalcAc()
     });
-    group['armorClass'] = new FormControl({value: this._monster.armorclass, disabled: true});
+    group['armorClass'].setValue(this._monster.armorclass);
     group['armorClass'].valueChanges.subscribe(ac => {
       this._monster.armorclass = ac;
     })
-    group['armor'] = new FormControl(this._monster.armor);
+    group['armor'].setValue(this._monster.armor);
     group['armor'].valueChanges.subscribe(armor => {
       this._monster.armor = armor;
     })
-    group['hitDieCount'] = new FormControl(this._monster.hitDie.dieCount);
+    group['hitDieCount'].setValue(this._monster.hitDie.dieCount);
     group['hitDieCount'].valueChanges.subscribe(hitDieCount => {
       this._monster.hitDie.dieCount = hitDieCount;
       this.calculateHitDieMultiplier();
       if(group['hitDieMultiplier'].value != this._hitDieMultiplier)
         group['hitDieMultiplier'].setValue(this._hitDieMultiplier);
     })
-    group['hitDieMultiplier'] = new FormControl(this._hitDieMultiplier);
+    group['hitDieMultiplier'].setValue(this._hitDieMultiplier);
 
-    group['hitDie'] = new FormControl(this._monster.hitDie.die);
+    group['hitDie'].setValue(this._monster.hitDie.die);
     group['hitDie'].valueChanges.subscribe(hitDie => {
       this._monster.hitDie.die = hitDie;
       this.recalcHP();
       this.calculateHitDieMultiplier();
     })
 
-    group['hitPoints'] = new FormControl({value: this._monster.maximumHitpoints, disabled: true});
-    group['hitPointsDescription'] = new FormControl({value: this._monster.maximumHitpoints, disabled: true});
+    group['hitPoints'].setValue(this._monster.maximumHitpoints);
+    group['hitPointsDescription'].setValue(this._monster.maximumHitpoints);
     
     this.formGroups['basic']['cr'].valueChanges.subscribe((cr: number) => {
       this.setCr(cr);
@@ -138,8 +152,6 @@ export class MonsterDefenseComponent implements OnInit {
           break;
       }
     }
-
-    this.calcDefCR()
   }
   public acGroupChange() {
     this._monster.armorInfo.piece = undefined;
@@ -163,17 +175,6 @@ export class MonsterDefenseComponent implements OnInit {
     this._group['hitPointsDescription'].setValue(hd.description);
     this._monster.maximumHitpoints = hd.expectedRoll;
     this._group['hitPoints'].setValue(this._monster.maximumHitpoints);
-    this.calcDefCR();
-  }
-
-  public calcDefCR() {
-    let hp = this._monster.hitDie.expectedRoll;
-    let ac = this._monster.armorclass;
-    let hpLine = this.statsByCr.find(l => l.hp[0] <= hp && l.hp[1] >= hp);
-    if (hpLine === undefined) return;
-    let hpCR = hpLine.cr;
-    let acCR = parseInt("" + ((ac - hpLine.ac) / 2))
-    let defCR = hpCR + acCR;
   }
 
 
