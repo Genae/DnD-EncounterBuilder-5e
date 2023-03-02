@@ -52,7 +52,34 @@
                     <label class="col-md-4">Effective AC</label>
                     <label class="col-md-2">{{effectiveAC}}</label>
                     <label class="col-md-4">Attack/DC</label>
-                    <label class="col-md-2">{{attackDCMultiplier}}</label>
+                    <label class="col-md-2">x{{attackDCMultiplier}}</label>
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="row">
+                <div style="font-weight: bold;">
+                    <label class="col-md-12">Action Rounds</label>
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <label class="col-md-4">Round 1:</label>
+                    <label class="col-md-6">{{damageRounds[0].actionName}}</label>
+                    <label class="col-md-2">{{damageRounds[0].damage}}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <label class="col-md-4">Round 2:</label>
+                    <label class="col-md-6">{{damageRounds[1].actionName}}</label>
+                    <label class="col-md-2">{{damageRounds[1].damage}}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <label class="col-md-4">Round 3:</label>
+                    <label class="col-md-6">{{damageRounds[2].actionName}}</label>
+                    <label class="col-md-2">{{damageRounds[2].damage}}</label>
                 </div>
             </div>
         </mat-card-content>

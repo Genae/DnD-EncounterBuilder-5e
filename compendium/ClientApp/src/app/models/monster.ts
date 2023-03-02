@@ -252,9 +252,21 @@ export class Trait {
     text: string;
 }
 
+export enum LimitedUsage {
+    Recharge6="Recharge6",
+    Recharge5="Recharge5",
+    RechargeShort="RechargeShort",
+    RechargeLong="RechargeLong",
+    OnePerDay="OnePerDay",
+    TwoPerDay="TwoPerDay",
+    ThreePerDay="ThreePerDay",
+}
+
 export class Action {
     name: string;
     text: string;
+    limitedUsageText: string;
+    limitedUsage?: LimitedUsage;
     attack?: Attack;
     hasAttack: boolean;
     hitEffects: HitEffect[];

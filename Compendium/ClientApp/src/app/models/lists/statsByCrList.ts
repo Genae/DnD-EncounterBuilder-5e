@@ -45,4 +45,16 @@ export class StatsByCrList {
         { cr: 29, prof: 9, ac: 19, hp: [760, 805], atk: 13, dmg: [285, 302], save: 22 },
         { cr: 30, prof: 9, ac: 19, hp: [805, 850], atk: 14, dmg: [303, 320], save: 23 },
     ]
+
+    static findByDamage(dmgPerRound: any) {
+        return StatsByCrList.list.find(l => l.dmg[0] <= dmgPerRound && l.dmg[1] >= dmgPerRound)
+    }
+
+    static findByCR(cr: any) {
+        return StatsByCrList.list.find(l => l.cr == cr)
+    }
+    
+    static findByHP(hp: any) {
+        return StatsByCrList.list.find(l => l.hp[0] <= hp && l.hp[1] >= hp)
+    }
 }

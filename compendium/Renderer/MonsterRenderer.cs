@@ -74,7 +74,7 @@ namespace Compendium.Renderer
 
         private void RenderAction(Models.CoreData.Action action, StringBuilder stringBuilder)
         {
-            stringBuilder.AppendLine($"> ***{action.Name}.*** {action.Text}");
+            stringBuilder.AppendLine($"> ***{action.Name}{action.LimitedUsageText}.*** {action.Text}");
             stringBuilder.AppendLine($">");
         }
 

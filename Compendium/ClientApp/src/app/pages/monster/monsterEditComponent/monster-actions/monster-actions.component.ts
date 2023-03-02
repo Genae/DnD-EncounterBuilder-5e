@@ -135,6 +135,7 @@ export class MonsterActionsComponent implements OnInit {
       name: this.addSelectedActionToMonster.name,
       attack: this.addSelectedActionToMonster.attack,
       hitEffects: [this.addSelectedActionToMonster.hitEffect],
+      limitedUsageText: "",
       text: "None"
     };
     this._monster.actions.push(action);

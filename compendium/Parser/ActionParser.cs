@@ -80,10 +80,12 @@ namespace Compendium.Parser
 
         public Action ParseAction(ActionRaw raw, List<string> errors, DynamicEnumProvider dep)
         {
+            var limitedUsage = GetLimitedUsageFromName(ref raw.Name);
             var action = new Action
             {
                 Name = raw.Name,
                 Text = new Regex("[ ]{2,}", RegexOptions.None).Replace(raw.Text.Replace("\r\n", " ").Replace("\n", " ").Replace("\r", " "), " "),
+                LimitedUsage = limitedUsage
             };
             GetAttackTypeFromText(action, errors);
             if (action.Attack != null)
@@ -95,6 +97,21 @@ namespace Compendium.Parser
             var pos = 0;
             FindHitEffects(action, errors, ref pos, dep);
             return action;
+        }
+
+        private LimitedUsage? GetLimitedUsageFromName(ref string rawName)
+        {
+            if (rawName == null)
+                return null;
+            foreach (LimitedUsage usage in Enum.GetValues(typeof(LimitedUsage)))
+            {
+                if (rawName.ToLower().Contains(usage.ToDescriptionString().ToLower()))
+                {
+                    rawName = rawName.Replace(usage.ToDescriptionString(), "", StringComparison.CurrentCultureIgnoreCase).Replace("()", "").Trim();
+                    return usage;
+                }
+            }
+            return null;
         }
 
         private void FindHitEffects(Action action, List<string> errors, ref int pos, DynamicEnumProvider dep)

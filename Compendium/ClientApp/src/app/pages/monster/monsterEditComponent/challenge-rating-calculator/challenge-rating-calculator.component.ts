@@ -1,7 +1,15 @@
 import {Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
 import {FormControl} from "@angular/forms";
-import {Action, DieRoll, Monster, MovementType} from "../../../../models/monster";
+import {Action, DieRoll, LimitedUsage, Monster, MovementType, Multiattack} from "../../../../models/monster";
 import {StatsByCr, StatsByCrList} from "../../../../models/lists/statsByCrList";
+
+class ActionDamage {
+  actionName: string;
+  usesInFirst3Rounds: number;
+  numberOfTargets: number;
+  singleTargetDamage: number;
+  damage: number;
+}
 
 @Component({
   selector: 'app-challenge-rating-calculator',
@@ -39,6 +47,9 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
   effectiveDMG: any;
   offensiveTraits: any;
   attackDCMultiplier: any;
+  
+  actionDamage: ActionDamage[];
+  damageRounds: ActionDamage[];
 
   constructor() { }
   
@@ -73,44 +84,103 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
     //TODO traits
     this.defensiveTraits = 0;
     let ac = this._monster.armorclass;
-    let hpLine = this.statsByCr.find(l => l.hp[0] <= hp && l.hp[1] >= hp);
+    let hpLine = StatsByCrList.findByHP(hp);
     if (hpLine === undefined) return;
     let hpCR = hpLine.cr;
-    let acCR = parseInt("" + ((ac - hpLine.ac) / 2))
     let flyingBonus = 0;
     if(this._monster.speed.speeds[MovementType.Fly+""] > 0 && this._monster.actions.find(a => a.attack?.shortRange??0 > 0))
       flyingBonus = 2;
     this.effectiveAC = ac + flyingBonus;
+    let acCR = parseInt("" + ((this.effectiveAC - hpLine.ac) / 2))
     this.defensiveCR = hpCR + acCR;
     this.calcCR();
   }
   
   public calcOffCR(){
-    //TODO: Multiattack, Spells, Feats, etc..
-    let dmgs: number[] = [];
+    //TODO: Spells, Feats, etc..
+    this.actionDamage = [];
     for(let i = 0; i < this._monster.actions.length; i++) {
-      dmgs.push(this.calcDamage(this._monster.actions[i]));
+      this.actionDamage.push(this.calcDamage(this._monster.actions[i]));
     }
-    this.dmgPerRound = Math.max(...dmgs);
+    if(this._monster.multiattackAction){
+      this.actionDamage.push(this.calcMultiattackDamage(this._monster.multiattackAction));
+    }
+    this.actionDamage.sort((a,b) => b.damage - a.damage);
+    let overallDmg = 0;
+    this.damageRounds = [];
+    for(let r = 0; r < 3; r++){
+      if(this.actionDamage[0].usesInFirst3Rounds > r) {
+        this.damageRounds[r] = this.actionDamage[0];
+      }
+      else if(this.actionDamage[1].usesInFirst3Rounds > r-this.actionDamage[0].usesInFirst3Rounds) {
+        this.damageRounds[r] = this.actionDamage[1];
+      }
+      else {
+        this.damageRounds[r] = this.actionDamage[2];        
+      }
+      overallDmg += this.damageRounds[r].damage;
+    }
+    this.dmgPerRound = Math.round(overallDmg/3);
     this.effectiveDMG = this.dmgPerRound;
     //TODO: Traits
     this.offensiveTraits = 0;
     //TODO: Attack DC Multiplier
     this.attackDCMultiplier = 1;
-    let dmgLine = this.statsByCr.find(l => l.dmg[0] <= this.dmgPerRound && l.dmg[1] >= this.dmgPerRound);
+    let dmgLine = StatsByCrList.findByDamage(this.dmgPerRound);
     this.offensiveCR = dmgLine!.cr;
     this.calcCR();    
   }
 
-  calcDamage(action: Action): number {
+  private calcMultiattackDamage(multiAtk: Multiattack): ActionDamage {
+    let dmg = 0;
+    for (let a in multiAtk.actions) {
+      let acDmg = this.actionDamage.find(ad => ad.actionName == a);
+      dmg += (acDmg?.damage ?? 0) * multiAtk.actions[a];
+    }
+    return  {
+      actionName: multiAtk.name,
+      damage: dmg,
+      numberOfTargets: 1,
+      singleTargetDamage: dmg,
+      usesInFirst3Rounds: 3
+    };
+  }
+
+  calcDamage(action: Action): ActionDamage {
+    let actionDamage = new ActionDamage();
+    actionDamage.actionName = action.name;
+    actionDamage.usesInFirst3Rounds = 3;
+    if(action.limitedUsage) {
+      switch (action.limitedUsage){
+        case LimitedUsage.Recharge6:
+        case LimitedUsage.Recharge5:
+        case LimitedUsage.RechargeShort:
+        case LimitedUsage.RechargeLong:
+        case LimitedUsage.OnePerDay:
+          actionDamage.usesInFirst3Rounds = 1;
+          break;
+        case LimitedUsage.TwoPerDay:
+          actionDamage.usesInFirst3Rounds = 2;
+          break;
+        case LimitedUsage.ThreePerDay:
+          actionDamage.usesInFirst3Rounds = 3;
+          break;
+      }
+    }
+    actionDamage.numberOfTargets = 1;
+    if(action.text.toLowerCase().indexOf("one target") === -1 && action.text.toLowerCase().indexOf("one creature") === -1 ) {
+      actionDamage.numberOfTargets = 2;
+    }
     if(action.hitEffects) {
       let dmgSum = 0;
       for(let i = 0; i < action.hitEffects.length; i++) {
-        dmgSum+= DieRoll.getExpectedRoll(action.hitEffects[i].damageDie);
+        if(action.hitEffects[i].damageDie)
+          dmgSum+= DieRoll.getExpectedRoll(action.hitEffects[i].damageDie);
       }
-      return dmgSum;
+      actionDamage.singleTargetDamage = dmgSum;
+      actionDamage.damage = actionDamage.singleTargetDamage * actionDamage.numberOfTargets;
     }
-    return 0;
+    return actionDamage;
   }
   
   
