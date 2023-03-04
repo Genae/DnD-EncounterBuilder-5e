@@ -1,7 +1,8 @@
 import {Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
 import {FormControl} from "@angular/forms";
-import {Action, DieRoll, LimitedUsage, Monster, MovementType, Multiattack} from "../../../../models/monster";
+import {Ability, Action, DieRoll, LimitedUsage, Monster, MovementType, Multiattack} from "../../../../models/monster";
 import {StatsByCr, StatsByCrList} from "../../../../models/lists/statsByCrList";
+import {timeout} from "rxjs";
 
 class ActionDamage {
   actionName: string;
@@ -27,7 +28,7 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
   }
 
   //Static
-  statsByCr: StatsByCr[] = StatsByCrList.list;
+  public abilityValues = Object.values(Ability);
   
   
   //Local
@@ -39,6 +40,8 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
   defensiveCR: any;
   baseHP: any;
   effectiveHP: any;
+  acFromSaves: number;
+  flyingBonus:number = 0;
   defensiveTraits: any;
   effectiveAC: any;
   
@@ -59,16 +62,35 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
     })
     
     this.formGroups['defence']['armorClass'].valueChanges.subscribe(_=>{
-      this.calcDefCR();
+      setTimeout(()=>this.calcDefCR(), 10);
     })
     this.formGroups['defence']['hitPoints'].valueChanges.subscribe(_=>{
-      this.calcDefCR();
+      setTimeout(()=>this.calcDefCR(), 10);
     })
-    //register flightspeed + actions
+    for(let ability of this.abilityValues) {
+      this.formGroups['abilities'][ability + 'saveMultiplier'].valueChanges.subscribe(_=>{
+        setTimeout(()=>this.calcDefCR(), 10);
+      })
+    }
+    this.formGroups['defence']['vulnerabilities'].valueChanges.subscribe(_=>{
+      setTimeout(()=>this.calcDefCR(), 10);
+    });
+    this.formGroups['defence']['resistances'].valueChanges.subscribe(_=>{
+      setTimeout(()=>this.calcDefCR(), 10);
+    });
+    this.formGroups['defence']['immunities'].valueChanges.subscribe(_=>{
+      setTimeout(()=>this.calcDefCR(), 10);
+    });
+    this.formGroups['defence']['conditionImmunities'].valueChanges.subscribe(_=>{
+      setTimeout(()=>this.calcDefCR(), 10);
+    });
+        //register flightspeed + actions
   }
 
 
   public calcDefCR() {
+    if(!this.expectedCR)
+      return;
     let hp = this._monster.hitDie.expectedRoll;
     this.baseHP = hp;
     /*
@@ -79,7 +101,7 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
       cr 17++: x1, x1.25
       vulnerable >= 3: x0.5 (dont do that!)
      */
-    this.effectiveHP = this.baseHP;
+    this.effectiveHP = this.baseHP * this.calcResistanceMultiplier() * this.calcVulMultiplier();
     
     //TODO traits
     this.defensiveTraits = 0;
@@ -87,15 +109,54 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
     let hpLine = StatsByCrList.findByHP(hp);
     if (hpLine === undefined) return;
     let hpCR = hpLine.cr;
-    let flyingBonus = 0;
     if(this._monster.speed.speeds[MovementType.Fly+""] > 0 && this._monster.actions.find(a => a.attack?.shortRange??0 > 0))
-      flyingBonus = 2;
-    this.effectiveAC = ac + flyingBonus;
-    let acCR = parseInt("" + ((this.effectiveAC - hpLine.ac) / 2))
+      this.flyingBonus = 2;
+    this.acFromSaves = this.calcCrFromSaves();
+    this.effectiveAC = ac + this.flyingBonus + this.acFromSaves;
+    let crLine = StatsByCrList.findByCR(this.expectedCR);
+    let acCR = parseInt("" + ((this.effectiveAC - crLine!.ac) / 2));
+    
     this.defensiveCR = hpCR + acCR;
     this.calcCR();
   }
-  
+
+  calcResistanceMultiplier():number {
+    let numImmune = this._monster.immune?.length??0;
+    let numRes = this._monster.resist?.length??0;
+    if(this.expectedCR <=4 ){
+      if(numImmune + numRes >= 3) return 2;
+    }
+    else if(this.expectedCR <=10 ){
+      if(numImmune >= 3) return 2;
+      if(numImmune + numRes >= 3) return 1.5;
+    }
+    else if(this.expectedCR <=16 ){
+      if(numImmune >= 3) return 1.5;
+      if(numImmune + numRes >= 3) return 1.25;
+    }
+    else{
+      if(numImmune >= 3) return 1.25;
+    }
+    return 1;
+  };
+  calcVulMultiplier():number {
+    let numVul = this._monster.vulnerable?.length??0;    
+      if(numVul >= 3) return 0.5;
+    return 1;
+  };
+  calcCrFromSaves() {
+    let saves = 0;
+    for(let ability of this.abilityValues) {
+      let mult = this.formGroups['abilities'][ability + 'saveMultiplier'].value;
+      if(mult > 0)
+        saves += mult;
+    }
+    if(saves>=5)
+      return 4;
+    if(saves>=3)
+      return 2;
+    return 0;
+  }
   public calcOffCR(){
     //TODO: Spells, Feats, etc..
     this.actionDamage = [];

@@ -39,16 +39,32 @@ export class AbilityScoreComponent implements OnInit {
   
   
   constructor() {     
-  } 
+  }
 
+  static initForm(group: { [id: string]: FormControl; }) {
+    for(let ability of Object.values(Ability)) {
+      group[ability] = new FormControl()
+      group[ability + 'slider'] = new FormControl()
+      group[ability + 'saveMultiplier'] = new FormControl()
+      group[ability + 'save'] = new FormControl()
+    }
+    for(let skill of Object.keys(SkillList.list)) {
+      group[skill + 'Multiplier'] = new FormControl()
+      group[skill] = new FormControl()
+    }
+    group['skillFilter'] = new FormControl();
+    group['addSkill'] = new FormControl();
+    return group;
+  }
+  
   ngOnInit(): void {
     this._group = this.formGroups['abilities'];
     let group = this._group;
     this._proficiency = this.formGroups['basic']['proficiency'].value;
     
     for(let ability of this.abilityValues) {
-      group[ability] = new FormControl(this.abilities[ability].value)
-      group[ability + 'slider'] = new FormControl(this.abilities[ability].value)
+      group[ability].setValue(this.abilities[ability].value)
+      group[ability + 'slider'].setValue(this.abilities[ability].value)
       group[ability].valueChanges.subscribe((ev: number) => {
         if(group[ability + 'slider'].value != ev)
           group[ability + 'slider'].setValue(ev)
@@ -56,8 +72,8 @@ export class AbilityScoreComponent implements OnInit {
       })
 
       this.calculateSaveMultiplier(ability);
-      group[ability + 'saveMultiplier'] = new FormControl(this.saveMultipliers[ability])
-      group[ability + 'save'] = new FormControl(this.savingThrows[ability])
+      group[ability + 'saveMultiplier'].setValue(this.saveMultipliers[ability])
+      group[ability + 'save'].setValue(this.savingThrows[ability])
       group[ability + 'save'].valueChanges.subscribe((ev: number) => {
         this.savingThrows[ability] = ev;
         this.calculateSaveMultiplier(ability);
@@ -69,8 +85,6 @@ export class AbilityScoreComponent implements OnInit {
       this.calculateSkillMultiplier(skill);
       this.addSkillGroup(skill);
     }
-    group['skillFilter'] = new FormControl();
-    group['addSkill'] = new FormControl();
     group['addSkill'].valueChanges.subscribe((val:string) => {
       if(!val) return;
       this.addSkill(val);
@@ -81,10 +95,6 @@ export class AbilityScoreComponent implements OnInit {
     this.formGroups['basic']['proficiency'].valueChanges.subscribe((prof: number) => {
       this.setProficiency(prof);
     })
-  }
-
-  monsterUpdated() {
-
   }
   
   setProficiency(p: number){
@@ -102,10 +112,8 @@ export class AbilityScoreComponent implements OnInit {
   }
   
   addSkillGroup(skill: string){
-    if(this._group[skill])
-      return;
-    this._group[skill + 'Multiplier'] = new FormControl(this.skillMultipliers[skill])
-    this._group[skill] = new FormControl(this.skillModifiers[skill])
+    this._group[skill + 'Multiplier'].setValue(this.skillMultipliers[skill])
+    this._group[skill].setValue(this.skillModifiers[skill])
     this._group[skill].valueChanges.subscribe((ev: number) => {
       this.skillModifiers[skill] = ev;
       this.calculateSkillMultiplier(skill);
@@ -166,7 +174,6 @@ export class AbilityScoreComponent implements OnInit {
 
   public addSkill(skill: string) {
     this.skillMultipliers[skill] = 1;
-    this.addSkillGroup(skill);
     this.updateSkill(skill);
   }
 

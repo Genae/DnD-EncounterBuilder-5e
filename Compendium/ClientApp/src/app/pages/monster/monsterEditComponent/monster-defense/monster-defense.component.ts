@@ -54,6 +54,10 @@ export class MonsterDefenseComponent implements OnInit {
     group['hitDie'] = new FormControl({value: 0, disabled: true});
     group['hitPoints'] = new FormControl({value: 0, disabled: true});
     group['hitPointsDescription'] = new FormControl({value: 0, disabled: true});
+    group['vulnerabilities'] = new FormControl();
+    group['resistances'] = new FormControl();
+    group['immunities'] = new FormControl();
+    group['conditionImmunities'] = new FormControl();
     return group;
   }
 
@@ -116,6 +120,14 @@ export class MonsterDefenseComponent implements OnInit {
     })
     this.calculateHitDieMultiplier();
     this.recalcHP();
+    group['vulnerabilities'].setValue(this._monster.vulnerable);
+    group['vulnerabilities'].valueChanges.subscribe((value) => {this._monster.vulnerable = value})
+    group['resistances'].setValue(this._monster.resist);
+    group['resistances'].valueChanges.subscribe((value) => {this._monster.resist = value})
+    group['immunities'].setValue(this._monster.immune);
+    group['immunities'].valueChanges.subscribe((value) => {this._monster.immune = value})
+    group['conditionImmunities'].setValue(this._monster.conditionImmune);
+    group['conditionImmunities'].valueChanges.subscribe((value) => {this._monster.conditionImmune = value})
     this.defenseFormGroup = new FormGroup(group);
   }
 

@@ -52,7 +52,7 @@ namespace Compendium.Parser
                 Skillmodifiers = raw.Skills.ToDictionary(s => s.Skill, s => s.Modifier),
                 Speed = ParseSpeed(raw.Speed, errors),
                 Spellcasting = CheckForSpellcasting(spells, raw, ref errors, _dep),
-                Traits = raw.Traits.Select(t => new Trait() { Name = t.Name, Text = t.Text }).ToList(),
+                Traits = raw.Traits.Select(ParseTrait).ToList(),
                 Race = ParseMonsterType(raw.Type),
                 Vulnerable = ParseDamageTypes(raw.Vulnerable)
             };
@@ -60,6 +60,14 @@ namespace Compendium.Parser
                 monster.ShortName = shortName;
             monster.HitDie = GetHealthDies(monster.MaximumHitpoints, monster.Abilities["Constitution"], raw.SizeId);
             return monster;
+        }
+
+        private static Trait ParseTrait(TraitRaw t)
+        {
+            var rawName = t.Name;
+            var limitedUsage = ActionParser.GetLimitedUsageFromName(ref rawName);
+            var trait = new Trait() { Name = rawName, Text = t.Text, LimitedUsage = limitedUsage};
+            return trait;
         }
 
         private MonsterRace ParseMonsterType(string rawType)
@@ -140,7 +148,7 @@ namespace Compendium.Parser
             if (rawImmune == null)
                 return null;
             var damageTypes = new List<DamageType>();
-            if (rawImmune.ToLower().Contains("from nonmagical attacks"))
+            if (rawImmune.ToLower().Contains("nonmagical"))
             {
                 damageTypes.AddRange(new[] { DamageType.Piercing, DamageType.Slashing, DamageType.Bludgeoning }.Where(dt => rawImmune.ToLower().Contains(dt.ToString().ToLower())));
             }

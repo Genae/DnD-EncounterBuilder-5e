@@ -43,7 +43,7 @@ namespace Compendium.Renderer
             if (monster.Traits != null)
                 foreach (var trait in monster.Traits)
                 {
-                    stringBuilder.AppendLine($"> ***{trait.Name}.*** {trait.Text}");
+                    stringBuilder.AppendLine($"> ***{trait.Name}{trait.LimitedUsageText}.*** {trait.Text}");
                     stringBuilder.AppendLine($">");
                 }
             if (monster.Spellcasting != null || (monster.Actions?.Any() ?? false))

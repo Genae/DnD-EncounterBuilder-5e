@@ -250,6 +250,8 @@ export class PreparedSpell {
 export class Trait {
     name: string;
     text: string;
+    limitedUsage:LimitedUsage;
+    limitedUsageText: string;
 }
 
 export enum LimitedUsage {

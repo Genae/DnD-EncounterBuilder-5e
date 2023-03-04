@@ -99,7 +99,7 @@ namespace Compendium.Parser
             return action;
         }
 
-        private LimitedUsage? GetLimitedUsageFromName(ref string rawName)
+        public static LimitedUsage? GetLimitedUsageFromName(ref string rawName)
         {
             if (rawName == null)
                 return null;

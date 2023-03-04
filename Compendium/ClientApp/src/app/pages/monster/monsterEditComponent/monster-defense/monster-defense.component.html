@@ -48,7 +48,7 @@
     <div>
         <mat-form-field appearance="outline" class="col-md-3">
             <mat-label>Vulnerabilities</mat-label>
-            <mat-select [(ngModel)]="_monster.vulnerable" [ngModelOptions]="{standalone: true}" multiple>
+            <mat-select formControlName="vulnerabilities" multiple>
                 <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
             </mat-select>
         </mat-form-field>
@@ -57,7 +57,7 @@
     <div>
         <mat-form-field appearance="outline" class="col-md-3">
             <mat-label>Resistances</mat-label>
-            <mat-select [(ngModel)]="_monster.resist" [ngModelOptions]="{standalone: true}" multiple>
+            <mat-select formControlName="resistances" multiple>
                 <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
             </mat-select>
         </mat-form-field>
@@ -66,7 +66,7 @@
     <div>
         <mat-form-field appearance="outline" class="col-md-3">
             <mat-label>Immunities</mat-label>
-            <mat-select [(ngModel)]="_monster.immune" [ngModelOptions]="{standalone: true}" multiple>
+            <mat-select formControlName="immunities" multiple>
                 <mat-option *ngFor="let dt of dmgTypeValues" [value]="dt">{{dt}}</mat-option>
             </mat-select>
         </mat-form-field>
@@ -75,7 +75,7 @@
     <div>
         <mat-form-field appearance="outline" class="col-md-3">
             <mat-label>Condition Immunities</mat-label>
-            <mat-select [(ngModel)]="_monster.conditionImmune" [ngModelOptions]="{standalone: true}" multiple>
+            <mat-select formControlName="conditionImmunities" multiple>
                 <mat-option *ngFor="let con of conditionValues" [value]="con">{{con}}</mat-option>
             </mat-select>
         </mat-form-field>
