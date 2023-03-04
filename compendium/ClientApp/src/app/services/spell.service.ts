@@ -9,6 +9,10 @@ export class SpellService {
 
     constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) { }
 
+    getSpellsWithParams(params: any): Observable<Spell[]> {
+        return this.http.get<Spell[]>(this.baseUrl + 'api/spell/filtered', {params});
+    }
+
     getSpells(): Observable<Spell[]> {
         return this.http.get<Spell[]>(this.baseUrl + 'api/spell');
     }

@@ -109,7 +109,7 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
     let hpLine = StatsByCrList.findByHP(hp);
     if (hpLine === undefined) return;
     let hpCR = hpLine.cr;
-    if(this._monster.speed.speeds[MovementType.Fly+""] > 0 && this._monster.actions.find(a => a.attack?.shortRange??0 > 0))
+    if(this.expectedCR < 10 && this._monster.speed.speeds[MovementType.Fly+""] > 0 && this._monster.actions.find(a => a.attack?.shortRange??0 > 0))
       this.flyingBonus = 2;
     this.acFromSaves = this.calcCrFromSaves();
     this.effectiveAC = ac + this.flyingBonus + this.acFromSaves;

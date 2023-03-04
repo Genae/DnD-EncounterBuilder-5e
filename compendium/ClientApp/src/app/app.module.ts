@@ -31,6 +31,7 @@ import { MonsterTraitInfoComponent } from './pages/monster/monsterEditComponent/
 import { MonsterActionsComponent } from './pages/monster/monsterEditComponent/monster-actions/monster-actions.component';
 import { ChallengeRatingCalculatorComponent } from "./pages/monster/monsterEditComponent/challenge-rating-calculator/challenge-rating-calculator.component";
 import { SpellcastingInfoComponent } from './pages/monster/monsterEditComponent/monster-trait-info/spellcasting-info/spellcasting-info.component';
+import {SpellSelectionComponent} from "./components/spellSelectionComponent/spellSelection.component";
 
 @NgModule({
     declarations: [
@@ -48,6 +49,7 @@ import { SpellcastingInfoComponent } from './pages/monster/monsterEditComponent/
         FilterPipe,
         FilterSpellsPipe,
         ProjectSelectionComponent,
+        SpellSelectionComponent,
         AbilityScoreComponent,
         MonsterDefenseComponent,
         MonsterBasicInfoComponent,

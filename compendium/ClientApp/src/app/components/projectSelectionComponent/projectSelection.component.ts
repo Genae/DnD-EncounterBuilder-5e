@@ -31,11 +31,13 @@ export class ProjectSelectionComponent {
         this.projectService.getProjects().pipe(first()).subscribe(res => {
             this.allProjects = res;
             this.convertTagsToProject();
+            this.setLabel();
             this.filteredProjects = this.projectCtrl.valueChanges.pipe(startWith(null), map(proj => this._filter(proj)));
         })
     }
 
     ngOnChanges(changes: SimpleChanges) {
+        this.setLabel();
         this.convertTagsToProject();
     }
     convertTagsToProject() {
@@ -57,6 +59,7 @@ export class ProjectSelectionComponent {
         event.chipInput!.clear();
 
         this.projectCtrl.setValue(null);
+        this.setLabel();
     }
 
     removeProject(project: Project): void {
@@ -67,6 +70,7 @@ export class ProjectSelectionComponent {
             this.updateList.emit(this.projects);
         }
         this.projectCtrl.setValue(null);
+        this.setLabel();
     }
 
     selectedProject(event: MatAutocompleteSelectedEvent): void {
@@ -77,11 +81,13 @@ export class ProjectSelectionComponent {
         this.projectCtrl.setValue(null);
     }
 
-    private _filter(search: any): Project[] {
+    private setLabel() {
         if (this.projects.length == 0)
             this.label = "Not in any project"
         else
             this.label = "Projects"
+    }
+    private _filter(search: any): Project[] {
         let searchLower = "";
         if (search?.name)
             searchLower = "";

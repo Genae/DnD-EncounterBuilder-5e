@@ -1,1 +1,11 @@
-<p>spellcasting-info works!</p>
+<form [formGroup]="spellCastingFormGroup">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header style="height:auto; min-height:48px">
+            <mat-panel-title style=" margin: 10px 0 5px 0;"><mat-slide-toggle style="margin-right:10px" formControlName="hasSpellCasting"></mat-slide-toggle><span style="white-space: pre-wrap"><strong>{{_monster.spellcasting?.name ?? "Spellcasting"}}. </strong>{{_monster.spellcasting?.text ?? ""}}</span></mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-divider style="margin:5px 0 10px 0"></mat-divider>
+        <mat-list role="list" *ngIf="hasSpellCasting">
+            <spellSelection *ngFor="let sfl of spellsForLevel; let i = index" [spellTags]="spellsForLevel[i]" [spellLabel]="spellLabelForLevel[i]" [level]="i" [listClass]="_monster.spellcasting.spellListClass"></spellSelection>
+        </mat-list>
+    </mat-expansion-panel>    
+</form>

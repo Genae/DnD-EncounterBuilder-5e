@@ -1,0 +1,24 @@
+<mat-form-field class="example-chip-list no-underline" style="width: 100%">
+    <mat-label>{{label}}</mat-label>
+    <mat-chip-list #chipList aria-label="Spell selection">
+        <mat-chip *ngFor="let spell of spells"
+                  (removed)="removeSpell(spell)">
+            {{spell.name}}
+            <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+            </button>
+        </mat-chip>
+        <input placeholder="Add spell"
+               #spellInput
+               [formControl]="spellCtrl"
+               [matAutocomplete]="auto"
+               [matChipInputFor]="chipList"
+               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               (matChipInputTokenEnd)="addSpell($event)">
+    </mat-chip-list>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedSpell($event)">
+        <mat-option *ngFor="let project of filteredSpells | async" [value]="project">
+            {{project.name}}
+        </mat-option>
+    </mat-autocomplete>
+</mat-form-field>

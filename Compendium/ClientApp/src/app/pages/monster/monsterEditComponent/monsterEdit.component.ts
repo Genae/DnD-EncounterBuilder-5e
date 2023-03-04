@@ -25,6 +25,7 @@ import {HitDieSize, HitDieSizeList} from "../../../models/lists/hitDieSizeList";
 import {MonsterBasicInfoComponent} from "./monster-basic-info/monster-basic-info.component";
 import {MonsterDefenseComponent} from "./monster-defense/monster-defense.component";
 import {AbilityScoreComponent} from "./ability-score/ability-score.component";
+import {SpellcastingInfoComponent} from "./monster-trait-info/spellcasting-info/spellcasting-info.component";
 
 @Component({
     selector: 'monsterEdit',
@@ -44,7 +45,8 @@ export class MonsterEditComponent implements OnInit {
     public formGroups: { [id: string]: { [id: string]: FormControl; }; } = {
         'basic': MonsterBasicInfoComponent.initForm({}),
         'abilities': AbilityScoreComponent.initForm({}),
-        'defence': MonsterDefenseComponent.initForm({})
+        'defence': MonsterDefenseComponent.initForm({}),
+        'spellCasting': SpellcastingInfoComponent.initForm({})
     }
 
     ngOnInit(): void {
