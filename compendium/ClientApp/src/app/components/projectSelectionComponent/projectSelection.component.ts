@@ -26,6 +26,7 @@ export class ProjectSelectionComponent {
     @Output() updateList = new EventEmitter<Project[]>();
 
     @ViewChild('projectInput') projectInput: ElementRef<HTMLInputElement>;
+    isOpen: boolean;
 
     constructor(private projectService: ProjectService) {
         this.projectService.getProjects().pipe(first()).subscribe(res => {

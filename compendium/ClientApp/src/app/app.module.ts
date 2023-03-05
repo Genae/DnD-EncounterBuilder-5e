@@ -32,6 +32,7 @@ import { MonsterActionsComponent } from './pages/monster/monsterEditComponent/mo
 import { ChallengeRatingCalculatorComponent } from "./pages/monster/monsterEditComponent/challenge-rating-calculator/challenge-rating-calculator.component";
 import { SpellcastingInfoComponent } from './pages/monster/monsterEditComponent/monster-trait-info/spellcasting-info/spellcasting-info.component';
 import {SpellSelectionComponent} from "./components/spellSelectionComponent/spellSelection.component";
+import {CdkOverlayOrigin} from "@angular/cdk/overlay";
 
 @NgModule({
     declarations: [

@@ -2,7 +2,11 @@
     <mat-label>{{label}}</mat-label>
     <mat-chip-list #chipList aria-label="Spell selection">
         <mat-chip *ngFor="let spell of spells"
-                  (removed)="removeSpell(spell)">
+                  (removed)="removeSpell(spell)"
+                  cdkOverlayOrigin
+                  (mouseenter)="toggle(trigger, spell, true)"
+                  (mouseleave)="toggle(trigger, spell, false)"
+                  #trigger="cdkOverlayOrigin">
             {{spell.name}}
             <button matChipRemove>
                 <mat-icon>cancel</mat-icon>
@@ -22,3 +26,14 @@
         </mat-option>
     </mat-autocomplete>
 </mat-form-field>
+
+<ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="triggerOrigin"
+        [cdkConnectedOverlayOpen]="isOpen"
+>
+    <mat-card>
+        <spellDetail [spell]="previewSpell"></spellDetail>
+        
+    </mat-card>
+</ng-template>

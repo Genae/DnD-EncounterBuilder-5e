@@ -279,10 +279,4 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
     return cr + "";
   }
 
-  @HostListener('window:scroll', ['$event']) // for window scroll events
-  onScroll() {
-    let topPos = this.crCalc.nativeElement.getBoundingClientRect().top;
-    this.crCalc.nativeElement.style.top = 200+window.scrollY + "px";
-  }
-
 }

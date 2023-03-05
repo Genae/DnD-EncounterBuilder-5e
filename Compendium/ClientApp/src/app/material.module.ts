@@ -21,6 +21,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {MatSortModule} from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import {CdkConnectedOverlay, OverlayModule} from "@angular/cdk/overlay";
 
 
 
@@ -46,7 +47,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
         MatAutocompleteModule,
         MatSortModule,
         MatTableModule,
-        MatPaginatorModule
+        MatPaginatorModule,
+        OverlayModule
     ]
 })
 export class MaterialModule { }

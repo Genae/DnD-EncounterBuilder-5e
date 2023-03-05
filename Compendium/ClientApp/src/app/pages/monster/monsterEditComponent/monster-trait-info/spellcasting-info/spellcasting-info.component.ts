@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
 import {Monster} from "../../../../../models/monster";
 import {FormControl, FormGroup} from "@angular/forms";
 
@@ -62,4 +62,6 @@ export class SpellcastingInfoComponent implements OnInit {
       return "3rd";
     return num + "th";
   }
+
+  @ViewChild('spellPreview') spellPreview: ElementRef;
 }

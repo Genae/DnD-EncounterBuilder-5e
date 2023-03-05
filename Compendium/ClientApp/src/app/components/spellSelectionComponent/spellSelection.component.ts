@@ -6,6 +6,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { first, map, Observable, startWith } from 'rxjs';
 import { Spell } from '../../models/spell';
 import { SpellService } from '../../services/spell.service';
+import { CdkOverlayOrigin } from "@angular/cdk/overlay";
 
 
 @Component({
@@ -29,6 +30,9 @@ export class SpellSelectionComponent implements OnInit {
     @Output() updateList = new EventEmitter<Spell[]>();
 
     @ViewChild('spellInput') spellInput: ElementRef<HTMLInputElement>;
+    isOpen: boolean;
+    triggerOrigin: CdkOverlayOrigin;
+    previewSpell: Spell;
 
     constructor(private spellService: SpellService) {
         
@@ -101,5 +105,11 @@ export class SpellSelectionComponent implements OnInit {
         else
             searchLower = search?.toLowerCase() ?? "";
         return this.allSpells.filter(spell => this.spells.indexOf(spell) === -1 && spell.name.toLowerCase().includes(searchLower));
+    }
+
+    toggle(trigger: CdkOverlayOrigin, spell:Spell, isOpen:boolean) {
+        this.triggerOrigin = trigger;
+        this.previewSpell = spell;
+        this.isOpen = isOpen;
     }
 }

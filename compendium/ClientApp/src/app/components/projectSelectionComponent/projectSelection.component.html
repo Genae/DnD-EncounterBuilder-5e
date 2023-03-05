@@ -2,7 +2,8 @@
     <mat-label>{{label}}</mat-label>
     <mat-chip-list #chipList aria-label="Project selection">
         <mat-chip *ngFor="let project of projects"
-                  (removed)="removeProject(project)">
+                  (removed)="removeProject(project)"
+        >
             {{project.name}}
             <button matChipRemove>
                 <mat-icon>cancel</mat-icon>
