@@ -95,7 +95,7 @@ namespace Compendium.Parser
                 GetTargetFromText(action, errors, reachEnd);
             }
             var pos = 0;
-            FindHitEffects(action, errors, ref pos, dep);
+            action.HitEffects = FindHitEffects(action.Text, dep);
             return action;
         }
 
@@ -114,16 +114,17 @@ namespace Compendium.Parser
             return null;
         }
 
-        private void FindHitEffects(Action action, List<string> errors, ref int pos, DynamicEnumProvider dep)
+        private static List<HitEffect> FindHitEffects(string text, DynamicEnumProvider dep)
         {
-            var HitDieRegex = new Regex(@"([0-9]*) \(([0-9]*)d([0-9]*)( [\+|\-] [0-9]*)*\) ([a-z]*) damage");
-            var hitDies = HitDieRegex.Matches(action.Text);
+            var hitlist = new List<HitEffect>();
+            var HitDieRegex = new Regex(@"([0-9]*) ?\(([0-9]*)d([0-9]*)( ?[\+|\-] ?[0-9]*)*\) ([a-z]*) damage");
+            var hitDies = HitDieRegex.Matches(text);
             var positions = hitDies.ToDictionary(d => d.Index, d => d);
             var DCRegex = new Regex(@"(DC ([0-9]*) ([A-Za-z]*) saving throw)|(\(escape DC ([0-9]*)\))|(DC ([0-9]*) [A-Za-z]* \(([A-Za-z]*)\)( or [A-Za-z]* \(([A-Za-z]*)\)*)* check)", RegexOptions.None);
-            var dcs = DCRegex.Matches(action.Text);
+            var dcs = DCRegex.Matches(text);
             var dcPositions = dcs.ToDictionary(d => d.Index, d => d);
             var conditionRegex = new Regex(string.Join("|", Enum.GetNames(typeof(Condition)).Select(c => "(" + c.ToLower() + ")").ToArray()));
-            var conditions = conditionRegex.Matches(action.Text);
+            var conditions = conditionRegex.Matches(text);
             var effects = new Dictionary<int, HitEffect>();
             foreach (var hitDie in positions)
             {
@@ -137,7 +138,7 @@ namespace Compendium.Parser
                         DamageDie = damageDie,
                         DamageType = damageType
                     };
-                    action.HitEffects.Add(hitEffect);
+                    hitlist.Add(hitEffect);
                 }
                 else
                 {
@@ -151,10 +152,11 @@ namespace Compendium.Parser
                 hitEffect.Condition.Add(Enum.Parse<Condition>(cond.Value, true));
             }
 
-            action.HitEffects.AddRange(effects.Values);
+            hitlist.AddRange(effects.Values);
+            return hitlist;
         }
 
-        private HitEffect FindEffectForPosition(int position, DynamicEnumProvider dep, Dictionary<int, HitEffect> effects, Dictionary<int, Match> dcPositions)
+        private static HitEffect FindEffectForPosition(int position, DynamicEnumProvider dep, Dictionary<int, HitEffect> effects, Dictionary<int, Match> dcPositions)
         {
             HitEffect effect;
             var dc = dcPositions.LastOrDefault(d => d.Key < position || d.Key - 20 < position && d.Value.Value.Contains("escape"));

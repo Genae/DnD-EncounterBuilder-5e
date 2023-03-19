@@ -24,7 +24,7 @@ namespace Compendium.Models.CoreData
                    DamageType == effect.DamageType &&
                    EqualityComparer<DieRoll>.Default.Equals(DamageDie, effect.DamageDie) &&
                    EqualityComparer<ICheck>.Default.Equals(DC, effect.DC) &&
-                   Condition.SequenceEqual(effect.Condition);
+                   ((!(Condition?.Any()??false) && !(effect.Condition?.Any()??false)) || Condition.SequenceEqual(effect.Condition));
         }
     }
 }

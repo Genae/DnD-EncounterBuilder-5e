@@ -23,7 +23,7 @@ namespace Compendium.Provider
             this.spellProvider = spellProvider;
             this.monsterProvider = monsterProvider;
             this.projectProvider = projectProvider;
-            spellParser = new SpellParser();
+            spellParser = new SpellParser(dynamicEnumProvider);
             monsterParser = new MonsterParser(new SpellcastingParser(), new ActionParser(), dynamicEnumProvider);
         }
 

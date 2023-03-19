@@ -11,11 +11,11 @@ namespace Compendium.Tests;
 [TestFixture]
 public class TestActionParser
 {
-    [Test, Ignore("doesnt work")]
+    [Test]
     public void Test1()
     {
         var ap = new ActionParser();
-        var dep = new DynamicEnumProvider(null);
+        var dep = new DynamicEnumProvider(new JsonDatabaseConnection());
         List<string> errors = new List<string>();
         var action = ap.ParseAction(new ActionRaw()
         {
@@ -55,6 +55,35 @@ public class TestActionParser
             DamageType = null,
             DC = new SkillCheck {Skill = Skill.Acrobatics | Skill.Athletics, Value = 13},
             DamageDie = null
+        }, action.HitEffects);
+    }
+    
+    [Test]
+    public void Test2()
+    {
+        var ap = new ActionParser();
+        var dep = new DynamicEnumProvider(new JsonDatabaseConnection());
+        List<string> errors = new List<string>();
+        var action = ap.ParseAction(new ActionRaw()
+        {
+            Name = "Shortsword",
+            Text = @"Melee Weapon Attack: +6 to hit, reach 5 ft. one target. Hit: 7 (1d6+4) piercing damage."
+        }, errors, dep);
+        Assert.AreEqual(new Attack
+        {
+            AttackBonus = 6,
+            LongRange = 0,
+            ShortRange = 0,
+            Reach = 5,
+            Target = "one target",
+            Type = AttackType.Melee_Weapon_Attack
+        }, action.Attack);
+        Assert.Contains(new HitEffect
+        {
+            Condition = null,
+            DamageType = DamageType.Piercing,
+            DC = null,
+            DamageDie = new DieRoll(6, 1, 4)
         }, action.HitEffects);
     }
 }

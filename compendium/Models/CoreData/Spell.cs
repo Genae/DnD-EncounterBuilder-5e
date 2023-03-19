@@ -17,5 +17,7 @@ namespace Compendium.Models.CoreData
         public string Duration { get; set; }
         public string Text { get; set; }
         public List<string> ClassLists { get; set; } = new List<string>();
+        public bool IsMultiTarget { get; set; }
+        public List<HitEffect> Effects { get; set; }
     }
 }

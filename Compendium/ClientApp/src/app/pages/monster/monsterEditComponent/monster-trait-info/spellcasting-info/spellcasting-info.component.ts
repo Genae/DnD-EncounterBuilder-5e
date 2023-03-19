@@ -34,20 +34,11 @@ export class SpellcastingInfoComponent implements OnInit {
     let group = this._group;
     group['hasSpellCasting'].valueChanges.subscribe(val => {
       this.hasSpellCasting = val;
+      this.calculateSpellsForLevel();
     })
     group['hasSpellCasting'].setValue(this._monster.spellcasting !== undefined)
     
-    let lvl = 0;
-    for(let lvlSpells of this._monster.spellcasting.spells) {
-      if(lvlSpells != null){
-        this.spellsForLevel[lvl] = lvlSpells.map(s => s.spellId)
-        if(lvl === 0)
-          this.spellLabelForLevel[lvl] = "Cantrips (at will)"
-        else
-          this.spellLabelForLevel[lvl] = this.thIfy(lvl) + " level (" + this._monster.spellcasting.spellslots[lvl-1] + " slots)"
-      }
-      lvl++;
-    }
+    
     
     this.spellCastingFormGroup = new FormGroup(group);
   }
@@ -64,4 +55,22 @@ export class SpellcastingInfoComponent implements OnInit {
   }
 
   @ViewChild('spellPreview') spellPreview: ElementRef;
+
+  private calculateSpellsForLevel() {
+    if(!this._monster.spellcasting)
+      return;
+    this.spellsForLevel = [];
+    this.spellLabelForLevel = [];
+    let lvl = 0;
+    for(let lvlSpells of this._monster.spellcasting.spells) {
+      if(lvlSpells != null){
+        this.spellsForLevel[lvl] = lvlSpells.map(s => s.spellId)
+        if(lvl === 0)
+          this.spellLabelForLevel[lvl] = "Cantrips (at will)"
+        else
+          this.spellLabelForLevel[lvl] = this.thIfy(lvl) + " level (" + this._monster.spellcasting.spellslots[lvl-1] + " slots)"
+      }
+      lvl++;
+    }
+  }
 }
