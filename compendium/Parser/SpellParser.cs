@@ -3,7 +3,6 @@ using Compendium.Models.CoreData;
 using Compendium.Models.CoreData.Enums;
 using Compendium.Models.ImportData;
 using Compendium.Provider;
-using Action = Compendium.Models.CoreData.Action;
 
 namespace Compendium.Parser
 {
@@ -29,8 +28,10 @@ namespace Compendium.Parser
                 Range = raw.Range,
                 School = raw.SchoolId.HasValue ? (SpellSchool)raw.SchoolId.Value : SpellSchool.None,
                 SomaticComponent = raw.SomaticId == 1,
+                AtHigherLevels = GetAtHigherLevels(ref raw.Text),
                 Text = raw.Text,
                 Time = raw.Time,
+                CastingTime = GetCastingTime(raw.Time),
                 VocalComponent = raw.VocalId == 1
             };
             spell.IsMultiTarget = spell.Text.Contains("targets", StringComparison.InvariantCultureIgnoreCase) ||
@@ -40,6 +41,11 @@ namespace Compendium.Parser
             {
                 var effects = FindHitEffects(spell.Text, _dep);
                 spell.Effects = effects;
+                if(spell.AtHigherLevels != null)
+                {
+                    var effects2 = FindAtHigherLevelEffects(spell.AtHigherLevels, _dep);
+                    spell.AtHigherLevelEffects = effects2;
+                }
             }
             catch (Exception e)
             {
@@ -47,8 +53,68 @@ namespace Compendium.Parser
             }
             return spell;
         }
-        
-         public static List<HitEffect> FindHitEffects(string text, DynamicEnumProvider dep)
+
+        private List<HitEffect> FindAtHigherLevelEffects(string text, DynamicEnumProvider dep)
+        {
+            var hitlist = new List<HitEffect>();
+            var HitDieRegex = new Regex(@"([0-9]+)d([0-9]+)");
+            var hitDies = HitDieRegex.Matches(text);
+            var positions = hitDies.ToDictionary(d => d.Index, d => d);
+            foreach (var hitDie in positions)
+            {
+                var damageDie = new DieRoll(Convert.ToInt32(hitDie.Value.Groups[2].Value),
+                    Convert.ToInt32(hitDie.Value.Groups[1].Value), 0);
+                hitlist.Add(new HitEffect()
+                {
+                    DamageDie = damageDie
+                });
+            }
+            return hitlist;
+        }
+
+        private string GetAtHigherLevels(ref string rawText)
+        {
+            if (rawText.Contains("at higher levels", StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (rawText.Contains("~"))
+                    throw new InvalidDataException();
+                var split = rawText.Replace("at higher levels", "~", StringComparison.InvariantCultureIgnoreCase).Split("~");
+                rawText = split[0].Trim();
+                return split[1].Trim(':', ' ');
+            }
+            return null;
+        }
+
+        private CastingTime? GetCastingTime(string time)
+        {
+            if (time == null)
+                return null;
+            if (time.Contains("bonus", StringComparison.InvariantCultureIgnoreCase))
+                return CastingTime.BonusAction;
+            if (time.Contains("reaction", StringComparison.InvariantCultureIgnoreCase))
+                return CastingTime.Reaction;
+            if (time.Contains("attack action", StringComparison.InvariantCultureIgnoreCase))
+                return CastingTime.AttackAction;
+            if (time.Contains("action", StringComparison.InvariantCultureIgnoreCase))
+                return CastingTime.Action;
+            if (time.Contains("1 minute", StringComparison.InvariantCultureIgnoreCase))
+                return CastingTime.Minute;
+            if (time.Contains("10 minutes", StringComparison.InvariantCultureIgnoreCase))
+                return CastingTime._10Minutes;
+            if (time.Contains("1 hour", StringComparison.InvariantCultureIgnoreCase))
+                return CastingTime.Hour;
+            if (time.Contains("8 hours", StringComparison.InvariantCultureIgnoreCase))
+                return CastingTime._8Hours;
+            if (time.Contains("12 hours", StringComparison.InvariantCultureIgnoreCase))
+                return CastingTime._12Hours;
+            if (time.Contains("24 hours", StringComparison.InvariantCultureIgnoreCase))
+                return CastingTime._24Hours;
+            if (time.Contains("varies", StringComparison.InvariantCultureIgnoreCase))
+                return CastingTime.Varies;
+            return null;
+        }
+
+        public static List<HitEffect> FindHitEffects(string text, DynamicEnumProvider dep)
         {
             var hitlist = new List<HitEffect>();
             var HitDieRegex = new Regex(@"([0-9]+)d([0-9]+) ([a-z]*) damage");

@@ -8,4 +8,5 @@
     <div><span style="font-weight: bold">Component: </span><span>{{getComponents()}}</span></div>
     <div><span style="font-weight: bold">Duration: </span><span>{{spell.duration}}</span></div>
     <div>{{spell.text}}</div>
+    <div *ngIf="spell.atHigherLevels"><span style="font-weight: bold">At Higher Level: </span>{{spell.atHigherLevels}}</div>
 </div>

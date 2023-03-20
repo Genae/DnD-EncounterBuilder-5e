@@ -8,7 +8,7 @@
     <div class="row">
         <projectSelection [projectTags]="monster.projectTags" (updateList)="updateProjectTags($event)" class="col-md-6"></projectSelection>
     </div>
-    <app-challenge-rating-calculator [monster]="monster" [formGroups]="formGroups"></app-challenge-rating-calculator>
+    <app-challenge-rating-calculator [monster]="monster" [formGroups]="formGroups" [spells]="monsterSpells"></app-challenge-rating-calculator>
     <mat-stepper orientation="vertical" [linear]="false" #stepper>
         <mat-step>
             <ng-template matStepLabel>Basic Info</ng-template>

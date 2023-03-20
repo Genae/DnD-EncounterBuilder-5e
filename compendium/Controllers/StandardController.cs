@@ -19,7 +19,7 @@ namespace Compendium.Controllers
 
         [HttpGet]
         [Route("")]
-        public List<T> GetAll()
+        public virtual List<T> GetAll()
         {
             return provider.GetAll();
         }

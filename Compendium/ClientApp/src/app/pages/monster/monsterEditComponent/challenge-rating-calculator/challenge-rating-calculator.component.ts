@@ -1,8 +1,17 @@
-import {Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {FormControl} from "@angular/forms";
-import {Ability, Action, DieRoll, LimitedUsage, Monster, MovementType, Multiattack} from "../../../../models/monster";
-import {StatsByCr, StatsByCrList} from "../../../../models/lists/statsByCrList";
-import {timeout} from "rxjs";
+import {
+  Ability,
+  Action,
+  DieRoll,
+  LimitedUsage,
+  Monster,
+  MovementType,
+  Multiattack,
+  PreparedSpell, Spellcasting
+} from "../../../../models/monster";
+import {StatsByCrList} from "../../../../models/lists/statsByCrList";
+import {CastingTime, Spell} from "../../../../models/spell";
 
 class ActionDamage {
   actionName: string;
@@ -26,6 +35,10 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
     this.calcDefCR();
     this.calcOffCR();
   }
+  @Input() set spells(s: Spell[]) {
+    this._spells = s;
+    this.calcOffCR();
+  };
 
   //Static
   public abilityValues = Object.values(Ability);
@@ -33,6 +46,7 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
   
   //Local
   _monster: Monster;
+  _spells: Spell[];
   @ViewChild('crCalc') crCalc: ElementRef;
   expectedCR: any;
   calculatedCR: any;
@@ -41,6 +55,7 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
   baseHP: any;
   effectiveHP: any;
   acFromSaves: number;
+  acFromSpells: number;
   flyingBonus:number = 0;
   defensiveTraits: any;
   effectiveAC: any;
@@ -112,7 +127,12 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
     if(this.expectedCR < 10 && this._monster.speed.speeds[MovementType.Fly+""] > 0 && this._monster.actions.find(a => a.attack?.shortRange??0 > 0))
       this.flyingBonus = 2;
     this.acFromSaves = this.calcCrFromSaves();
-    this.effectiveAC = ac + this.flyingBonus + this.acFromSaves;
+    if(this._monster.spellcasting && this._monster.spellcasting.spells[1] && this._monster.spellcasting.spells[1].findIndex(s => s.name === "Mage Armor")) {
+        this.acFromSpells = 13 + this._monster.abilities['Dexterity'].modifier - ac;
+        if(this.acFromSpells < 0)
+          this.acFromSpells = 0;
+    }
+    this.effectiveAC = ac + this.flyingBonus + this.acFromSaves + this.acFromSpells;
     let crLine = StatsByCrList.findByCR(this.expectedCR);
     let acCR = parseInt("" + ((this.effectiveAC - crLine!.ac) / 2));
     
@@ -123,6 +143,8 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
   calcResistanceMultiplier():number {
     let numImmune = this._monster.immune?.length??0;
     let numRes = this._monster.resist?.length??0;
+    if(this._monster.spellcasting && this._monster.spellcasting.spells[1] && this._monster.spellcasting.spells[1].findIndex(s => s.name === "Stoneskin"))
+      numRes += 3
     if(this.expectedCR <=4 ){
       if(numImmune + numRes >= 3) return 2;
     }
@@ -165,6 +187,10 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
     }
     if(this._monster.multiattackAction){
       this.actionDamage.push(this.calcMultiattackDamage(this._monster.multiattackAction));
+    }
+    if(this._monster.spellcasting) {
+      this.actionDamage.push(...this.calcCantripDamage(this._monster.spellcasting.spells[0], this._monster.challengeRating.value));
+      this.actionDamage.push(...this.calcSpellDamage(this._monster.spellcasting, this._monster.challengeRating.value));
     }
     this.actionDamage.sort((a,b) => b.damage - a.damage);
     let overallDmg = 0;
@@ -279,4 +305,94 @@ export class ChallengeRatingCalculatorComponent implements OnInit {
     return cr + "";
   }
 
+  private calcCantripDamage(spells: PreparedSpell[], cr: number): ActionDamage[] {
+    if(!this._spells)
+      return [];
+    let mult = 0;
+    if(cr < 5){
+      mult = 1;
+    }
+    else if(cr < 11){
+      mult = 2;
+    }
+    else if(cr < 17) {
+      mult = 3;
+    }
+    else {
+      mult = 4;
+    }
+    let actDmg: ActionDamage[] = [];
+    for(let i = 0; i < spells.length; i++) {
+      let cSp = this._spells.find(s => spells[i].spellId === s.id);
+      if(cSp === undefined)
+        continue;
+      let actionDamage = new ActionDamage();
+      actionDamage.actionName = cSp.name;
+      actionDamage.usesInFirst3Rounds = 3;
+      actionDamage.numberOfTargets = cSp.isMultiTarget?2:1;
+      if(cSp.effects) {
+        let dmgSum = 0;
+        for(let i = 0; i < cSp.effects.length; i++) {
+          if(cSp.effects[i].damageDie)
+            dmgSum+= DieRoll.getExpectedRoll(cSp.effects[i].damageDie);
+        }
+        actionDamage.singleTargetDamage = dmgSum;
+        actionDamage.damage = actionDamage.singleTargetDamage * actionDamage.numberOfTargets * mult;
+      }
+      actDmg.push(actionDamage);
+    }
+    return actDmg;
+  }
+
+  private calcSpellDamage(spellcasting: Spellcasting, cr: number): ActionDamage[] {
+    let spells = spellcasting.spells;
+    let maxSlot = 0;
+    for(let i = 0; i < spellcasting.spellslots.length; i++){
+      if(spellcasting.spellslots[i] > 0)
+        maxSlot = i+1;
+    }
+    if(!this._spells)
+      return [];
+    let actDmg: ActionDamage[] = [];
+    for(let lvl = 1; lvl < spells.length; lvl++) {
+      if(spells[lvl] == null) continue;
+      for(let i = 0; i < spells[lvl].length; i++) {
+        let cSp = this._spells.find(s => spells[lvl][i].spellId === s.id);
+        if(cSp === undefined)
+          continue;
+        if(cSp.castingTime !== CastingTime.Action && cSp.castingTime != CastingTime.BonusAction && cSp.castingTime != CastingTime.Reaction && cSp.castingTime != CastingTime.AttackAction)
+          continue; //not relevant for first 3 rounds
+        let actionDamage = new ActionDamage();
+        actionDamage.actionName = cSp.name + " (" + lvl + ")";
+        actionDamage.usesInFirst3Rounds = 3;
+        actionDamage.numberOfTargets = cSp.isMultiTarget?2:1;
+        if(cSp.effects) {
+          let dmgSum = 0;
+          for(let i = 0; i < cSp.effects.length; i++) {
+            if(cSp.effects[i].damageDie)
+              dmgSum+= DieRoll.getExpectedRoll(cSp.effects[i].damageDie);
+          }
+          actionDamage.singleTargetDamage = dmgSum;
+          actionDamage.damage = actionDamage.singleTargetDamage * actionDamage.numberOfTargets;
+        }
+
+        if(cSp.atHigherLevelEffects) {
+          let dmgSum = 0;
+          for(let i = 0; i < cSp.atHigherLevelEffects.length; i++) {
+            if(cSp.atHigherLevelEffects[i].damageDie)
+              dmgSum+= DieRoll.getExpectedRoll(cSp.atHigherLevelEffects[i].damageDie);
+          }
+          let extraDmg = 0;
+          if(lvl < maxSlot) {
+            extraDmg = dmgSum * (maxSlot - lvl)
+            actionDamage.actionName = cSp.name + " (" + lvl + "->" + maxSlot + ")"
+          }
+          actionDamage.damage += extraDmg * actionDamage.numberOfTargets;
+        }
+        
+        actDmg.push(actionDamage);
+      }
+    }    
+    return actDmg;
+  }
 }

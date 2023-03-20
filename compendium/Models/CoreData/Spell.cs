@@ -10,6 +10,7 @@ namespace Compendium.Models.CoreData
         public bool CastAsRitual { get; set; }
         public int Level { get; set; }
         public string Time { get; set; }
+        public CastingTime? CastingTime { get; set; }
         public string Range { get; set; }
         public bool VocalComponent { get; set; }
         public bool SomaticComponent { get; set; }
@@ -19,5 +20,22 @@ namespace Compendium.Models.CoreData
         public List<string> ClassLists { get; set; } = new List<string>();
         public bool IsMultiTarget { get; set; }
         public List<HitEffect> Effects { get; set; }
+        public string AtHigherLevels { get; set; }
+        public List<HitEffect> AtHigherLevelEffects { get; set; }
+    }
+
+    public enum CastingTime
+    {
+        Action,
+        BonusAction,
+        Reaction,
+        AttackAction,
+        Minute,
+        _10Minutes,
+        Hour,
+        _8Hours,
+        _12Hours,
+        _24Hours,
+        Varies
     }
 }
